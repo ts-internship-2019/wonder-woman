@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace batman.Models
+namespace iWasHere.Domain.Model
 {
     public partial class DictionaryLandmarkType
     {

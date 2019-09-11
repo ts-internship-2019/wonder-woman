@@ -2,15 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace batman.Models
+namespace iWasHere.Domain.Model
 {
-    public partial class DatabaseContext : DbContext
+    public partial class BatmanContext : DbContext
     {
-        public DatabaseContext()
+        public BatmanContext()
         {
         }
 
-        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+        public BatmanContext(DbContextOptions<BatmanContext> options)
             : base(options)
         {
         }
@@ -19,11 +19,6 @@ namespace batman.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=ts-internship-2019.database.windows.net;Initial Catalog=Batman;Persist Security Info=False;User ID=sa_admin;Password=A123456a;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
