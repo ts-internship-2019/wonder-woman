@@ -5,8 +5,12 @@ export class SaveLandmark extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { title: "Create", newDictionaryEntry: new DictionaryData};
+        this.state = { title: "Create", newDictionaryEntry: new DictionaryData };
+        this.state.newDictionaryEntry.dictionaryItemCode = 'sa';
+        debugger;
         this.handleSave = this.handleSave.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+
     }
 
     handleSave(event) {
@@ -20,7 +24,14 @@ export class SaveLandmark extends Component {
         window.top.location.reload();
     }
 
+    handleChange(event) {
+        const { name, value } = event.target;
+        debugger;
+        this.setState(prevState => ({ newDictionaryEntry: { ...prevState.newDictionaryEntry, dictionaryItemCode: value } }));//({ ...newDictionaryEntry: event.target.value });
+    }
+
     render() {
+        debugger;
         return <div>
             <h1>{this.state.title}</h1>
             <h3>Landmark Type</h3>
@@ -32,7 +43,7 @@ export class SaveLandmark extends Component {
                 <div>
                     <label htmlFor="DictionaryItemCode" > DictionaryItemCode </label>
                     <div>
-                        <input type="text" name="dictionaryItemCode" />
+                        <input type="text" value={this.state.newDictionaryEntry.dictionaryItemCode} onChange={this.handleChange} />
                     </div>
                 </div>
                 <div>
@@ -57,7 +68,7 @@ export class SaveLandmark extends Component {
 
 class DictionaryData {
     dictionaryItemId: number = 0;
-    dictionaryItemCode: string = "";
+    dictionaryItemCode: string = "fd";
     dictionaryItemName: string = "";
     description: string = "";
 }
