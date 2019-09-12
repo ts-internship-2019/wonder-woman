@@ -15,6 +15,7 @@ namespace iWasHere.Web
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
+            // LMAO
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
