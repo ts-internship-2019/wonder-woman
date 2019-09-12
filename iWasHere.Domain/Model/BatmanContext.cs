@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace iWasHere.Domain.Model
 {
-    public partial class BatmanContext : DbContext
+    public partial class DatabaseContext : DbContext
     {
-        public BatmanContext()
+        public DatabaseContext()
         {
         }
 
-        public BatmanContext(DbContextOptions<BatmanContext> options)
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
         }
