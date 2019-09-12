@@ -18,7 +18,7 @@ namespace iWasHere.Web
             string something = "I was here";
             string something = "I was here 2nd time";
         }
-        //test1
+
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
