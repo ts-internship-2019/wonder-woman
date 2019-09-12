@@ -20,6 +20,7 @@ namespace iWasHere.Web
 {
     public class Startup
     {
+        //this is a test
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
