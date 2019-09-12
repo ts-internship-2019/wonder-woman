@@ -9,17 +9,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace iWasHere.Web
-{//testestest
+{
     public class Program
     {
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
-            // LMAO
+            string something = "I was here";
+            string something = "I was here 2nd time";
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>(); // PUSH LMAO
+                .UseStartup<Startup>();
     }
 }
