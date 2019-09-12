@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace iWasHere.Web
-{
+{//testestest
     public class Program
     {
         public static void Main(string[] args)
