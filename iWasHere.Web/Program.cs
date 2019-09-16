@@ -14,9 +14,7 @@ namespace iWasHere.Web
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
-            //string something = "I was here";
-            //string something = "I was here 2nd time";
+            CreateWebHostBuilder(args).Build().Run();           
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
