@@ -15,12 +15,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using iWasHere.Domain.Model;
 using iWasHere.Domain.Service;
-//coment temp
+
 namespace iWasHere.Web
 {
     public class Startup
     {
-        //this is a test
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
