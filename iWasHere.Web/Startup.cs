@@ -13,8 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using iWasHere.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using iWasHere.Domain.Model;
+using iWasHere.Domain.Models;
 using iWasHere.Domain.Service;
+using Newtonsoft.Json.Serialization;
 
 namespace iWasHere.Web
 {
@@ -45,8 +46,8 @@ namespace iWasHere.Web
             services.AddDefaultIdentity<IdentityUser>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddKendo();
             services.AddScoped<DictionaryService>();
         }
