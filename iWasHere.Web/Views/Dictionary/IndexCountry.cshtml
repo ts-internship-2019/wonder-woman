@@ -17,6 +17,8 @@
             {
                 columns.Bound(c => c.Name).Title("Country Name");
                 columns.Bound(c => c.Code).Title("Country Code");
+                columns.Command(d => d.Edit());
+                columns.Command(d => d.Destroy());
             })
             .HtmlAttributes(new { style = "height: 380px;" })
             .Scrollable()

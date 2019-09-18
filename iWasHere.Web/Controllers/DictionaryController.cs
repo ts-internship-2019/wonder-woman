@@ -8,14 +8,7 @@ using iWasHere.Domain.Service;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
-using Kendo.Mvc.UI;
-using iWasHere.Domain.Models;
-using Kendo.Mvc.Extensions;
-using FluentNHibernate.Conventions.Inspections;
 using System.Web.Helpers;
-
-using Kendo.Mvc.UI;
-using Kendo.Mvc.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace iWasHere.Web.Controllers
