@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,7 +53,7 @@ namespace iWasHere.Domain.Service
 
             return dictionaryCurrencyTypes;
         }
-        
+
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
         {
             totalRows = 0;
@@ -108,7 +109,7 @@ namespace iWasHere.Domain.Service
         {
             var query = _dbContext.County.Select(c => new CountyModel()
             {
-                Id = c.CountyId,
+                CountyId = c.CountyId,
                 Name = c.Name
             });
             return query.ToList();
@@ -128,6 +129,22 @@ namespace iWasHere.Domain.Service
             }).Skip(skip).Take(pageSize).ToList();
 
             return country;
+        }
+
+        public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
+        {
+            int skip = (page - 1) * pageSize;
+            count = _dbContext.County.Count();
+            List<CountyModel> listCounties = _dbContext.County.Include(a=>a.Country).Select(a => new CountyModel()
+            {
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName=a.Country.Name
+            }).Skip(skip).Take(pageSize).ToList();
+
+            return listCounties ;
         }
     }
 }
