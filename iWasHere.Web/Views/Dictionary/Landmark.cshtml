@@ -1,0 +1,76 @@
+﻿@using Kendo.Mvc.UI
+
+@model iWasHere.Domain.Models.DictionaryLandmarkType
+
+@(Html.Kendo().TextBox()
+                        .HtmlAttributes(new
+                            {
+                                id = "filterName"
+                            })
+                        .Name("filterName")
+)
+
+@(Html.Kendo().Button()
+                        .Name("filterBtn")
+                        .Content("Filtreaza")
+                        .Icon("filter")
+                        .HtmlAttributes(new { type = "button" })
+                        .Events(ev => ev.Click("onClick")))
+
+@(Html.Kendo().Button()
+    .Name("clearFilterBtn")
+    .Icon("clear-filter")
+    .Content("Reseteaza Filtru")
+    .HtmlAttributes(new { type = "button" })
+    .Events(ev => ev.Click("onClick")))
+
+@(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryLandmarkType>
+    ()
+    .Name("grid")
+    .Columns(columns =>
+    {
+    columns.Bound(p => p.Name).Title("Name");
+    columns.Bound(p => p.Code).Title("Code");
+    columns.Bound(p => p.Description).Title("Description");
+    })
+    .Filterable()
+    .Selectable(selectable => selectable
+    .Mode(GridSelectionMode.Single)
+    .Type(GridSelectionType.Row))
+    .Pageable(pager => pager.PageSizes(new int[] { 5, 10, 50 }))
+    .Navigatable()
+    .Sortable(sortable => sortable.AllowUnsort(false))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .ServerOperation(true)
+    .PageSize(10)
+    .Read(read => read.Action("LandmarkTypeRead", "Dictionary").Data("getfilter"))
+    )
+)
+
+<script type="text/javascript">
+    var name;
+    function getfilter() {
+        return {
+            filterName: name,
+        };
+    }
+    function onClick(e) {
+        if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
+            $('#filterName').val(null);
+            name = "";
+            $('#grid').data("kendoGrid").dataSource.read();
+            $('#grid').data("kendoGrid").dataSource.page(1);
+        }
+        if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
+            name = $('#filterName').val();
+            $('#grid').data("kendoGrid").dataSource.read();
+            $('#grid').data("kendoGrid").dataSource.page(1);
+        }
+    }
+</script>
+
+
+
+
+

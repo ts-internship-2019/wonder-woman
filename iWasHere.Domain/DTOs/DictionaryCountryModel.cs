@@ -4,13 +4,11 @@ using System.Text;
 
 namespace iWasHere.Domain.DTOs
 {
-    public class CountyModel
+    public class DictionaryCountryModel
     {
-        public int CountyId { get; set; }
+        public int CountryId { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
-        public int CountryId { get; set; }
-        public string CountryName { get; set; }
-
+        public int? ParentId { get; set; }
     }
 }
