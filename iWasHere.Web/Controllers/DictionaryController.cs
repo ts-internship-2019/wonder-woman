@@ -6,15 +6,10 @@ using iWasHere.Domain.DTOs;
 using iWasHere.Domain.Models;
 using iWasHere.Domain.Service;
 using Microsoft.AspNetCore.Mvc;
-using Kendo.Mvc.UI;
-using iWasHere.Domain.Models;
-using Kendo.Mvc.Extensions;
-using FluentNHibernate.Conventions.Inspections;
 using System.Web.Helpers;
-
+using Microsoft.EntityFrameworkCore;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace iWasHere.Web.Controllers
 {
@@ -31,9 +26,22 @@ namespace iWasHere.Web.Controllers
 
         public IActionResult Index()
         {
-            List<DictionaryLandmarkTypeModel> dictionaryLandmarkTypeModels = _dictionaryService.GetDictionaryLandmarkTypeModels();
+            return View();
+        }
 
-            return View(dictionaryLandmarkTypeModels);
+        public IActionResult Tickets([DataSourceRequest] DataSourceRequest request)
+        {
+            return View();
+        }
+
+        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request)
+        {
+            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(request.Page, request.PageSize, out int count);
+
+            DataSourceResult result = new DataSourceResult();
+            result.Data = dictionaryTicketTypeModels;
+            result.Total = count;
+            return Json(result);
         }
 
         public IActionResult IndexCity()
@@ -152,5 +160,21 @@ namespace iWasHere.Web.Controllers
         }
 
     
+        public IActionResult Construction([DataSourceRequest] DataSourceRequest request)
+        {
+
+           
+            return View();
+        }
+
+        public ActionResult GetConstruction([DataSourceRequest] DataSourceRequest request)
+        {
+            List<DictionaryConstructionTypeModel> dictionaryConstructionType = _dictionaryService.GetDictionaryConstructionTypeModels(request.Page, request.PageSize, out int count);
+            DataSourceResult result = new DataSourceResult();
+            result.Data = dictionaryConstructionType;
+            result.Total = count;
+            return Json(result);
+        }
+
     }
 }

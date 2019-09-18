@@ -5,34 +5,34 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace iWasHere.Domain.Service
 {
     public class DictionaryService
     {
         private readonly DatabaseContext _dbContext;
-       
         public DictionaryService(DatabaseContext databaseContext)
         {
             _dbContext = databaseContext;
         }
 
-        public List<DictionaryLandmarkTypeModel> GetDictionaryLandmarkTypeModels()
-        {
-            List<DictionaryLandmarkTypeModel> dictionaryLandmarkTypeModels = _dbContext.DictionaryLandmarkType.Select(a => new DictionaryLandmarkTypeModel()
-            {
-                Id = a.LandmarkTypeId,
-                Name = a.Name,
-                Code = a.Code,
-                Description = a.Description
-            }).ToList();
-            return dictionaryLandmarkTypeModels;
-        }
 
+
+        public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(int currentPage, int pageSize, out int count)
+        {
+            int rowsToSkip = (currentPage - 1) * pageSize;
+            count = Convert.ToInt32(_dbContext.DictionaryTicketType.Count());
+
+            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dbContext.DictionaryTicketType.Select(a => new DictionaryTicketTypeModel()
+            {
+                TicketTypeId = a.TicketTypeId,
+                Code = a.Code,
+                Name = a.Name,
+                Description = a.Description
+            }).Skip(rowsToSkip).Take(pageSize).ToList();
+            return dictionaryTicketTypeModels;
+        }
 
         //ewifhfew
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
@@ -117,6 +117,7 @@ namespace iWasHere.Domain.Service
             
             return new List<CityModel>();            
         }
+
         public List<CountyModel> GetCounties()
         {
             var query = _dbContext.County.Select(c => new CountyModel()
@@ -159,17 +160,19 @@ namespace iWasHere.Domain.Service
             return listCounties ;
         }
 
- /*
+        public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(int currentPage,int pageSize, out int count)
+        {
+            int rowsToSkip = (currentPage - 1) * pageSize;
+            count = Convert.ToInt32(_dbContext.DictionaryConstructionType.Count());
+            List<DictionaryConstructionTypeModel> dictionaryConstructionTypeModels = _dbContext.DictionaryConstructionType.Select(a => new DictionaryConstructionTypeModel()
+            {
+                ConstructionTypeId = a.ConstructionTypeId,
+                Code = a.Code,
+                Name = a.Name,
+                Description = a.Description
+            }).Skip(rowsToSkip).Take(pageSize).ToList();
 
-            // new menu = Model.Menu}).Data(""))
-            $("#grid").data("kendogrid").datasource.read / page
-
-        var myf = {}
-       
-        myf["cityid"] = 7
-
-        $("#spanac").value 
-    */
-
+            return dictionaryConstructionTypeModels;
+        }
     }
 }
