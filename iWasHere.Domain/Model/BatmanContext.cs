@@ -1,5 +1,4 @@
 ﻿//using System;
-//using iWasHere.Domain.Models;
 //using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -17,8 +16,6 @@
 //        }
 
 //        public virtual DbSet<DictionaryLandmarkType> DictionaryLandmarkType { get; set; }
-
-//        public virtual DbSet<DictionaryCurrencyType> DictionaryCurrencyType { get; set; }
 
 //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //        {
