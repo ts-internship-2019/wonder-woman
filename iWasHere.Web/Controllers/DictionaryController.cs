@@ -119,7 +119,7 @@ namespace iWasHere.Web.Controllers
         }
 
 
-        //paginare
+        //paginare tari
 
         [HttpPost]
         public ActionResult Paging_Orders_Country([DataSourceRequest] DataSourceRequest request, string filterName)
@@ -139,6 +139,13 @@ namespace iWasHere.Web.Controllers
                 result.Total = count;
             }
             return Json(result);
+        }
+
+        //delete Country
+        public ActionResult DestroyCountry([DataSourceRequest] DataSourceRequest request, DictionaryCountryModel countryToDelete)
+        {
+            _dictionaryService.DestroyCountry(countryToDelete);
+            return Json(request);
         }
 
         public IActionResult AddNewCountry()

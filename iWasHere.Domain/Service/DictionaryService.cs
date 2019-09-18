@@ -161,6 +161,17 @@ namespace iWasHere.Domain.Service
             return country.Skip(skip).Take(pageSize).ToList();
         }
 
+        //delete button for Country
+        public void DestroyCountry(DictionaryCountryModel countryToDestroy)
+        {
+            var db = _dbContext;
+            var countries = db.Country.Where(pd => pd.CountryId == countryToDestroy.CountryId);
+            foreach (var tckt in countries)
+            {
+                db.Country.Remove(tckt);
+            }
+            db.SaveChanges();
+        }
 
 
         public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
