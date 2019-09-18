@@ -38,7 +38,6 @@ namespace iWasHere.Domain.Service
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
         {
             int skip = (page - 1) * pageSize;
-
             List<DictionaryCurrencyType> dictionaryCurrencyTypes = _dbContext.DictionaryCurrencyType.Select(a => new DictionaryCurrencyType
             {
                 CurrencyTypeId = a.CurrencyTypeId,
@@ -48,10 +47,24 @@ namespace iWasHere.Domain.Service
                 CurrencyCountryId = a.CurrencyCountryId,
                 CurrencyCountry = a.CurrencyCountry
             }).Skip(skip).Take(pageSize).ToList();
-
             count = _dbContext.DictionaryCurrencyType.Count();
-
             return dictionaryCurrencyTypes;
+        }
+
+        public List<DictionaryCurrencyType> GetFilteredDictionaryCurrencyTypeModels(int page, int pageSize, string name, out int count)
+        {
+            List<DictionaryCurrencyType> dictionaryCurrencyTypes = _dbContext.DictionaryCurrencyType.Select(a => new DictionaryCurrencyType
+            {
+                CurrencyTypeId = a.CurrencyTypeId,
+                Name = a.Name,
+                Code = a.Code,
+                Description = a.Description,
+                CurrencyCountryId = a.CurrencyCountryId,
+                CurrencyCountry = a.CurrencyCountry
+            }).Where(a => a.Name.Contains(name)).ToList();
+            count = dictionaryCurrencyTypes.Count();
+            int skip = (page - 1) * pageSize;
+            return dictionaryCurrencyTypes.Skip(skip).Take(pageSize).ToList(); ;
         }
 
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
@@ -145,5 +158,18 @@ namespace iWasHere.Domain.Service
 
             return listCounties ;
         }
+
+ /*
+
+            // new menu = Model.Menu}).Data(""))
+            $("#grid").data("kendogrid").datasource.read / page
+
+        var myf = {}
+       
+        myf["cityid"] = 7
+
+        $("#spanac").value 
+    */
+
     }
 }

@@ -89,26 +89,20 @@ namespace iWasHere.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request)
+        public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string name)
         {
-            DataSourceResult result = new DataSourceResult()
+            DataSourceResult result = new DataSourceResult();
+            if (string.IsNullOrWhiteSpace(name))
             {
-                Data = _dictionaryService.GetDictionaryCurrencyTypeModels(request.Page, request.PageSize, out int count),
-                Total = count
-            };
-
-            return Json(result);
-        }
-
-        [HttpPost]
-        public ActionResult Filter(DictionaryCurrencyType model)
-        {
-            if (ModelState.IsValid)
-            {
-               
+                result.Data = _dictionaryService.GetDictionaryCurrencyTypeModels(request.Page, request.PageSize, out int count);
+                result.Total = count;
             }
-
-            return View("Currency", model);
+            else
+            {
+                result.Data = _dictionaryService.GetFilteredDictionaryCurrencyTypeModels(request.Page, request.PageSize, name, out int count);
+                result.Total = count;
+            }
+            return Json(result);
         }
 
         public IActionResult IndexCountry()
