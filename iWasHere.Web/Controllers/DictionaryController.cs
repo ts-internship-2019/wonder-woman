@@ -96,18 +96,40 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
+        public IActionResult Landmark()
+        {
+            return View();
+        }
+
         [HttpPost]
-        public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string name)
+        public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string filterName)
         {
             DataSourceResult result = new DataSourceResult();
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(filterName))
             {
-                result.Data = _dictionaryService.GetDictionaryCurrencyTypeModels(request.Page, request.PageSize, out int count);
+                result.Data = _dictionaryService.GetLandmarkTypeModels(request.Page, request.PageSize, out int count);
                 result.Total = count;
             }
             else
             {
-                result.Data = _dictionaryService.GetFilteredDictionaryCurrencyTypeModels(request.Page, request.PageSize, name, out int count);
+                result.Data = _dictionaryService.GetFilteredLandmarkTypeModels(request.Page, request.PageSize, filterName, out int count);
+                result.Total = count;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        public ActionResult LandmarkTypeRead([DataSourceRequest]DataSourceRequest request, string filterName)
+        {
+            DataSourceResult result = new DataSourceResult();
+            if (string.IsNullOrWhiteSpace(filterName))
+            {
+                result.Data = _dictionaryService.GetLandmarkTypeModels(request.Page, request.PageSize, out int count);
+                result.Total = count;
+            }
+            else
+            {
+                result.Data = _dictionaryService.GetFilteredLandmarkTypeModels(request.Page, request.PageSize, filterName, out int count);
                 result.Total = count;
             }
             return Json(result);
@@ -162,8 +184,6 @@ namespace iWasHere.Web.Controllers
     
         public IActionResult Construction([DataSourceRequest] DataSourceRequest request)
         {
-
-           
             return View();
         }
 

@@ -17,8 +17,6 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
         }
 
-
-
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
@@ -34,7 +32,6 @@ namespace iWasHere.Domain.Service
             return dictionaryTicketTypeModels;
         }
 
-        //ewifhfew
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
         {
             int skip = (page - 1) * pageSize;
@@ -52,7 +49,7 @@ namespace iWasHere.Domain.Service
         }
 
         public List<DictionaryCurrencyType> GetFilteredDictionaryCurrencyTypeModels(int page, int pageSize, string name, out int count)
-        {
+        {   
             List<DictionaryCurrencyType> dictionaryCurrencyTypes = _dbContext.DictionaryCurrencyType.Select(a => new DictionaryCurrencyType
             {
                 CurrencyTypeId = a.CurrencyTypeId,
@@ -65,6 +62,34 @@ namespace iWasHere.Domain.Service
             count = dictionaryCurrencyTypes.Count();
             int skip = (page - 1) * pageSize;
             return dictionaryCurrencyTypes.Skip(skip).Take(pageSize).ToList(); ;
+        }
+
+        public List<iWasHere.Domain.Models.DictionaryLandmarkType> GetLandmarkTypeModels(int page, int pageSize, out int count)
+        {
+            int skip = (page - 1) * pageSize;
+            List<iWasHere.Domain.Models.DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
+            {
+                LandmarkTypeId = a.LandmarkTypeId,
+                Name = a.Name,
+                Code = a.Code,
+                Description = a.Description,
+            }).Skip(skip).Take(pageSize).ToList();
+            count = _dbContext.DictionaryLandmarkType.Count();
+            return dictionaryLandmarkTypes;
+        }
+
+        public List<iWasHere.Domain.Models.DictionaryLandmarkType> GetFilteredLandmarkTypeModels(int page, int pageSize, string name, out int count)
+        {
+            List<iWasHere.Domain.Models.DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
+            {
+                LandmarkTypeId = a.LandmarkTypeId,
+                Name = a.Name,
+                Code = a.Code,
+                Description = a.Description,
+            }).Where(a => a.Name.Contains(name)).ToList();
+            count = dictionaryLandmarkTypes.Count();
+            int skip = (page - 1) * pageSize;
+            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList(); ;
         }
 
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
