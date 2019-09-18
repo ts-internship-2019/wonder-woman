@@ -2,24 +2,28 @@
 
 <div>
     <td>
-        <label for="countryName">Country Name:</label>
+        <label for="CountryName">Country Name:</label>
         @(Html.Kendo().TextBox()
             .HtmlAttributes(new
-                    {
-                id = "CountryName"
-                    })
-            .Name("Name")
-            .Value("")
+            {
+                id = "CountryName",
+                required = "required",
+                validationmessage ="Enter Country Name!"
+            })
+        .Name("Name")
+        .Value("")
         )
     </td>
-    <br/>
+    <br />
     <td>
-        <label for="countryName">Country Code:</label>
+        <label for="CountryCode">Country Code:</label>
         @(Html.Kendo().TextBox()
             .HtmlAttributes(new
-                    {
-                id = "CountryCode"
-                    })
+            {
+                id = "CountryCode",
+                required = "required",
+                validationmessage ="Enter Country Code!"
+            })
             .Name("Code")
             .Value("")
         )
@@ -28,7 +32,7 @@
 
 </div>
 
-<br/>
+<br />
 <div>
     <div class="demo-section k-content">
         @(Html.Kendo().Button()

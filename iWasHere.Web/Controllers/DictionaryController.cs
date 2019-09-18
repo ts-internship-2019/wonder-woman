@@ -34,14 +34,19 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request)
+        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request, string filterName)
         {
-            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(request.Page, request.PageSize, out int count);
+            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(filterName, request.Page, request.PageSize, out int count);
 
             DataSourceResult result = new DataSourceResult();
             result.Data = dictionaryTicketTypeModels;
             result.Total = count;
             return Json(result);
+        }
+        public ActionResult DestroyTicket([DataSourceRequest] DataSourceRequest request, DictionaryTicketTypeModel ticketToDelete)
+        {
+            _dictionaryService.DestroyTicket(ticketToDelete);
+            return Json(request);
         }
 
         public IActionResult IndexCity()
@@ -159,7 +164,7 @@ namespace iWasHere.Web.Controllers
         }
 
 
-        //paginare
+        //paginare tari
 
         [HttpPost]
         public ActionResult Paging_Orders_Country([DataSourceRequest] DataSourceRequest request, string filterName)
@@ -179,6 +184,13 @@ namespace iWasHere.Web.Controllers
                 result.Total = count;
             }
             return Json(result);
+        }
+
+        //delete Country
+        public ActionResult DestroyCountry([DataSourceRequest] DataSourceRequest request, DictionaryCountryModel countryToDelete)
+        {
+            _dictionaryService.DestroyCountry(countryToDelete);
+            return Json(request);
         }
 
         public IActionResult AddNewCountry()
