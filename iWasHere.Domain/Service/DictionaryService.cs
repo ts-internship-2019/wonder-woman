@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
+
 
 
 namespace iWasHere.Domain.Service
@@ -104,6 +103,7 @@ namespace iWasHere.Domain.Service
             
             return new List<CityModel>();            
         }
+
         public List<CountyModel> GetCounties()
         {
             var query = _dbContext.County.Select(c => new CountyModel()
