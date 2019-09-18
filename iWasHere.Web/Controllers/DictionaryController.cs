@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using iWasHere.Domain.DTOs;
 using iWasHere.Domain.Models;
 using iWasHere.Domain.Service;
-using Kendo.Mvc.UI;
-using iWasHere.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Kendo.Mvc.UI;
 using iWasHere.Domain.Models;
@@ -111,6 +109,31 @@ namespace iWasHere.Web.Controllers
             }
 
             return View("Currency", model);
+        }
+
+        public IActionResult IndexCountry()
+        {
+            return View();
+        }
+
+
+        //paginare
+
+        [HttpPost]
+        public ActionResult Paging_Orders([DataSourceRequest] DataSourceRequest request)
+        {
+            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountryModels(request.Page, request.PageSize, out int count).ToList();
+            DataSourceResult result = new DataSourceResult()
+            {
+                Data = countryModels,
+                Total = count
+            };
+            return Json(result);
+        }
+
+        public IActionResult AddNewCountry()
+        {
+            return View();
         }
 
         public IActionResult IndexCounty()
