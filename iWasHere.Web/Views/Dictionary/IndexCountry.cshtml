@@ -11,27 +11,64 @@
         .Events(ev => ev.Click("onClick")))
 </div>
 
+
+<div>
+    <table>
+        <tr>
+            <td>
+                <label for="countryName">Country Name:</label>
+                @(Html.Kendo().TextBox()
+                    .HtmlAttributes(new
+                            {
+                        id = "filterName"
+                            })
+                    .Name("filterName")
+                    .Value("")
+                )
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("filterBtn")
+                    .Content("Filter")
+                    .Icon("filter")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("clearFilterBtn")
+                    .Icon("clear-filter")
+                    .Content("Reset Filter")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+        </tr>
+    </table>
+</div>
+
+
 @(Html.Kendo().Grid<iWasHere.Domain.Models.Country>()
-            .Name("grid")
-            .Columns(columns =>
-            {
-                columns.Bound(c => c.Name).Title("Country Name");
-                columns.Bound(c => c.Code).Title("Country Code");
-            })
-            .HtmlAttributes(new { style = "height: 380px;" })
-            .Scrollable()
-            .Groupable()
-            .Sortable()
-            .Pageable(pageable => pageable
-                .Refresh(true)
-                .PageSizes(true)
-                .ButtonCount(5))
+                .Name("grid")
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.Name).Title("Country Name");
+                    columns.Bound(c => c.Code).Title("Country Code");
+                    columns.Command(d => { d.Custom("Edit"); d.Destroy(); });
+                })
+                .HtmlAttributes(new { style = "height: 380px;" })
+                .Scrollable()
+                .Groupable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
                 .DataSource(dataSource => dataSource
                     .Ajax()
-                    .Read(read => read.Action("Paging_Orders", "Dictionary"))
-                    )
+                    .Read(read => read.Action("Paging_Orders_Country", "Dictionary").Data("filterName")))
                 .Scrollable(scr => scr.Height(430))
 )
+
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -40,4 +77,50 @@ $(document).ready(function () {
       window.location = '@Url.Action("AddNewCountry", "Dictionary")';
   });
 });
-  </script>
+</script>
+
+<div id="grid"></div>
+<script>
+    $("#grid").kendoGrid({
+        columns: [
+            { field: "CountryName" },
+            { field: "CountryCode" },
+            {
+                command: [
+                    {
+                        name: "Edit",
+                        click: function (e) {
+                             window.location = '@Url.Action("AddNewCountry", "Dictionary")';
+                        }
+                    },
+                    {
+                        name: "destroy",
+                    }
+                ]
+            }
+        ],
+    });
+</script>
+
+
+<script type="text/javascript">
+    var name;
+    function filterName() {
+        return {
+            filterName: name,
+        };
+    }
+    function onClick(e) {
+        if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
+            $('#filterName').val(null);
+            name = "";
+            $('#grid').data("kendoGrid").dataSource.read();
+            $('#grid').data("kendoGrid").dataSource.page(1);
+        }
+        if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
+            name = $('#filterName').val();
+            $('#grid').data("kendoGrid").dataSource.read();
+            $('#grid').data("kendoGrid").dataSource.page(1);
+        }
+    }
+</script>

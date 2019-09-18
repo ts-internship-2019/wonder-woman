@@ -1,6 +1,6 @@
 ﻿@using Kendo.Mvc.UI
 
-@model iWasHere.Domain.Models.DictionaryCurrencyType
+@model iWasHere.Domain.Models.DictionaryLandmarkType
 
 @(Html.Kendo().TextBox()
                         .HtmlAttributes(new
@@ -24,7 +24,7 @@
     .HtmlAttributes(new { type = "button" })
     .Events(ev => ev.Click("onClick")))
 
-@(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryCurrencyType>
+@(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryLandmarkType>
     ()
     .Name("grid")
     .Columns(columns =>
@@ -32,7 +32,6 @@
     columns.Bound(p => p.Name).Title("Name");
     columns.Bound(p => p.Code).Title("Code");
     columns.Bound(p => p.Description).Title("Description");
-    columns.Bound(p => p.CurrencyCountry).Title("Country");
     })
     .Filterable()
     .Selectable(selectable => selectable
@@ -45,7 +44,7 @@
     .Ajax()
     .ServerOperation(true)
     .PageSize(10)
-    .Read(read => read.Action("CurrencyRead", "Dictionary").Data("getfilter"))
+    .Read(read => read.Action("LandmarkTypeRead", "Dictionary").Data("getfilter"))
     )
 )
 

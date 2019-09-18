@@ -5,40 +5,36 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace iWasHere.Domain.Service
 {
     public class DictionaryService
     {
         private readonly DatabaseContext _dbContext;
-       
         public DictionaryService(DatabaseContext databaseContext)
         {
             _dbContext = databaseContext;
         }
 
-        public List<DictionaryLandmarkTypeModel> GetDictionaryLandmarkTypeModels()
+        public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(int currentPage, int pageSize, out int count)
         {
-            List<DictionaryLandmarkTypeModel> dictionaryLandmarkTypeModels = _dbContext.DictionaryLandmarkType.Select(a => new DictionaryLandmarkTypeModel()
+            int rowsToSkip = (currentPage - 1) * pageSize;
+            count = Convert.ToInt32(_dbContext.DictionaryTicketType.Count());
+
+            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dbContext.DictionaryTicketType.Select(a => new DictionaryTicketTypeModel()
             {
-                Id = a.LandmarkTypeId,
-                Name = a.Name,
+                TicketTypeId = a.TicketTypeId,
                 Code = a.Code,
+                Name = a.Name,
                 Description = a.Description
-            }).ToList();
-            return dictionaryLandmarkTypeModels;
+            }).Skip(rowsToSkip).Take(pageSize).ToList();
+            return dictionaryTicketTypeModels;
         }
 
-
-        //ewifhfew
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
         {
             int skip = (page - 1) * pageSize;
-
             List<DictionaryCurrencyType> dictionaryCurrencyTypes = _dbContext.DictionaryCurrencyType.Select(a => new DictionaryCurrencyType
             {
                 CurrencyTypeId = a.CurrencyTypeId,
@@ -48,13 +44,54 @@ namespace iWasHere.Domain.Service
                 CurrencyCountryId = a.CurrencyCountryId,
                 CurrencyCountry = a.CurrencyCountry
             }).Skip(skip).Take(pageSize).ToList();
-
             count = _dbContext.DictionaryCurrencyType.Count();
-
             return dictionaryCurrencyTypes;
         }
-         
-    
+
+        public List<DictionaryCurrencyType> GetFilteredDictionaryCurrencyTypeModels(int page, int pageSize, string name, out int count)
+        {   
+            List<DictionaryCurrencyType> dictionaryCurrencyTypes = _dbContext.DictionaryCurrencyType.Select(a => new DictionaryCurrencyType
+            {
+                CurrencyTypeId = a.CurrencyTypeId,
+                Name = a.Name,
+                Code = a.Code,
+                Description = a.Description,
+                CurrencyCountryId = a.CurrencyCountryId,
+                CurrencyCountry = a.CurrencyCountry
+            }).Where(a => a.Name.Contains(name)).ToList();
+            count = dictionaryCurrencyTypes.Count();
+            int skip = (page - 1) * pageSize;
+            return dictionaryCurrencyTypes.Skip(skip).Take(pageSize).ToList(); ;
+        }
+
+        public List<iWasHere.Domain.Models.DictionaryLandmarkType> GetLandmarkTypeModels(int page, int pageSize, out int count)
+        {
+            int skip = (page - 1) * pageSize;
+            List<iWasHere.Domain.Models.DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
+            {
+                LandmarkTypeId = a.LandmarkTypeId,
+                Name = a.Name,
+                Code = a.Code,
+                Description = a.Description,
+            }).Skip(skip).Take(pageSize).ToList();
+            count = _dbContext.DictionaryLandmarkType.Count();
+            return dictionaryLandmarkTypes;
+        }
+
+        public List<iWasHere.Domain.Models.DictionaryLandmarkType> GetFilteredLandmarkTypeModels(int page, int pageSize, string name, out int count)
+        {
+            List<iWasHere.Domain.Models.DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
+            {
+                LandmarkTypeId = a.LandmarkTypeId,
+                Name = a.Name,
+                Code = a.Code,
+                Description = a.Description,
+            }).Where(a => a.Name.Contains(name)).ToList();
+            count = dictionaryLandmarkTypes.Count();
+            int skip = (page - 1) * pageSize;
+            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList(); ;
+        }
+
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
         {
             totalRows = 0;
@@ -105,6 +142,7 @@ namespace iWasHere.Domain.Service
             
             return new List<CityModel>();            
         }
+
         public List<CountyModel> GetCounties()
         {
             var query = _dbContext.County.Select(c => new CountyModel()
@@ -142,6 +180,25 @@ namespace iWasHere.Domain.Service
         
     
         }
+
+        //filtrare Country
+        public List<DictionaryCountryModel> GetFilteredCountryModels(int page, int pageSize, out int count, string filterName)
+        {
+            int skip = (page - 1) * pageSize;
+            //count = _dbContext.Country.Count();
+
+            List<DictionaryCountryModel> country = _dbContext.Country.Select(a => new DictionaryCountryModel()
+            {
+                CountryId = a.CountryId,
+                Name = a.Name,
+                Code = a.Code,
+                ParentId = a.ParentId
+            }).Where(a=>a.Name.Contains(filterName)).ToList();
+            count = country.Count();
+            return country.Skip(skip).Take(pageSize).ToList();
+        }
+
+
 
         public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
         {
@@ -210,5 +267,7 @@ namespace iWasHere.Domain.Service
             return new List<CountyModel>();
         }
 
+            return dictionaryConstructionTypeModels;
+        }
     }
 }
