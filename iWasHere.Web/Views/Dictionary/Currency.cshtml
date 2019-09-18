@@ -1,0 +1,34 @@
+﻿@using Kendo.Mvc.UI
+
+@model iWasHere.Domain.Models.DictionaryCurrencyType
+
+
+@using (Html.BeginForm("Filter", "Dictionary", FormMethod.Post))
+{
+    @Html.TextBoxFor(model => model.Name)
+    <button type="submit">Filter</button>
+}
+
+@(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryCurrencyType>()
+    .Name("grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Name).Title("Name");
+        columns.Bound(p => p.Code).Title("Code");
+        columns.Bound(p => p.Description).Title("Description");
+        columns.Bound(p => p.CurrencyCountry).Title("Country");
+    })
+    .Filterable()
+    .Selectable(selectable => selectable
+    .Mode(GridSelectionMode.Single)
+    .Type(GridSelectionType.Row))
+    .Pageable(pager => pager.PageSizes(new int[] { 5, 10, 50 }))
+    .Navigatable()
+    .Sortable(sortable => sortable.AllowUnsort(false))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .ServerOperation(true)
+        .PageSize(10)
+        .Read(read => read.Action("CurrencyRead", "Dictionary"))
+     )
+)
