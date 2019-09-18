@@ -103,6 +103,8 @@ namespace iWasHere.Domain.Service
         /// <returns></returns>
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
         {
+            throw new Exception("bau");
+
             totalRows = 0;
             if (filterCounty > 0)
             {

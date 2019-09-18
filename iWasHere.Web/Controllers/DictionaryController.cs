@@ -186,6 +186,18 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
+        public IActionResult CurrencyAdd()
+        {
+            return View();
+        }
+
+        public IActionResult LandmarkAdd()
+        {
+            return View();
+        }
+
+
+
         public IActionResult IndexCounty()
         {
           
