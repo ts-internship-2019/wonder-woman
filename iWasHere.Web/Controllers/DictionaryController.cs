@@ -33,36 +33,51 @@ namespace iWasHere.Web.Controllers
         {            
             return View();
         }
-
-        public  IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName)
+        /// <summary>
+        /// IActionResult for Cities that populpates the Kendo UI Grid in the IndexCity View
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="filterName"></param>
+        /// <returns></returns>
+        public  IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
         {            
             if (String.IsNullOrEmpty(filterName))
             {
                 filterName = "";
-            }
-            int filterCounty = 1;
+            }            
             DataSourceResult result = new DataSourceResult();            
             List<CityModel> list = GetCities(request.Page, request.PageSize, filterName, filterCounty, out int totalRows);
             result.Data = list;
             result.Total = totalRows;
             return Json(result);
         }
-
-        public IActionResult Couties_Read_ForCB([DataSourceRequest] DataSourceRequest request)
+        /// <summary>
+        /// Test IActionResult for Counties ComboBox
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public JsonResult Couties_Read_ForCB(string text)
         {
-            //DataSourceResult result = new DataSourceResult();
-            //List<CountyModel> list = GetCountiesForCB();
-            //result.Data = list;
-            DataSourceResult result = GetCountiesForCB().ToDataSourceResult(request);
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+            List<CountyModel> result = GetCountiesForCB(text);            
             return Json(result);
         }
-
-        public List<CountyModel> GetCountiesForCB()
+        /// <summary>
+        /// Test Gets Counties as a List<>
+        /// </summary>
+        /// <returns></returns>
+        public List<CountyModel> GetCountiesForCB(string filterCounty)
         {
-            List<CountyModel> countyModels = _dictionaryService.GetCounties();
+            List<CountyModel> countyModels = _dictionaryService.GetCounties(filterCounty);
             return countyModels;
         }
-
+        /// <summary>
+        /// Test Gets Cities as a List<>
+        /// </summary>
+        /// <returns></returns>
         private List<CityModel> GetCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
         {            
             int skipRows = (page - 1) * pageSize;
@@ -70,7 +85,10 @@ namespace iWasHere.Web.Controllers
             totalRows = rowsCount;
             return cityModels;
         }
-
+        /// <summary>
+        /// NOT IMplemeted Yet
+        /// </summary>
+        /// <returns></returns>
         public IActionResult AddCity()
         {
             return View();

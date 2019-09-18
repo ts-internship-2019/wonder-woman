@@ -29,7 +29,16 @@ namespace iWasHere.Domain.Service
             }).ToList();
 
             return dictionaryLandmarkTypeModels;
-        } 
+        }
+        /// <summary>
+        /// Gets paged cities
+        /// </summary>
+        /// <param name="skipRows">Represents rows to skip to show the desired page</param>
+        /// <param name="pageSize">Represents the # of rows to display per page</param>
+        /// <param name="filterName">Presents the City Name to filter by</param>
+        /// <param name="filterCounty">Represents the County ID to filter by</param>
+        /// <param name="totalRows">Represents the total # of records in the DB mathincg the filtering criteria</param>
+        /// <returns></returns>
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
         {
             totalRows = 0;
@@ -80,13 +89,17 @@ namespace iWasHere.Domain.Service
             
             return new List<CityModel>();            
         }
-        public List<CountyModel> GetCounties()
+        /// <summary>
+        /// Simple service method to get Counties for ComboBox
+        /// </summary>
+        /// <returns></returns>
+        public List<CountyModel> GetCounties(string filterCounty)
         {
             var query = _dbContext.County.Select(c => new CountyModel()
             {
                 Id = c.CountyId,
                 Name = c.Name
-            });
+            }).Where(c => c.Name.Contains(filterCounty));
             return query.ToList();
         }
     }
