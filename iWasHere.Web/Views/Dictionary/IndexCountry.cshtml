@@ -1,0 +1,44 @@
+﻿@model IEnumerable<iWasHere.Domain.DTOs.DictionaryCountryModel>
+@{
+    ViewData["Title"] = "IndexCountry";
+}
+
+<div class="demo-section k-content">
+    @(Html.Kendo().Button()
+        .Name("btnAdd")
+        .Content("Add Country")
+        .HtmlAttributes(new { type = "button" })
+        .Events(ev => ev.Click("onClick")))
+</div>
+
+@(Html.Kendo().Grid<iWasHere.Domain.Models.Country>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Name).Title("Country Name");
+                columns.Bound(c => c.Code).Title("Country Code");
+                columns.Command(d => { d.Edit(); d.Destroy();});
+    })
+            .HtmlAttributes(new { style = "height: 380px;" })
+            .Scrollable()
+            .Groupable()
+            .Sortable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Read(read => read.Action("Paging_Orders_Country", "Dictionary"))
+                    )
+                .Scrollable(scr => scr.Height(430))
+)
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#btnAdd').click(function (e)
+  {
+      window.location = '@Url.Action("AddNewCountry", "Dictionary")';
+  });
+});
+  </script>

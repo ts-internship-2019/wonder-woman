@@ -1,9 +1,10 @@
-﻿@model IEnumerable<iWasHere.Domain.DTOs.DictionaryLandmarkTypeModel>
+﻿@model IEnumerable<iWasHere.Domain.Models.DictionaryLandmarkType>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <h1>Index</h1>
 
@@ -14,7 +15,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                @Html.DisplayNameFor(model => model.LandmarkTypeId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -26,7 +27,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
+                @Html.DisplayFor(modelItem => item.LandmarkTypeId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)

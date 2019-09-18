@@ -1,0 +1,19 @@
+﻿@model IEnumerable<iWasHere.Domain.DTOs.DictionaryCountryModel>
+    @*@{
+        ViewData["Title"] = "IndexAddNewCountry";
+    }*@
+
+    <div class="demo-section k-content">
+        @(Html.Kendo().Button()
+            .Name("textButton")
+            .Content("Edit")
+            .HtmlAttributes(new { type = "button" })
+            .Events(ev => ev.Click("onClick")))
+    </div>
+    <div class="demo-section k-content">
+        @(Html.Kendo().Button()
+            .Name("textButton")
+            .Content("Save")
+            .HtmlAttributes(new { type = "button" })
+            .Events(ev => ev.Click("onClick")))
+    </div>
