@@ -120,7 +120,7 @@ namespace iWasHere.Web.Controllers
         //paginare
 
         [HttpPost]
-        public ActionResult Paging_Orders([DataSourceRequest] DataSourceRequest request)
+        public ActionResult Paging_Orders_Country([DataSourceRequest] DataSourceRequest request)
         {
             List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountryModels(request.Page, request.PageSize, out int count).ToList();
             DataSourceResult result = new DataSourceResult()
@@ -141,7 +141,7 @@ namespace iWasHere.Web.Controllers
           
             return View();
         }
-        public ActionResult Paging_Orders([DataSourceRequest] DataSourceRequest request)
+        public ActionResult Paging_Orders_County([DataSourceRequest] DataSourceRequest request)
         {
             List<CountyModel> list = _dictionaryService.GetCountyModels(request.Page, request.PageSize, out int count).ToList();
             DataSourceResult result = new DataSourceResult()

@@ -53,8 +53,7 @@ namespace iWasHere.Domain.Service
 
             return dictionaryCurrencyTypes;
         }
-            return dictionaryLandmarkTypeModels;
-        } 
+
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
         {
             totalRows = 0;
@@ -109,11 +108,10 @@ namespace iWasHere.Domain.Service
         {
             var query = _dbContext.County.Select(c => new CountyModel()
             {
-                Id = c.CountyId,
+                CountyId = c.CountyId,
                 Name = c.Name
             });
             return query.ToList();
-        }
         }
 
         public List<DictionaryCountryModel> GetCountryModels(int page, int pageSize, out int count)
@@ -131,8 +129,6 @@ namespace iWasHere.Domain.Service
 
             return country;
         }
-    }
-        }
 
         public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
         {
@@ -149,8 +145,5 @@ namespace iWasHere.Domain.Service
 
             return listCounties ;
         }
-
-
-
     }
 }
