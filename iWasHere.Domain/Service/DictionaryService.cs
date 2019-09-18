@@ -17,6 +17,8 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
         }
 
+
+
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
@@ -29,7 +31,8 @@ namespace iWasHere.Domain.Service
                 Name = a.Name,
                 Description = a.Description
             }).Skip(rowsToSkip).Take(pageSize).ToList();
-
+            return dictionaryTicketTypeModels;
+        }
 
         //ewifhfew
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
