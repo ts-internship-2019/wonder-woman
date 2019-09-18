@@ -115,14 +115,22 @@ namespace iWasHere.Web.Controllers
         //paginare
 
         [HttpPost]
-        public ActionResult Paging_Orders_Country([DataSourceRequest] DataSourceRequest request)
+        public ActionResult Paging_Orders_Country([DataSourceRequest] DataSourceRequest request, string filterName)
         {
-            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountryModels(request.Page, request.PageSize, out int count).ToList();
-            DataSourceResult result = new DataSourceResult()
+            List<DictionaryCountryModel> countryModels = new List<DictionaryCountryModel>();
+            DataSourceResult result = new DataSourceResult();
+            if (string.IsNullOrWhiteSpace(filterName))
             {
-                Data = countryModels,
-                Total = count
-            };
+                countryModels = _dictionaryService.GetCountryModels(request.Page, request.PageSize, out int count).ToList();
+                result.Data = countryModels;
+                result.Total = count;
+            }
+            else
+            {
+                countryModels = _dictionaryService.GetFilteredCountryModels(request.Page, request.PageSize, out int count, filterName).ToList();
+                result.Data = countryModels;
+                result.Total = count;
+            }
             return Json(result);
         }
 
