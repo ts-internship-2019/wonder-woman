@@ -25,10 +25,11 @@ namespace iWasHere.Domain.Service
                 Id = a.LandmarkTypeId,
                 Name = a.Name
             }).ToList();
-
             return dictionaryLandmarkTypeModels;
         }
 
+
+        //ewifhfew
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
         {
             int skip = (page - 1) * pageSize;
