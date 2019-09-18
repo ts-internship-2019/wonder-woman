@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using iWasHere.Domain.DTOs;
 using iWasHere.Domain.Service;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace iWasHere.Web.Controllers
@@ -19,9 +21,33 @@ namespace iWasHere.Web.Controllers
 
         public IActionResult Index()
         {
-            List<DictionaryLandmarkTypeModel> dictionaryLandmarkTypeModels = _dictionaryService.GetDictionaryLandmarkTypeModels();
-
-            return View(dictionaryLandmarkTypeModels);
+            return View();
         }
+
+        public IActionResult Tickets([DataSourceRequest] DataSourceRequest request)
+        {
+            return View();
+        }
+        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request)
+        {
+            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(request.Page, request.PageSize, out int count);
+
+            DataSourceResult result = new DataSourceResult();
+            result.Data = dictionaryTicketTypeModels;
+            result.Total = count;
+            return Json(result);
+        }
+
+        //public ActionResult Local_Data_Binding()
+        //{
+        //    var model = _dictionaryService.GetDictionaryTicketTypeModels();
+
+        //    return View(model);
+        //}
+        //public IActionResult Customers_Read([DataSourceRequest] DataSourceRequest request)
+        //{
+        //    return Json(GetCustomers().ToDataSourceResult(request));
+        //}
+
     }
 }

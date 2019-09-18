@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace iWasHere.Domain.Models
 {
-    public partial class WonderWomanContext : DbContext
+    public partial class DatabaseContext : DbContext
     {
-        public WonderWomanContext()
+        public DatabaseContext()
         {
         }
 
-        public WonderWomanContext(DbContextOptions<WonderWomanContext> options)
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
         }
