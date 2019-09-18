@@ -1,11 +1,9 @@
 ﻿using iWasHere.Domain.DTOs;
-using iWasHere.Domain.Model;
 using iWasHere.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace iWasHere.Domain.Service
 {
@@ -64,10 +62,10 @@ namespace iWasHere.Domain.Service
             return dictionaryCurrencyTypes.Skip(skip).Take(pageSize).ToList(); ;
         }
 
-        public List<iWasHere.Domain.Models.DictionaryLandmarkType> GetLandmarkTypeModels(int page, int pageSize, out int count)
+        public List<DictionaryLandmarkType> GetLandmarkTypeModels(int page, int pageSize, out int count)
         {
             int skip = (page - 1) * pageSize;
-            List<iWasHere.Domain.Models.DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
+            List<DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
             {
                 LandmarkTypeId = a.LandmarkTypeId,
                 Name = a.Name,
@@ -78,9 +76,9 @@ namespace iWasHere.Domain.Service
             return dictionaryLandmarkTypes;
         }
 
-        public List<iWasHere.Domain.Models.DictionaryLandmarkType> GetFilteredLandmarkTypeModels(int page, int pageSize, string name, out int count)
+        public List<DictionaryLandmarkType> GetFilteredLandmarkTypeModels(int page, int pageSize, string name, out int count)
         {
-            List<iWasHere.Domain.Models.DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
+            List<DictionaryLandmarkType> dictionaryLandmarkTypes = _dbContext.DictionaryLandmarkType.Select(a => new iWasHere.Domain.Models.DictionaryLandmarkType
             {
                 LandmarkTypeId = a.LandmarkTypeId,
                 Name = a.Name,
@@ -102,9 +100,7 @@ namespace iWasHere.Domain.Service
         /// <param name="totalRows">Represents the total # of records in the DB mathincg the filtering criteria</param>
         /// <returns></returns>
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
-        {
-            throw new Exception("bau");
-
+        {           
             totalRows = 0;
             if (filterCounty > 0)
             {
