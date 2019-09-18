@@ -31,19 +31,3 @@
         .Read(read => read.Action("GetAllTickets", "Dictionary"))
      )
 )
-@*<div class="demo-section k-content">
-    <div>
-        <h4>Basic Button</h4>
-        <p>
-            @(Html.Kendo().Button()
-                    .Name("primaryTextButton")
-                    .HtmlAttributes(new { type = "button", @class = "k-primary" })
-                    .Content("Primary Button"))
-
-            @(Html.Kendo().Button()
-                    .Name("textButton")
-                    .HtmlAttributes(new { type = "button" })
-                    .Content("Button"))
-        </p>
-    </div>*@
-@*<input type="button" value="Create" onclick="location.href='@Url.Action("Tickets?p=20", "Dictionary")'" />*@

@@ -28,6 +28,7 @@ namespace iWasHere.Web.Controllers
         {
             return View();
         }
+
         public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request)
         {
             List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(request.Page, request.PageSize, out int count);
@@ -37,17 +38,5 @@ namespace iWasHere.Web.Controllers
             result.Total = count;
             return Json(result);
         }
-
-        //public ActionResult Local_Data_Binding()
-        //{
-        //    var model = _dictionaryService.GetDictionaryTicketTypeModels();
-
-        //    return View(model);
-        //}
-        //public IActionResult Customers_Read([DataSourceRequest] DataSourceRequest request)
-        //{
-        //    return Json(GetCustomers().ToDataSourceResult(request));
-        //}
-
     }
 }
