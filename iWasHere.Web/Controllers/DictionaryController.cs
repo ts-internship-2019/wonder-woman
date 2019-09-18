@@ -34,14 +34,19 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request)
+        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request, string filterName)
         {
-            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(request.Page, request.PageSize, out int count);
+            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(filterName, request.Page, request.PageSize, out int count);
 
             DataSourceResult result = new DataSourceResult();
             result.Data = dictionaryTicketTypeModels;
             result.Total = count;
             return Json(result);
+        }
+        public ActionResult DestroyTicket([DataSourceRequest] DataSourceRequest request, DictionaryTicketTypeModel ticketToDelete)
+        {
+            _dictionaryService.DestroyTicket(ticketToDelete);
+            return Json(request);
         }
 
         public IActionResult IndexCity()

@@ -5,29 +5,103 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h1>Index</h1>
+@{
+    ViewData["Title"] = "IndexCity";
+}
+<div>
+    <table>
+        <tr>
+            <td>
+                <label for="ticketname">Nume bilet:</label>
+                @(Html.Kendo().TextBox()
+                    .HtmlAttributes(new
+                            {
+                        id = "ticketName"
+                            })
+                    .Name("ticketName")
+                    .Value("")
+                )
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("filterBtn")
+                    .Content("Filtreaza")
+                    .Icon("filter")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("clearFilterBtn")
+                    .Icon("clear-filter")
+                    .Content("Reseteaza Filtru")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+        </tr>
+    </table>
+</div>
+<div>
+    @(Html.Kendo().Grid(Model)
+        .Name("Grid")
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.TicketTypeId).Title("TicketTypeId");
+            columns.Bound(p => p.Code).Title("Code");
+            columns.Bound(p => p.Name).Title("Name");
+            columns.Bound(p => p.Description).Title("Description");
+            columns.Command(command => { command.Edit(); command.Destroy(); });
+        })
+        .Pageable(pageable => pageable
+            .Refresh(true)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .Sortable()
+        .Scrollable(scr => scr.Height(430))
+        .Filterable()
+        .Groupable()
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(5)
+            .ServerOperation(true)
+            .Model(model => model.Id(p => p.TicketTypeId))
+            .Read(read => { read.Action("GetAllTickets", "Dictionary"); read.Data("ticketReadData"); })
+            .Destroy(update => update.Action("DestroyTicket", "Dictionary"))
+         )
+    )
+    <div class="demo-section k-content">
+        @(Html.Kendo().Button()
+            .Name("btnAdd")
+            .Content("Adauga Bilet")
+            .HtmlAttributes(new { type = "button" })
+            .Events(ev => ev.Click("onClick")))
+    </div>
 
-@(Html.Kendo().Grid(Model)
-    .Name("Grid")
-    .Columns(columns =>
-    {
-        columns.Bound(p => p.TicketTypeId).Title("TicketTypeId");
-        columns.Bound(p => p.Code).Title("Code");
-        columns.Bound(p => p.Name).Title("Name");
-        columns.Bound(p => p.Description).Title("Description");
-        columns.Command(command => { command.Edit(); command.Destroy(); });
-    })
-    .Pageable(pageable => pageable
-        .Refresh(true)
-        .PageSizes(true)
-        .ButtonCount(5))
-    .Sortable()
-    .Scrollable(scr => scr.Height(430))
-    .Filterable()
-    .Groupable()
-    .DataSource(dataSource => dataSource
-        .Ajax()
-        .PageSize(5)
-        .ServerOperation(true)
-        .Read(read => read.Action("GetAllTickets", "Dictionary"))
-     )
-)
+    <script type="text/javascript">
+        var ticketName = "";
+        function ticketReadData() {
+            return {
+                filterName: ticketName
+            };
+        }
+        function onClick(e) {
+            if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
+                $('#ticketName').val(null);
+                ticketName = "";
+                $('#Grid').data("kendoGrid").dataSource.read();
+                $('#Grid').data("kendoGrid").dataSource.page(1);
+            }
+            if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
+                ticketName = $('#ticketName').val();
+                $('#Grid').data("kendoGrid").dataSource.read();
+                $('#Grid').data("kendoGrid").dataSource.page(1);
+            }
+        }
+
+        $(document).ready(function () {
+            $('#btnAdd').click(function (e)
+            {
+                window.location = '@Url.Action("AddNewTicket", "Dictionary")';
+            });
+        });
+    </script>

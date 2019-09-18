@@ -17,21 +17,65 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
         }
 
-
-
-        public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(int currentPage, int pageSize, out int count)
+        public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
-            count = Convert.ToInt32(_dbContext.DictionaryTicketType.Count());
 
-            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dbContext.DictionaryTicketType.Select(a => new DictionaryTicketTypeModel()
+            if (!String.IsNullOrWhiteSpace(filterName))
             {
-                TicketTypeId = a.TicketTypeId,
-                Code = a.Code,
-                Name = a.Name,
-                Description = a.Description
-            }).Skip(rowsToSkip).Take(pageSize).ToList();
-            return dictionaryTicketTypeModels;
+                var query = _dbContext.DictionaryTicketType.Where(a => a.Name.Contains(filterName));
+                if (query.Count() > 0)
+                {
+                    var page = query.OrderBy(p => p.TicketTypeId)
+                                .Select(p => new DictionaryTicketTypeModel()
+                                {
+                                    TicketTypeId = p.TicketTypeId,
+                                    Name = p.Name,
+                                    Code = p.Code,
+                                    Description = p.Description
+                                })
+                                .Skip(rowsToSkip).Take(pageSize)
+                                .GroupBy(p => new { Total = query.Count() })
+                                .First();
+                    count = page.Key.Total;
+                    var tickets = page.Select(p => p);
+                    return tickets.ToList();
+                }
+            }
+            else
+            {
+                 var page = _dbContext.DictionaryTicketType.OrderBy(p => p.TicketTypeId)
+                                .Select(p => new DictionaryTicketTypeModel()
+                                {
+                                    TicketTypeId = p.TicketTypeId,
+                                    Name = p.Name,
+                                    Code = p.Code,
+                                    Description = p.Description
+                                })
+                                .Skip(rowsToSkip).Take(pageSize)
+                                .GroupBy(p => new { Total = _dbContext.DictionaryTicketType.Count() })
+                                .First();
+                    count = page.Key.Total;
+                    var tickets = page.Select(p => p);
+                    return tickets.ToList();
+                
+            }
+            count = 0;
+            return new List<DictionaryTicketTypeModel>();
+
+        }
+        public void DestroyTicket(DictionaryTicketTypeModel ticketToDestroy)
+        {
+            var db = _dbContext;
+
+            var tickets = db.DictionaryTicketType.Where(pd => pd.TicketTypeId == ticketToDestroy.TicketTypeId);
+
+            foreach (var tckt in tickets)
+            {
+                db.DictionaryTicketType.Remove(tckt);
+            }
+
+            db.SaveChanges();
         }
 
         //ewifhfew
