@@ -50,8 +50,7 @@
                 columns.Command(cmd => { cmd.Edit(); cmd.Destroy(); });
             })
             .HtmlAttributes(new { style = "height: 500dp;" })
-            .Scrollable()
-            .Groupable()
+            .Scrollable()            
             .Sortable()
             .Pageable(pageable => pageable
                 .Refresh(true)

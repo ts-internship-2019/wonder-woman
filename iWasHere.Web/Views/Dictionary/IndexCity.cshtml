@@ -86,6 +86,14 @@
         )
     </div>
 
+    <div>
+        @(Html.Kendo().Button()
+                        .Name("addCityBtn")
+                        .Content("Adauga Oras")
+                        .HtmlAttributes(new { type = "button" })
+                        .Events(ev => ev.Click("onClick")))
+    </div>
+
     <script type="text/javascript">
         var city = "";
         var county = 0; 
