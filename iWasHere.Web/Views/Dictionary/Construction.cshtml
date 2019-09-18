@@ -1,0 +1,30 @@
+﻿@model IEnumerable<iWasHere.Domain.DTOs.DictionaryConstructionTypeModel>
+
+
+
+<p>Index</p>
+@(Html.Kendo().Grid(Model)
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.ConstructionTypeId).Width(100);
+            columns.Bound(c => c.Code).Width(100);
+            columns.Bound(c => c.Name).Width(100);
+            columns.Bound(c => c.Description);
+        })
+        .HtmlAttributes(new { style = "height: 500px;" })
+        .Scrollable()
+        .Groupable()
+        .Sortable()
+        .Pageable(pageable => pageable
+            .Refresh(true)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(5)
+            .ServerOperation(true)
+            .Read(read => read.Action ("GetConstruction","Dictionary"))
+           )
+)
+

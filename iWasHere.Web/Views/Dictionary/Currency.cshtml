@@ -2,13 +2,6 @@
 
 @model iWasHere.Domain.Models.DictionaryCurrencyType
 
-
-@using (Html.BeginForm("Filter", "Dictionary", FormMethod.Post))
-{
-    @Html.TextBoxFor(model => model.Name)
-    <button type="submit">Filter</button>
-}
-
 @(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryCurrencyType>()
     .Name("grid")
     .Columns(columns =>
@@ -32,3 +25,18 @@
         .Read(read => read.Action("CurrencyRead", "Dictionary"))
      )
 )
+
+
+<input type="text" name="filterName" , id="filterName">
+<button type="button" , id="Search">Click Me!</button>
+
+<script>
+    function getfilters()
+    var name = $("#filterName").value;
+    return name;
+
+    function searchFilters()
+    $("#grid").data("kendoGrid").datasource.read();
+    $("#grid").data("kendoGrid").datasource.page(1);
+    return
+</script>

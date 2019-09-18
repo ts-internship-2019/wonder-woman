@@ -1,0 +1,33 @@
+﻿@model IEnumerable<iWasHere.Domain.DTOs.DictionaryTicketTypeModel>
+
+@{
+    ViewData["Title"] = "Bilete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Index</h1>
+
+@(Html.Kendo().Grid(Model)
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.TicketTypeId).Title("TicketTypeId");
+        columns.Bound(p => p.Code).Title("Code");
+        columns.Bound(p => p.Name).Title("Name");
+        columns.Bound(p => p.Description).Title("Description");
+        columns.Command(command => { command.Edit(); command.Destroy(); });
+    })
+    .Pageable(pageable => pageable
+        .Refresh(true)
+        .PageSizes(true)
+        .ButtonCount(5))
+    .Sortable()
+    .Scrollable(scr => scr.Height(430))
+    .Filterable()
+    .Groupable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(5)
+        .ServerOperation(true)
+        .Read(read => read.Action("GetAllTickets", "Dictionary"))
+     )
+)
