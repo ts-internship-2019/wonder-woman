@@ -17,9 +17,8 @@
             {
                 columns.Bound(c => c.Name).Title("Country Name");
                 columns.Bound(c => c.Code).Title("Country Code");
-                columns.Command(d => d.Edit());
-                columns.Command(d => d.Destroy());
-            })
+                columns.Command(d => { d.Edit(); d.Destroy();});
+    })
             .HtmlAttributes(new { style = "height: 380px;" })
             .Scrollable()
             .Groupable()
@@ -30,7 +29,7 @@
                 .ButtonCount(5))
                 .DataSource(dataSource => dataSource
                     .Ajax()
-                    .Read(read => read.Action("Paging_Orders", "Dictionary"))
+                    .Read(read => read.Action("Paging_Orders_Country", "Dictionary"))
                     )
                 .Scrollable(scr => scr.Height(430))
 )

@@ -8,6 +8,8 @@ using iWasHere.Domain.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Web.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Kendo.Mvc.UI;
+using Kendo.Mvc.Extensions;
 
 namespace iWasHere.Web.Controllers
 {
