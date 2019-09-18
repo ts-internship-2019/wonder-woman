@@ -169,6 +169,25 @@ namespace iWasHere.Domain.Service
             return country;
         }
 
+        //filtrare Country
+        public List<DictionaryCountryModel> GetFilteredCountryModels(int page, int pageSize, out int count, string filterName)
+        {
+            int skip = (page - 1) * pageSize;
+            //count = _dbContext.Country.Count();
+
+            List<DictionaryCountryModel> country = _dbContext.Country.Select(a => new DictionaryCountryModel()
+            {
+                CountryId = a.CountryId,
+                Name = a.Name,
+                Code = a.Code,
+                ParentId = a.ParentId
+            }).Where(a=>a.Name.Contains(filterName)).ToList();
+            count = country.Count();
+            return country.Skip(skip).Take(pageSize).ToList();
+        }
+
+
+
         public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
         {
             int skip = (page - 1) * pageSize;
