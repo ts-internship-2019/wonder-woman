@@ -12,7 +12,7 @@
 
 @(Html.Kendo().Button()
                         .Name("filterBtn")
-                        .Content("Filtreaza")
+                        .Content("Search")
                         .Icon("filter")
                         .HtmlAttributes(new { type = "button" })
                         .Events(ev => ev.Click("onClick")))
@@ -20,18 +20,26 @@
 @(Html.Kendo().Button()
     .Name("clearFilterBtn")
     .Icon("clear-filter")
-    .Content("Reseteaza Filtru")
+    .Content("Reset")
     .HtmlAttributes(new { type = "button" })
     .Events(ev => ev.Click("onClick")))
+
+@(Html.Kendo().Button()
+.Name("addNewBtn")
+.Content("Add New")
+.HtmlAttributes(new { type = "button" })
+.Events(ev => ev.Click("onClick")))
+
 
 @(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryLandmarkType>
     ()
     .Name("grid")
     .Columns(columns =>
     {
-    columns.Bound(p => p.Name).Title("Name");
-    columns.Bound(p => p.Code).Title("Code");
-    columns.Bound(p => p.Description).Title("Description");
+        columns.Bound(p => p.Name).Title("Name");
+        columns.Bound(p => p.Code).Title("Code");
+        columns.Bound(p => p.Description).Title("Description");
+        columns.Command(d => { d.Custom("Edit"); d.Destroy(); }).Width(215);
     })
     .Filterable()
     .Selectable(selectable => selectable
@@ -47,6 +55,15 @@
     .Read(read => read.Action("LandmarkTypeRead", "Dictionary").Data("getfilter"))
     )
 )
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#addNewBtn').click(function (e)
+  {
+      window.location = '@Url.Action("LandmarkAdd", "Dictionary")';
+  });
+});
+</script>
 
 <script type="text/javascript">
     var name;
