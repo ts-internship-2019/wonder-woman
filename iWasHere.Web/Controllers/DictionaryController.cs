@@ -55,6 +55,8 @@ namespace iWasHere.Web.Controllers
             return Json(result);
         }
 
+
+
         public IActionResult Couties_Read_ForCB([DataSourceRequest] DataSourceRequest request)
         {
             //DataSourceResult result = new DataSourceResult();
@@ -120,7 +122,7 @@ namespace iWasHere.Web.Controllers
         //paginare
 
         [HttpPost]
-        public ActionResult Paging_Orders([DataSourceRequest] DataSourceRequest request)
+        public ActionResult Paging_Orders_Country([DataSourceRequest] DataSourceRequest request)
         {
             List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountryModels(request.Page, request.PageSize, out int count).ToList();
             DataSourceResult result = new DataSourceResult()
@@ -141,7 +143,7 @@ namespace iWasHere.Web.Controllers
           
             return View();
         }
-        public ActionResult Paging_Orders([DataSourceRequest] DataSourceRequest request)
+        public ActionResult Paging_Orders_County([DataSourceRequest] DataSourceRequest request)
         {
             List<CountyModel> list = _dictionaryService.GetCountyModels(request.Page, request.PageSize, out int count).ToList();
             DataSourceResult result = new DataSourceResult()
@@ -152,7 +154,45 @@ namespace iWasHere.Web.Controllers
             return Json(result);
         }
 
-       public IActionResult AddNewCounty()
+        public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName)
+        {
+            if (String.IsNullOrEmpty(filterName))
+            {
+                filterName = "";
+            }
+            int filterCountry = 1;
+            DataSourceResult result = new DataSourceResult();
+            List<CountyModel> list = GetCounties(request.Page, request.PageSize, filterName, filterCountry, out int totalRows);
+            result.Data = list;
+            result.Total = totalRows;
+            return Json(result);
+        }
+
+        private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
+        {
+            int skipRows = (page - 1) * pageSize;
+            List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
+            totalRows = rowsCount;
+            return countyModels;
+        }
+
+        public IActionResult Countries_Read_ForCB([DataSourceRequest] DataSourceRequest request)
+        {
+            //DataSourceResult result = new DataSourceResult();
+            //List<CountyModel> list = GetCountiesForCB();
+            //result.Data = list;
+            DataSourceResult result = GetCountriesForCB().ToDataSourceResult(request);
+            return Json(result);
+        }
+
+        public List<DictionaryCountryModel> GetCountriesForCB()
+        {
+            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountries();
+            return countryModels;
+        }
+
+
+        public IActionResult AddNewCounty()
         {
             return View();
         }
