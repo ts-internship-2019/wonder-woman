@@ -1,29 +1,25 @@
-﻿@model IEnumerable<iWasHere.Domain.DTOs.DictionaryCountryModel>
+﻿@model IEnumerable<iWasHere.Domain.Models.DictionaryCurrencyType>
 
 <div>
     <td>
-        <label for="CountryName">Country Name:</label>
+        <label for="countryName">Name:</label>
         @(Html.Kendo().TextBox()
             .HtmlAttributes(new
-            {
-                id = "CountryName",
-                required = "required",
-                validationmessage ="Enter Country Name!"
-            })
-        .Name("Name")
-        .Value("")
+                    {
+                id = "Name"
+                    })
+            .Name("Name")
+            .Value("")
         )
     </td>
     <br />
     <td>
-        <label for="CountryCode">Country Code:</label>
+        <label for="countryName">Code:</label>
         @(Html.Kendo().TextBox()
             .HtmlAttributes(new
-            {
-                id = "CountryCode",
-                required = "required",
-                validationmessage ="Enter Country Code!"
-            })
+                    {
+                id = "Code"
+                    })
             .Name("Code")
             .Value("")
         )
@@ -64,7 +60,7 @@
 $(document).ready(function () {
     $('#btnCancel').click(function (e)
   {
-      window.location = '@Url.Action("IndexCountry", "Dictionary")';
+      window.location = '@Url.Action("Currency", "Dictionary")';
   });
 });
 </script>

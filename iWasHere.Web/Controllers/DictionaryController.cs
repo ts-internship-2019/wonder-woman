@@ -34,52 +34,70 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request)
+        public ActionResult GetAllTickets([DataSourceRequest] DataSourceRequest request, string filterName)
         {
-            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(request.Page, request.PageSize, out int count);
+            List<DictionaryTicketTypeModel> dictionaryTicketTypeModels = _dictionaryService.GetDictionaryTicketTypeModels(filterName, request.Page, request.PageSize, out int count);
 
             DataSourceResult result = new DataSourceResult();
             result.Data = dictionaryTicketTypeModels;
             result.Total = count;
             return Json(result);
         }
+        public ActionResult DestroyTicket([DataSourceRequest] DataSourceRequest request, DictionaryTicketTypeModel ticketToDelete)
+        {
+            _dictionaryService.DestroyTicket(ticketToDelete);
+            return Json(request);
+        }
 
         public IActionResult IndexCity()
         {            
             return View();
         }
-
-        public  IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName)
+        /// <summary>
+        /// IActionResult for Cities that populpates the Kendo UI Grid in the IndexCity View
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="filterName"></param>
+        /// <returns></returns>
+        public  IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
         {            
             if (String.IsNullOrEmpty(filterName))
             {
                 filterName = "";
-            }
-            int filterCounty = 1;
+            }            
             DataSourceResult result = new DataSourceResult();            
             List<CityModel> list = GetCities(request.Page, request.PageSize, filterName, filterCounty, out int totalRows);
             result.Data = list;
             result.Total = totalRows;
             return Json(result);
         }
-
-
-
-        public IActionResult Couties_Read_ForCB([DataSourceRequest] DataSourceRequest request)
+        /// <summary>
+        /// Test IActionResult for Counties ComboBox
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public JsonResult Couties_Read_ForCB(string text)
         {
-            //DataSourceResult result = new DataSourceResult();
-            //List<CountyModel> list = GetCountiesForCB();
-            //result.Data = list;
-            DataSourceResult result = GetCountiesForCB().ToDataSourceResult(request);
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+            List<CountyModel> result = GetCountiesForCB(text);            
             return Json(result);
         }
-
-        public List<CountyModel> GetCountiesForCB()
+        /// <summary>
+        /// Test Gets Counties as a List<>
+        /// </summary>
+        /// <returns></returns>
+        public List<CountyModel> GetCountiesForCB(string filterCounty)
         {
-            List<CountyModel> countyModels = _dictionaryService.GetCounties();
+            List<CountyModel> countyModels = _dictionaryService.GetCounties(filterCounty);
             return countyModels;
         }
-
+        /// <summary>
+        /// Test Gets Cities as a List<>
+        /// </summary>
+        /// <returns></returns>
         private List<CityModel> GetCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
         {            
             int skipRows = (page - 1) * pageSize;
@@ -87,7 +105,10 @@ namespace iWasHere.Web.Controllers
             totalRows = rowsCount;
             return cityModels;
         }
-
+        /// <summary>
+        /// NOT IMplemeted Yet
+        /// </summary>
+        /// <returns></returns>
         public IActionResult AddCity()
         {
             return View();
@@ -143,7 +164,7 @@ namespace iWasHere.Web.Controllers
         }
 
 
-        //paginare
+        //paginare tari
 
         [HttpPost]
         public ActionResult Paging_Orders_Country([DataSourceRequest] DataSourceRequest request, string filterName)
@@ -165,10 +186,29 @@ namespace iWasHere.Web.Controllers
             return Json(result);
         }
 
+        //delete Country
+        public ActionResult DestroyCountry([DataSourceRequest] DataSourceRequest request, DictionaryCountryModel countryToDelete)
+        {
+            _dictionaryService.DestroyCountry(countryToDelete);
+            return Json(request);
+        }
+
         public IActionResult AddNewCountry()
         {
             return View();
         }
+
+        public IActionResult CurrencyAdd()
+        {
+            return View();
+        }
+
+        public IActionResult LandmarkAdd()
+        {
+            return View();
+        }
+
+
 
         public IActionResult IndexCounty()
         {
@@ -240,9 +280,9 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public ActionResult GetConstruction([DataSourceRequest] DataSourceRequest request)
+        public ActionResult GetConstruction([DataSourceRequest] DataSourceRequest request, string filterName)
         {
-            List<DictionaryConstructionTypeModel> dictionaryConstructionType = _dictionaryService.GetDictionaryConstructionTypeModels(request.Page, request.PageSize, out int count);
+            List<DictionaryConstructionTypeModel> dictionaryConstructionType = _dictionaryService.GetDictionaryConstructionTypeModels(filterName, request.Page, request.PageSize, out int count);
             DataSourceResult result = new DataSourceResult();
             result.Data = dictionaryConstructionType;
             result.Total = count;

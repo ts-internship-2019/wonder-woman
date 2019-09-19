@@ -65,7 +65,11 @@
                     .ButtonCount(5))
                 .DataSource(dataSource => dataSource
                     .Ajax()
-                    .Read(read => read.Action("Paging_Orders_Country", "Dictionary").Data("filterName")))
+                    .Read(read => read.Action("Paging_Orders_Country", "Dictionary").Data("filterName"))
+                    
+                    .ServerOperation(true)
+                    .Model(model => model.Id(p => p.CountryId))
+                    .Destroy(update => update.Action("DestroyCountry", "Dictionary")))
                 .Scrollable(scr => scr.Height(430))
 )
 
