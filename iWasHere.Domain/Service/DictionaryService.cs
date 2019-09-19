@@ -14,7 +14,7 @@ namespace iWasHere.Domain.Service
     public class DictionaryService
     {
         private readonly DatabaseContext _dbContext;
-       
+
         public DictionaryService(DatabaseContext databaseContext)
         {
             _dbContext = databaseContext;
@@ -100,8 +100,8 @@ namespace iWasHere.Domain.Service
                     return cities.ToList();
                 }
             }
-            
-            return new List<CityModel>();            
+
+            return new List<CityModel>();
         }
 
         public List<CountyModel> GetCounties()
@@ -130,35 +130,71 @@ namespace iWasHere.Domain.Service
             return country;
         }
 
-        public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
+        public List<CountyModel> GetCountyModels(int page, int pageSize, out int count)
         {
             int skip = (page - 1) * pageSize;
             count = _dbContext.County.Count();
-            List<CountyModel> listCounties = _dbContext.County.Include(a=>a.Country).Select(a => new CountyModel()
+            List<CountyModel> listCounties = _dbContext.County.Include(a => a.Country).Select(a => new CountyModel()
             {
                 CountyId = a.CountyId,
                 Name = a.Name,
                 Code = a.Code,
                 CountryId = a.CountryId,
-                CountryName=a.Country.Name
+                CountryName = a.Country.Name
             }).Skip(skip).Take(pageSize).ToList();
 
-            return listCounties ;
+            return listCounties;
         }
 
-        public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(int currentPage,int pageSize, out int count)
+        public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
-            count = Convert.ToInt32(_dbContext.DictionaryConstructionType.Count());
-            List<DictionaryConstructionTypeModel> dictionaryConstructionTypeModels = _dbContext.DictionaryConstructionType.Select(a => new DictionaryConstructionTypeModel()
-            {
-                ConstructionTypeId = a.ConstructionTypeId,
-                Code = a.Code,
-                Name = a.Name,
-                Description = a.Description
-            }).Skip(rowsToSkip).Take(pageSize).ToList();
 
-            return dictionaryConstructionTypeModels;
+            if (!String.IsNullOrWhiteSpace(filterName))
+            {
+                var query = _dbContext.DictionaryConstructionType.Where(a => a.Name.Contains(filterName));
+                if (query.Count() > 0)
+                {
+                    var page = query.OrderBy(p => p.ConstructionTypeId)
+                                .Select(p => new DictionaryConstructionTypeModel()
+                                {
+                                    ConstructionTypeId = p.ConstructionTypeId,
+                                    Name = p.Name,
+                                    Code = p.Code,
+                                    Description = p.Description
+                                })
+                                .Skip(rowsToSkip).Take(pageSize)
+                                .GroupBy(p => new { Total = query.Count() })
+                                .First();
+                    count = page.Key.Total;
+                    var construction = page.Select(p => p);
+                    return construction.ToList();
+                }
+            }
+            else
+            {
+                var page = _dbContext.DictionaryConstructionType.OrderBy(p => p.ConstructionTypeId)
+                               .Select(p => new DictionaryConstructionTypeModel()
+                               {
+                                   ConstructionTypeId = p.ConstructionTypeId,
+                                   Name = p.Name,
+                                   Code = p.Code,
+                                   Description = p.Description
+                               })
+                               .Skip(rowsToSkip).Take(pageSize)
+                               .GroupBy(p => new { Total = _dbContext.DictionaryConstructionType.Count() })
+                               .First();
+                count = page.Key.Total;
+                var construction = page.Select(p => p);
+                return construction.ToList();
+
+            }
+            count = 0;
+            return new List<DictionaryConstructionTypeModel>();
         }
     }
 }
+
+    
+
+

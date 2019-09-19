@@ -161,9 +161,9 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public ActionResult GetConstruction([DataSourceRequest] DataSourceRequest request)
+        public ActionResult GetConstruction([DataSourceRequest] DataSourceRequest request,string filterName)
         {
-            List<DictionaryConstructionTypeModel> dictionaryConstructionType = _dictionaryService.GetDictionaryConstructionTypeModels(request.Page, request.PageSize, out int count);
+            List<DictionaryConstructionTypeModel> dictionaryConstructionType = _dictionaryService.GetDictionaryConstructionTypeModels(filterName,request.Page, request.PageSize, out int count);
             DataSourceResult result = new DataSourceResult();
             result.Data = dictionaryConstructionType;
             result.Total = count;

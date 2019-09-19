@@ -3,28 +3,86 @@
 
 
 <p>Index</p>
-@(Html.Kendo().Grid(Model)
-        .Name("grid")
-        .Columns(columns =>
-        {
-            columns.Bound(c => c.ConstructionTypeId).Width(100);
-            columns.Bound(c => c.Code).Width(100);
-            columns.Bound(c => c.Name).Width(100);
-            columns.Bound(c => c.Description);
-        })
-        .HtmlAttributes(new { style = "height: 500px;" })
-        .Scrollable()
-        .Groupable()
-        .Sortable()
-        .Pageable(pageable => pageable
-            .Refresh(true)
-            .PageSizes(true)
-            .ButtonCount(5))
-        .DataSource(dataSource => dataSource
-            .Ajax()
-            .PageSize(5)
-            .ServerOperation(true)
-            .Read(read => read.Action ("GetConstruction","Dictionary"))
-           )
-)
+<div>
+    <table>
+        <tr>
+            <td>
+                <label for="constructionNamer">Nume:</label>
+                @(Html.Kendo().TextBox()
+                    .HtmlAttributes(new
+                            {
+                        id = "constructionName"
+                            })
+                    .Name("constructionName")
+                    .Value("")
+                )
+            </td>
+           
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("filterBtn")
+                    .Content("Filtreaza")
+                    .Icon("filter")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("clearFilterBtn")
+                    .Icon("clear-filter")
+                    .Content("Reseteaza Filtru")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+        </tr>
+    </table>
+</div>
+<div>
+    @(Html.Kendo().Grid(Model)
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.ConstructionTypeId).Width(100);
+                columns.Bound(c => c.Code).Width(100);
+                columns.Bound(c => c.Name).Width(100);
+                columns.Bound(c => c.Description);
+                columns.Command(cmd => { cmd.Edit(); cmd.Destroy(); });
+            })
+            .HtmlAttributes(new { style = "height: 500px;" })
+            .Scrollable()
+            .Groupable()
+            .Sortable()
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(5)
+                .ServerOperation(true)
+                .Read(read => read.Action("GetConstruction", "Dictionary"))
+               )
+    )
 
+    <script type="text/javascript">
+        var construction = "";
+
+        function constructionReadData() {
+            return {
+                filterName: construction
+
+            };
+        }
+        function onClick(e) {
+            if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
+                $('#constructionName').val(null);
+                city = "";
+                $('#Grid').data("kendoGrid").dataSource.read();
+                $('#Grid').data("kendoGrid").dataSource.page(1);
+            }
+            if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
+                city = $('#constructionName').val();
+                $('#Grid').data("kendoGrid").dataSource.read();
+                $('#Grid').data("kendoGrid").dataSource.page(1);
+            }
+        }</script>
