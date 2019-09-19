@@ -2,6 +2,8 @@
 
 
 
+
+
 <p>Index</p>
 <div>
     <table>
@@ -17,7 +19,7 @@
                     .Value("")
                 )
             </td>
-           
+
             <td>
                 @(Html.Kendo().Button()
                     .Name("filterBtn")
@@ -39,18 +41,16 @@
 </div>
 <div>
     @(Html.Kendo().Grid(Model)
-            .Name("grid")
+            .Name("Grid")
             .Columns(columns =>
-            {
-                columns.Bound(c => c.ConstructionTypeId).Width(100);
+            {                
                 columns.Bound(c => c.Code).Width(100);
                 columns.Bound(c => c.Name).Width(100);
                 columns.Bound(c => c.Description);
                 columns.Command(cmd => { cmd.Edit(); cmd.Destroy(); });
             })
-            .HtmlAttributes(new { style = "height: 500px;" })
-            .Scrollable()
-            .Groupable()
+            .HtmlAttributes(new { style = "height: 500dp;" })
+            .Scrollable()            
             .Sortable()
             .Pageable(pageable => pageable
                 .Refresh(true)
@@ -60,28 +60,25 @@
                 .Ajax()
                 .PageSize(5)
                 .ServerOperation(true)
-                .Read(read => read.Action("GetConstruction", "Dictionary"))
+                .Read(read => read.Action("GetConstruction", "Dictionary").Data("constructionReadData"))
                )
     )
-
     <script type="text/javascript">
         var construction = "";
-
         function constructionReadData() {
             return {
                 filterName: construction
-
             };
         }
         function onClick(e) {
             if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
                 $('#constructionName').val(null);
-                city = "";
+                construction = "";
                 $('#Grid').data("kendoGrid").dataSource.read();
                 $('#Grid').data("kendoGrid").dataSource.page(1);
             }
             if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
-                city = $('#constructionName').val();
+                construction = $('#constructionName').val();
                 $('#Grid').data("kendoGrid").dataSource.read();
                 $('#Grid').data("kendoGrid").dataSource.page(1);
             }
