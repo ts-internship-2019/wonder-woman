@@ -153,13 +153,13 @@ namespace iWasHere.Domain.Service
             return query.ToList();
         }
 
-        public List<DictionaryCountryModel> GetCountries()
+        public List<DictionaryCountryModel> GetCountries(string text)
         {
             var query = _dbContext.Country.Select(c => new DictionaryCountryModel()
             {
                 CountryId = c.CountryId,
                 Name = c.Name
-            });
+            }).Where(c=>c.Name.Contains(text));
             return query.ToList();
         }
 
@@ -267,7 +267,69 @@ namespace iWasHere.Domain.Service
             return new List<CountyModel>();
         }
 
+        public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(int currentPage, int pageSize, out int count)
+        {
+            int rowsToSkip = (currentPage - 1) * pageSize;
+            count = Convert.ToInt32(_dbContext.DictionaryConstructionType.Count());
+            List<DictionaryConstructionTypeModel> dictionaryConstructionTypeModels = _dbContext.DictionaryConstructionType.Select(a => new DictionaryConstructionTypeModel()
+            {
+                ConstructionTypeId = a.ConstructionTypeId,
+                Code = a.Code,
+                Name = a.Name,
+                Description = a.Description
+            }).Skip(rowsToSkip).Take(pageSize).ToList();
+
+
+
             return dictionaryConstructionTypeModels;
+        }
+
+        public void DestroyCounty(CountyModel countyToDestroy)
+        {
+            var db = _dbContext;
+
+
+
+            var county = db.County.Where(pd => pd.CountyId == countyToDestroy.CountyId);
+
+
+
+            foreach (var c in county)
+            {
+                db.County.Remove(c);
+            }
+
+
+
+            db.SaveChanges();
+        }
+        public County editCounty(int id)
+        {
+            return _dbContext.County.First(a => a.CountyId == id);
+        }
+
+        public CountyModel GetCountyInfoById(int id)
+        {
+            CountyModel county = new CountyModel();
+            List<CountyModel> counties = new List<CountyModel>();
+            var query = _dbContext.County.Where(a => a.CountyId.Equals(id)).Include(b => b.Country);
+            if (query.Count() == 1)
+            {
+                var page = query.Select(a => new CountyModel
+                {
+                    CountyId = a.CountyId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    CountryId = a.Country.CountryId,
+                    CountryName = a.Country.Name
+                });
+                counties = page.ToList();
+            }
+            if (counties.Count == 1)
+            {
+                county = counties[0];
+            }
+            return county;
         }
     }
 }

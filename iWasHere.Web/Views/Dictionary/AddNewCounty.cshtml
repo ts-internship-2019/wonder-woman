@@ -1,5 +1,91 @@
-﻿@model IEnumerable<iWasHere.Domain.DTOs.CountyModel>
+﻿
+@model iWasHere.Domain.DTOs.CountyModel
+@using Kendo.Mvc.UI
 @{
-    ViewData["Title"] = "IndexAddNewCounty";
+    ViewData["Title"] = "AddCounty";
 }
+<div>
+    <table>
+        <tr>
+            <td>
+                <label for="countyName">Nume Judet:</label>
+                @(Html.Kendo().TextBox()
+                    .HtmlAttributes(new
+                            {
+                        id = "countyName"
+                            })
+                    .Name("countyName")
+                    .Value(Model.Name)
+                )
+            </td>
+            <td>
+                <label for="countyCode">Cod Judet:</label>
+                @(Html.Kendo().TextBox()
+                    .HtmlAttributes(new
+                            {
+                        id = "countyCode"
+                            })
+                    .Name("countyCode")
+                    .Value(Model.Code)
+                )
+            </td>
+            <td>
+                <label for="countriesCB">Nume Tara:</label>
+            </td>
+            <td>
+                @(Html.Kendo().ComboBox()
+                        .Name("countries")
+                        .Placeholder("Selecteaza tara")
+                        .DataTextField("Name")
+                        .DataValueField("Id")
+                        .HtmlAttributes(new { style = "width:100%;" })
+                        .Filter(FilterType.Contains)
+                        .AutoBind(false)
+                        .MinLength(3)
+                        .DataSource(source =>
+                            {
+                                source.Read(read =>
+                            {
+                                read.Action("Countries_Read_ForCB", "Dictionary");
+                            })
+                                .ServerFiltering(true);
+                            })
+                        .Text(Model.CountryName)
+                        .Value(Model.CountryId.ToString())
+                )
+            </td>
+        </tr>
+    </table>
+</div>
+<div>
+    @(Html.Kendo().Button()
+                        .Name("addCountyAndNewBtn")
+                        .Content("Salveaza si nou")
+                        .HtmlAttributes(new { type = "button", position = "" })
+                        .Events(ev => ev.Click("onClick")))
 
+
+
+    @(Html.Kendo().Button()
+                        .Name("addCountyBtn")
+                        .Content("Salveaza")
+                        .HtmlAttributes(new { type = "button", position = "" })
+                        .Events(ev => ev.Click("onClick")))
+
+
+
+    @(Html.Kendo().Button()
+                        .Name("cancelBtn")
+                        .Content("Anuleaza")
+                        .HtmlAttributes(new { type = "button", position = "" })
+                        .Events(ev => ev.Click("onClick")))
+</div>
+
+<script>
+    function onClick(e) {
+         if ($(e.event.target).closest(".k-button").attr("id") == "cancelBtn") {
+                 window.location = '@Url.Action("IndexCounty", "Dictionary")';
+            }
+    }
+
+</script>
