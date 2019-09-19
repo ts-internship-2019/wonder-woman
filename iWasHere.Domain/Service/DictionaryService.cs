@@ -375,6 +375,7 @@ namespace iWasHere.Domain.Service
             }
             count = 0;
             return new List<DictionaryConstructionTypeModel>();
+        }
         public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
