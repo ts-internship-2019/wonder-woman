@@ -1,4 +1,4 @@
-﻿@*@model iWasHere.Domain.DTOs.DictionaryTicketTypeModel
+﻿@model iWasHere.Domain.DTOs.DictionaryTicketTypeModel
 
 @{
     ViewData["Title"] = "Editare/Adaugare Tip Bilet";
@@ -6,28 +6,35 @@
 
 @using (Html.BeginForm("UpdateTicket", "Dictionary", FormMethod.Post))
 {
+    <div>
+        <span>Nume Bilet:</span> @Html.Kendo().TextBoxFor(m => m.Name)
+        <br />
+        <span>Cod Bilet: </span> @Html.Kendo().TextBoxFor(m => m.Code)
+        <br />
+        <span>Descriere: </span>  @Html.Kendo().TextBoxFor(m => m.Description)
+        <br />
+        @Html.HiddenFor(m => m.TicketTypeId)
+        @if(Model.TicketTypeId != 0)
+        {
+        @(Html.Kendo().Button()
+                .Name("save")
+                .Content("Salveaza")
+                .HtmlAttributes(new { type = "submit", name = "submit", value = "Salveaza" }))
+        }
+        else
+        {
+        @(Html.Kendo().Button()
+                .Name("savenew")
+                .Content("Salveaza si nou")
+                .HtmlAttributes(new { type = "submit", name = "submit", value = "Salveaza si nou" }))
+        }
 
-    <span>Nume Bilet:</span> @Html.Kendo().TextBoxFor(m => m.Name)
-    <br />
-    <span>Cod Bilet: </span> @Html.Kendo().TextBoxFor(m => m.Code))
-    <br />
-    <span>Descriere: </span>  @Html.Kendo().TextBoxFor(m => m.Description)
-    <br />
-    @Html.HiddenFor(m => m.TicketTypeId);
-    @(Html.Kendo().Button()
-            .Name("save")
-            .Content("Salveaza")
-            .HtmlAttributes(new { type = "submit", name = "save", value = "Salveaza" }))
-    @(Html.Kendo().Button()
-            .Name("savenew")
-            .Content("Salveaza + nou")
-            .HtmlAttributes(new { type = "submit", name = "saveclose", value = "Salveaza + nou" }))
-
-    @(Html.Kendo().Button()
-           .Name("back")
-           .Content("Inapoi")
-           .HtmlAttributes(new { type = "button" })
-           .Events(ev => ev.Click("onClick")))
+        @(Html.Kendo().Button()
+               .Name("back")
+               .Content("Anuleaza")
+               .HtmlAttributes(new { type = "button", name = "submit", value = "Anuleaza" })
+               .Events(ev => ev.Click("onClick")))
+    </div>
 }
 
 <script>
@@ -35,7 +42,7 @@
     {
         if ($(e.event.target).closest(".k-button").attr("id") == "back")
         {
-                    window.location = '@Url.Action("UpdateTickets", "Dictionary")';
+                    window.location = '@Url.Action("Tickets", "Dictionary")';
         }
     }
-</script>*@
+</script>

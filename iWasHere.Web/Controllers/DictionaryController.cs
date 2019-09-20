@@ -17,8 +17,6 @@ namespace iWasHere.Web.Controllers
     {
         private readonly DictionaryService _dictionaryService;
 
-
-
         public DictionaryController(DictionaryService dictionaryService)
         {
             _dictionaryService = dictionaryService;
@@ -57,10 +55,22 @@ namespace iWasHere.Web.Controllers
 
             return View(ticket);
         }
-        public void UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
+        [HttpPost]
+        public ActionResult UpdateTicket(DictionaryTicketTypeModel ticketToUpdate, string submit)
         {
-            int status = _dictionaryService.UpdateTicket(ticketToUpdate);
-            Tickets(new DataSourceRequest());
+            switch (submit)
+            {
+                case "Salveaza si nou":
+                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                    return Redirect("/Dictionary/AddTicket");
+                case "Salveaza":
+                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                    return Redirect("/Dictionary/Tickets");
+                case "Anuleaza":
+                    return Redirect("/Dictionary/Tickets");
+                default:
+                    return Redirect("/Dictionary/Tickets");
+            }
         }
         public IActionResult IndexCity()
         {

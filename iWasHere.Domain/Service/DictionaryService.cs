@@ -31,49 +31,34 @@ namespace iWasHere.Domain.Service
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
-
-            if (!String.IsNullOrWhiteSpace(filterName))
+            if (string.IsNullOrWhiteSpace(filterName))
             {
-                var query = _dbContext.DictionaryTicketType.Where(a => a.Name.Contains(filterName));
-                if (query.Count() > 0)
+                List<DictionaryTicketTypeModel> ticketModels = _dbContext.DictionaryTicketType.Select(a => new DictionaryTicketTypeModel()
                 {
-                    var page = query.OrderBy(p => p.TicketTypeId)
-                                .Select(p => new DictionaryTicketTypeModel()
-                                {
-                                    TicketTypeId = p.TicketTypeId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    Description = p.Description
-                                })
-                                .Skip(rowsToSkip).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    count = page.Key.Total;
-                    var tickets = page.Select(p => p);
-                    return tickets.ToList();
-                }
+                    TicketTypeId = a.TicketTypeId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    Description = a.Description
+                }).Skip(rowsToSkip).Take(pageSize).ToList();
+
+                count = _dbContext.DictionaryTicketType.Count();
+
+                return ticketModels;
             }
             else
             {
-                 var page = _dbContext.DictionaryTicketType.OrderBy(p => p.TicketTypeId)
-                                .Select(p => new DictionaryTicketTypeModel()
-                                {
-                                    TicketTypeId = p.TicketTypeId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    Description = p.Description
-                                })
-                                .Skip(rowsToSkip).Take(pageSize)
-                                .GroupBy(p => new { Total = _dbContext.DictionaryTicketType.Count() })
-                                .First();
-                    count = page.Key.Total;
-                    var tickets = page.Select(p => p);
-                    return tickets.ToList();
-                
-            }
-            count = 0;
-            return new List<DictionaryTicketTypeModel>();
+                var query = _dbContext.DictionaryTicketType.Where(a => a.Name.Contains(filterName));
+                count = query.Count();
 
+                List<DictionaryTicketTypeModel> ticketModels = query.Select(a => new DictionaryTicketTypeModel()
+                {
+                    TicketTypeId = a.TicketTypeId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    Description = a.Description
+                }).Skip(rowsToSkip).Take(pageSize).ToList();
+                return ticketModels;
+            }
         }
         public void DestroyTicket(DictionaryTicketTypeModel ticketToDestroy)
         {
@@ -88,24 +73,25 @@ namespace iWasHere.Domain.Service
 
             db.SaveChanges();
         }
-        public int UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
+        public void UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
         {
-            var db = _dbContext;
+            DictionaryTicketType ticket = new DictionaryTicketType()
+            {
+                TicketTypeId = ticketToUpdate.TicketTypeId,
+                Code = ticketToUpdate.Code,
+                Name = ticketToUpdate.Name,
+                Description = ticketToUpdate.Description
+            };
             if (ticketToUpdate.TicketTypeId == 0)
             {
-                db.DictionaryTicketType.Add(new DictionaryTicketType() {
-                    TicketTypeId = ticketToUpdate.TicketTypeId,
-                    Code = ticketToUpdate.Code,
-                    Name = ticketToUpdate.Name,
-                    Description = ticketToUpdate.Description
-                });
-                db.SaveChanges();
+                _dbContext.DictionaryTicketType.Add(ticket);
             }
             else
             {
-                //update
+                _dbContext.DictionaryTicketType.Update(ticket);
             }
-            return 0;
+            _dbContext.SaveChanges();
+
         }
         public DictionaryTicketTypeModel GetTicketById(int Id)
         {
