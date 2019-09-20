@@ -1,109 +1,70 @@
-﻿
-@model iWasHere.Domain.DTOs.CountyModel
+﻿@model iWasHere.Domain.DTOs.CountyModel
 @using Kendo.Mvc.UI
 @{
     ViewData["Title"] = "AddCounty";
 }
-<div>
-    <table>
-        <tr>
-            <td>
-                <label for="countyName">Nume Judet:</label>
-                @(Html.Kendo().TextBox()
-                    .HtmlAttributes(new
-                            {
-                        id = "countyName"
-                            })
-                    .Name("countyName")
-                    .Value(Model.Name)
-                )
-            </td>
-            <td>
-                <label for="countyCode">Cod Judet:</label>
-                @(Html.Kendo().TextBox()
-                    .HtmlAttributes(new
-                            {
-                        id = "countyCode"
-                            })
-                    .Name("countyCode")
-                    .Value(Model.Code)
-                )
-            </td>
-            <td>
-                <label for="countriesCB">Nume Tara:</label>
-            </td>
-            <td>
-                @(Html.Kendo().ComboBox()
-                        .Name("countries")
-                        .Placeholder("Selecteaza tara")
-                        .DataTextField("Name")
-                        .DataValueField("Id")
-                        .HtmlAttributes(new { style = "width:100%;" })
-                        .Filter(FilterType.Contains)
-                        .AutoBind(false)
-                        .MinLength(3)
-                        .DataSource(source =>
-                            {
-                                source.Read(read =>
-                            {
-                                read.Action("Countries_Read_ForCB", "Dictionary");
-                            })
-                                .ServerFiltering(true);
-                            })
-                        .Text(Model.CountryName)
-                        .Value(Model.CountryId.ToString())
-                )
-            </td>
-        </tr>
-    </table>
-</div>
-@*<div>
-    @(Html.Kendo().Button()
-                        .Name("addCountyAndNewBtn")
-                        .Content("Salveaza si nou")
-                        .HtmlAttributes(new { type = "button", position = "" })
-                        .Events(ev => ev.Click("onClick")))
 
 
-
-    @(Html.Kendo().Button()
-                        .Name("addCountyBtn")
-                        .Content("Salveaza")
-                        .HtmlAttributes(new { type = "button", position = "" })
-                        .Events(ev => ev.Click("onClick")))
-
-
-
-    @(Html.Kendo().Button()
-                        .Name("cancelBtn")
-                        .Content("Anuleaza")
-                        .HtmlAttributes(new { type = "button", position = "" })
-                        .Events(ev => ev.Click("onClick")))
-</div>*@
-
-
-@*@using (Html.BeginForm("CountySubmit", "Dictionary", FormMethod.Post))
+@using (Html.BeginForm("SaveCounty", "Dictionary", FormMethod.Post))
 {
-    <span>Enter Your Name:</span> @Html.TextBoxFor(m => m.Name)
-    <br />
-    <span>Enter Your Code: </span> @Html.TextBoxFor(m => m.Code)
-    <br />*@
-   
 
+    <div>
+        <table>
+            <tr>
+                <td>
+                    <label for="countyName">Nume Judet:</label>
+                    @(Html.Kendo().TextBoxFor(a => a.Name)
+
+                    )
+                </td>
+                <td>
+                    <label for="countyCode">Cod Judet:</label>
+                    @(Html.Kendo().TextBoxFor(a => a.Code)
+
+                    )
+                </td>
+                <td>
+                    <label for="countriesCB">Nume Tara:</label>
+                </td>
+                <td>
+                    @(Html.Kendo().ComboBoxFor(a => a.CountryId)
+                            .Placeholder("Selecteaza tara")
+                            .DataTextField("Name")
+                            .DataValueField("CountryId")
+                            .HtmlAttributes(new { style = "width:100%;" })
+                            .Filter(FilterType.Contains)
+                            .AutoBind(false)
+                            .MinLength(3)
+                            .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                {
+                                    read.Action("Countries_Read_ForCB", "Dictionary");
+                                })
+                                    .ServerFiltering(true);
+                                })
+                            .Text(Model.CountryName)
+                    )
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <input type="submit" name="btn" value="Salveaza" />
     @Html.HiddenFor(a => a.CountyId)
-
-
-
-    <input type="submit" name="submitButton" value="Save" />
-    <input type="submit" name="submitButton" value="Save and New" />
-    <input type="submit" name="submitButton" value="Cancel" />
-
-
-<script>
-    function onClick(e) {
-         if ($(e.event.target).closest(".k-button").attr("id") == "cancelBtn") {
-                 window.location = '@Url.Action("IndexCounty", "Dictionary")';
-            }
+    if (Model.CountyId == 0)
+    {
+        <input type="submit" name="btn" value="Salveaza si Nou" />
     }
+    <input type="submit" name="btn" value="Anuleaza" />
+}
 
-</script>
+
+
+
+
+
+
+
+

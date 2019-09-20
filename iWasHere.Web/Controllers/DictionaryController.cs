@@ -71,6 +71,18 @@ namespace iWasHere.Web.Controllers
             result.Total = totalRows;
             return Json(result);
         }
+        public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCountry)
+        {
+            if (String.IsNullOrEmpty(filterName))
+            {
+                filterName = "";
+            }
+            DataSourceResult result = new DataSourceResult();
+            List<CountyModel> list = GetCounties(request.Page, request.PageSize, filterName, filterCountry, out int totalRows);
+            result.Data = list;
+            result.Total = totalRows;
+            return Json(result);
+        }
         /// <summary>
         /// Test IActionResult for Counties ComboBox
         /// </summary>
@@ -85,6 +97,19 @@ namespace iWasHere.Web.Controllers
             List<CountyModel> result = GetCountiesForCB(text);
             return Json(result);
         }
+
+        public JsonResult Countries_Read_ForCB(string text)
+        {
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+            //DataSourceResult result = new DataSourceResult();
+            List<DictionaryCountryModel> list = GetCountriesForCB(text);
+            //result.Data = list;
+            //  DataSourceResult result = GetCountriesForCB(text);
+            return Json(list);
+        }
         /// <summary>
         /// Test Gets Counties as a List<>
         /// </summary>
@@ -93,6 +118,11 @@ namespace iWasHere.Web.Controllers
         {
             List<CountyModel> countyModels = _dictionaryService.GetCounties(filterCounty);
             return countyModels;
+        }
+        public List<DictionaryCountryModel> GetCountriesForCB(string text)
+        {
+            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountries(text);
+            return countryModels;
         }
         /// <summary>
         /// Test Gets Cities as a List<>
@@ -106,6 +136,14 @@ namespace iWasHere.Web.Controllers
             return cityModels;
         }
 
+        private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
+        {
+            int skipRows = (page - 1) * pageSize;
+            List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
+            totalRows = rowsCount;
+            return countyModels;
+        }
+
         /// <summary>
         /// NOT IMplemeted Yet
         /// </summary>
@@ -115,7 +153,13 @@ namespace iWasHere.Web.Controllers
             CityModel city = _dictionaryService.GetCityInfoById(id);
             return View(city);
         }
-       
+        public IActionResult AddNewCounty(int id)
+        {
+            CountyModel county = _dictionaryService.GetCountyInfoById(id);
+            return View(county);
+
+        }
+
         public ActionResult SaveCity(CityModel city, string btn)
         {
             switch (btn)
@@ -133,6 +177,24 @@ namespace iWasHere.Web.Controllers
             }                  
             
         }
+
+        public ActionResult SaveCounty(CountyModel county, string btn)
+        {
+            switch (btn)
+            {
+                case "Salveaza si Nou":
+                    _dictionaryService.SaveCounty(county);
+                    return Redirect("/Dictionary/AddNewCounty");
+                case "Salveaza":
+                    _dictionaryService.SaveCounty(county);
+                    return Redirect("/Dictionary/IndexCounty");
+                case "Anuleaza":
+                    return Redirect("/Dictionary/IndexCounty");
+                default:
+                    return Redirect("/Dictionary/IndexCounty");
+            }
+
+        }
         /// <summary>
         /// Destroys the selected city
         /// </summary>
@@ -142,6 +204,11 @@ namespace iWasHere.Web.Controllers
         public IActionResult DestroyCity([DataSourceRequest] DataSourceRequest request, CityModel cityToDestroy)
         {
             _dictionaryService.DestroyCity(cityToDestroy);
+            return Json(request);
+        }
+        public IActionResult DestroyCounty([DataSourceRequest] DataSourceRequest request, CountyModel countyToDestroy)
+        {
+            _dictionaryService.DestroyCounty(countyToDestroy);
             return Json(request);
         }
         public IActionResult Currency()
@@ -298,55 +365,6 @@ namespace iWasHere.Web.Controllers
             return Json(result);
         }
 
-        public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName)
-        {
-            if (String.IsNullOrEmpty(filterName))
-            {
-                filterName = "";
-            }
-            int filterCountry = 1;
-            DataSourceResult result = new DataSourceResult();
-            List<CountyModel> list = GetCounties(request.Page, request.PageSize, filterName, filterCountry, out int totalRows);
-            result.Data = list;
-            result.Total = totalRows;
-            return Json(result);
-        }
-
-        private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
-        {
-            int skipRows = (page - 1) * pageSize;
-            List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
-            totalRows = rowsCount;
-            return countyModels;
-        }
-
-        public JsonResult Countries_Read_ForCB(string text)
-        {
-            //DataSourceResult result = new DataSourceResult();
-            List<DictionaryCountryModel> list = GetCountriesForCB(text);
-            //result.Data = list;
-          //  DataSourceResult result = GetCountriesForCB(text);
-            return Json(list);
-        }
-
-        public List<DictionaryCountryModel> GetCountriesForCB(string text)
-        {
-            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountries(text);
-            return countryModels;
-        }
-
-
-        public IActionResult AddNewCounty(int id)
-        {
-            if (id == 0)
-                return View();
-            else
- 
-                return View(_dictionaryService.editCounty(id));
-                
-        }
-
-    
         public IActionResult Construction([DataSourceRequest] DataSourceRequest request)
         {
             return View();
@@ -384,34 +402,9 @@ namespace iWasHere.Web.Controllers
                     return Redirect("/Dictionary/Currency");
             }
         }
-        public ActionResult DestroyCounty([DataSourceRequest] DataSourceRequest request, CountyModel countyToDelete)
-        {
-            _dictionaryService.DestroyCounty(countyToDelete);
-            //return Json(new[] { product }.ToDataSourceResult(request, ModelState));
-            return Json(request);
-        }
+      
 
-        [HttpPost]
-        public ActionResult CountySubmit(County model, string submitButton)
-        {
-            switch (submitButton)
-            {
-                case "Save":
-                    _dictionaryService.CountyUpdateInsert(model);
-                    return Redirect("/Dictionary/IndexCounty");
-
-
-
-                case "Save and New":
-                    _dictionaryService.CountyUpdateInsert(model);
-                    return Redirect("/Dictionary/AddNewCounty");
-
-
-
-                default:
-                    return Redirect("/Dictionary/IndexCounty");
-            }
-        }
+      
 
     }
 }

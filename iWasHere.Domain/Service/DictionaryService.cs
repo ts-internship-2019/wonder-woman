@@ -171,6 +171,24 @@ namespace iWasHere.Domain.Service
             _dbContext.SaveChanges();
 
         }
+        public void SaveCounty(CountyModel county)
+        {
+            County countyToSave = new County();
+            countyToSave.CountyId = county.CountyId;
+            countyToSave.Name = county.Name;
+            countyToSave.Code = county.Code;
+            countyToSave.CountryId = county.CountryId;
+            if (county.CountyId == 0)
+            {
+                _dbContext.County.Add(countyToSave);
+            }
+            else
+            {
+                _dbContext.County.Update(countyToSave);
+            }
+            _dbContext.SaveChanges();
+
+        }
 
         public CityModel GetCityInfoById(int id)
         {
@@ -195,6 +213,30 @@ namespace iWasHere.Domain.Service
             }
             return city;
         }
+        public CountyModel GetCountyInfoById(int id)
+        {
+            CountyModel county = new CountyModel();
+            List<CountyModel> counties = new List<CountyModel>();
+            var query = _dbContext.County.Where(a => a.CountyId.Equals(id)).Include(b => b.Country);
+            if (query.Count() == 1)
+            {
+                var page = query.Select(a => new CountyModel
+                {
+                    CountyId = a.CountyId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    CountryId = a.Country.CountryId,
+                    CountryName = a.Country.Name
+                });
+                counties = page.ToList();
+            }
+            if (counties.Count == 1)
+            {
+                county = counties[0];
+            }
+            return county;
+        }
+
 
         public List<DictionaryLandmarkType> GetLandmarkTypeModels(int page, int pageSize, out int count)
         {
@@ -333,7 +375,7 @@ namespace iWasHere.Domain.Service
             {
                 CountryId = c.CountryId,
                 Name = c.Name
-            }).Where(c=>c.Name.Contains(text));
+            }).Where(c=>c.Name.Contains(text)).Take(100);
             return query.ToList();
         }
 
@@ -544,30 +586,7 @@ namespace iWasHere.Domain.Service
             return ctymdl;
         }
 
-        public CountyModel GetCountyInfoById(int id)
-        {
-            CountyModel county = new CountyModel();
-            List<CountyModel> counties = new List<CountyModel>();
-            var query = _dbContext.County.Where(a => a.CountyId.Equals(id)).Include(b => b.Country);
-            if (query.Count() == 1)
-            {
-                var page = query.Select(a => new CountyModel
-                {
-                    CountyId = a.CountyId,
-                    Name = a.Name,
-                    Code = a.Code,
-                    CountryId = a.Country.CountryId,
-                    CountryName = a.Country.Name
-                });
-                counties = page.ToList();
-            }
-            if (counties.Count == 1)
-            {
-                county = counties[0];
-            }
-            return county;
-        }
-
+      
         public void DestroyConstruction(DictionaryConstructionTypeModel constructionToDestroy)
         {
             var db = _dbContext;
@@ -630,6 +649,19 @@ namespace iWasHere.Domain.Service
             else
             {
                 _dbContext.County.Update(model);
+                _dbContext.SaveChanges();
+            }
+        }
+        public void CountryUpdateInsert(Country model)
+        {
+            if (model.CountryId == 0)
+            {
+                _dbContext.Country.Add(model);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                _dbContext.Country.Update(model);
                 _dbContext.SaveChanges();
             }
         }
