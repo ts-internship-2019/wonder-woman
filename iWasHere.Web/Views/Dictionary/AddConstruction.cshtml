@@ -8,10 +8,11 @@
 
 @using (Html.BeginForm("UpdateConstruction", "Dictionary", FormMethod.Post))
 {
+    @Html.HiddenFor(a => a.ConstructionTypeId)
     <div>
-        <span>Nume Bilet:</span> @Html.TextBoxFor(m => m.Name)
+        <span>Nume Constructie:</span> @Html.TextBoxFor(m => m.Name)
         <br />
-        <span>Cod Bilet: </span> @Html.TextBoxFor(m => m.Code)
+        <span>Cod Constructie: </span> @Html.TextBoxFor(m => m.Code)
         <br />
         <span>Descriere: </span>@Html.TextBoxFor(m => m.Description)
         <br />

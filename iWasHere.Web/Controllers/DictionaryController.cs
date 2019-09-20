@@ -362,4 +362,14 @@ namespace iWasHere.Web.Controllers
         }
 
     }
+
+    [HttpPost]
+    public void UpdateConstruction(DictionaryConstructionType constuctionUpdate, string submitButton)
+    {
+        switch (submitButton)
+        {
+            case "Salveaza":
+                _
+        }
+            }
 }
