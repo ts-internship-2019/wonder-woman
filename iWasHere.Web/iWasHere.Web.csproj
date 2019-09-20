@@ -24,5 +24,4 @@
   <ItemGroup>
     <Folder Include="wwwroot\lib\kendo-ui\" />
   </ItemGroup>
-
 </Project>

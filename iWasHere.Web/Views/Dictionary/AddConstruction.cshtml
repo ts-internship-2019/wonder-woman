@@ -8,29 +8,43 @@
 
 @using (Html.BeginForm("UpdateConstruction", "Dictionary", FormMethod.Post))
 {
+    @Html.HiddenFor(a => a.ConstructionTypeId)
     <div>
-        <span>Nume Bilet:</span> @Html.TextBoxFor(m => m.Name)
+        <span>Nume Constructie:</span> @Html.TextBoxFor(m => m.Name)
         <br />
-        <span>Cod Bilet: </span> @Html.TextBoxFor(m => m.Code)
+        <span>Cod Constructie: </span> @Html.TextBoxFor(m => m.Code)
         <br />
         <span>Descriere: </span>@Html.TextBoxFor(m => m.Description)
         <br />
-        <input type="submit" name="submitButton" value="Salveaza" />
+        @Html.HiddenFor(m => m.ConstructionTypeId)
+        @if (Model.ConstructionTypeId == 0)
+        {
+            @(Html.Kendo().Button()
+                    .Name("savenew")
+                    .Content("Salveaza si nou")
+                    .HtmlAttributes(new { type = "submit", name = "submitButton", value = "Salveaza si nou" }))
+        }
+      
         @(Html.Kendo().Button()
-            .Name("back")
-            .Content("Inapoi")
-            .HtmlAttributes(new { type = "button" })
-            .Events(ev => ev.Click("onClick")))
+                .Name("save")
+                .Content("Salveaza")
+                .HtmlAttributes(new { type = "submit", name = "submitButton", value = "Salveaza" }))
+       
 
 
-
+        @(Html.Kendo().Button()
+               .Name("back")
+               .Content("Anuleaza")
+               .HtmlAttributes(new { type = "button", name = "submitButton", value = "Anuleaza" })
+               .Events(ev => ev.Click("onClick")))
     </div>
+
 }
 <script>
 
     function onClick(e) {
             if ($(e.event.target).closest(".k-button").attr("id") == "back") {
-                 window.location = '@Url.Action("UpdateConstruction", "Dictionary")';
+                 window.location = '@Url.Action("Construction", "Dictionary")';
             }
         }
 </script>

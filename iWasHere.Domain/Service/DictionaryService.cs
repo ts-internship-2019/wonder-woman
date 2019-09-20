@@ -405,6 +405,11 @@ namespace iWasHere.Domain.Service
             return country;
         }
 
+        public void UpdateConstruction(object constructionTonUpdate)
+        {
+            throw new NotImplementedException();
+        }
+
         //filtrare Country
         public List<DictionaryCountryModel> GetFilteredCountryModels(int page, int pageSize, out int count, string filterName)
         {
@@ -665,7 +670,8 @@ namespace iWasHere.Domain.Service
             }
             else
             {
-                //update
+                db.DictionaryConstructionType.Update(ConstructionToUpdate);
+                db.SaveChanges();
             }
             return 0;
         }

@@ -160,8 +160,8 @@ namespace iWasHere.Web.Controllers
                 city = _dictionaryService.GetCityInfoById(id);
             }            
             return View(city);
-        }            
-
+        }
+       
         public ActionResult SaveCity(CityModel city, string btn)
         {
             switch (btn)
@@ -186,12 +186,12 @@ namespace iWasHere.Web.Controllers
                         return RedirectToAction("AddCity", new RouteValueDictionary(city));
                     }
                     return Redirect("/Dictionary/IndexCity");
-                case "Anuleaza":                    
+                case "Anuleaza":
                     return Redirect("/Dictionary/IndexCity");
-                default:                    
+                default:
                     return Redirect("/Dictionary/IndexCity");
-            }                  
-            
+            }
+
         }
         /// <summary>
         /// Destroys the selected city
@@ -252,7 +252,7 @@ namespace iWasHere.Web.Controllers
                 result.Total = count;
             }
             return Json(result);
-        }   
+        }
 
         [HttpPost]
         public ActionResult CurrencyDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryCurrencyType currency)
@@ -371,7 +371,7 @@ namespace iWasHere.Web.Controllers
         }
 
         public IActionResult CurrencyAdd(int id)
-        {   
+        {
             if (id == 0)
             {
                 return View();
@@ -393,7 +393,7 @@ namespace iWasHere.Web.Controllers
 
         public IActionResult IndexCounty()
         {
-          
+
             return View();
         }
         public ActionResult Paging_Orders_County([DataSourceRequest] DataSourceRequest request)
@@ -447,12 +447,12 @@ namespace iWasHere.Web.Controllers
             if (id == 0)
                 return View();
             else
- 
+
                 return View(_dictionaryService.editCounty(id));
-                
+
         }
 
-    
+
         public IActionResult Construction([DataSourceRequest] DataSourceRequest request)
         {
             return View();
@@ -476,7 +476,7 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public ActionResult CurrencySubmit(DictionaryCurrencyType model, string submitButton)
         {
-            switch(submitButton)
+            switch (submitButton)
             {
                 case "Save":
                     if (_dictionaryService.CurrencyUpdateInsert(model))
@@ -502,5 +502,33 @@ namespace iWasHere.Web.Controllers
             return Json(request);
         }
 
-    }
-}
+
+        public IActionResult AddConstruction(int id)
+        {
+            DictionaryConstructionType construction = new DictionaryConstructionType();
+            if (id != 0)
+                construction = _dictionaryService.GetConstructionById(id);
+            return View(construction);
+
+
+        }
+          
+        [HttpPost]
+        public IActionResult UpdateConstruction(DictionaryConstructionType constructionUpdate, string submitButton)
+        {
+            switch (submitButton)
+            {
+                case "Salveaza":
+                    _dictionaryService.UpdateConstruction(constructionUpdate);
+                    return  Redirect("/Dictionary/Construction");
+                case "Salveaza si nou":
+                    _dictionaryService.UpdateConstruction(constructionUpdate);
+                    return Redirect("/Dictionary/AddConstruction");
+                case "Anuleaza":
+                    return Redirect("/Dictionary/Construction");
+                default:
+                    return Redirect("/Dictionary/Construction");
+                    
+            }
+        }
+    } }
