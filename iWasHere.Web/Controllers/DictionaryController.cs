@@ -283,6 +283,12 @@ namespace iWasHere.Web.Controllers
             result.Total = count;
             return Json(result);
         }
+        public ActionResult DestroyConstruction([DataSourceRequest] DataSourceRequest request, DictionaryConstructionTypeModel constructionToDelete)
+        {
+            _dictionaryService.DestroyConstruction(constructionToDelete);
+            //return Json(new[] { product }.ToDataSourceResult(request, ModelState));
+            return Json(request);
+        }
 
     }
 }

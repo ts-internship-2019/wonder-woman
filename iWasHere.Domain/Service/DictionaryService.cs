@@ -376,5 +376,56 @@ namespace iWasHere.Domain.Service
             count = 0;
             return new List<DictionaryConstructionTypeModel>();
         }
+
+        public void DestroyConstruction(DictionaryConstructionTypeModel constructionToDestroy)
+        {
+            var db = _dbContext;
+
+
+
+            var construction = db.DictionaryConstructionType.Where(pd => pd.ConstructionTypeId == constructionToDestroy.ConstructionTypeId);
+
+
+
+            foreach (var c in construction)
+            {
+                db.DictionaryConstructionType.Remove(c);
+            }
+
+
+
+            db.SaveChanges();
+        }
+        public int UpdateConstruction(DictionaryConstructionType ConstructionToUpdate)
+        {
+            var db = _dbContext;
+            if (ConstructionToUpdate.ConstructionTypeId == 0)
+            {
+                db.DictionaryConstructionType.Add(ConstructionToUpdate);
+                db.SaveChanges();
+            }
+            else
+            {
+                //update
+            }
+            return 0;
+        }
+        public DictionaryConstructionType GetConstructionById(int Id)
+        {
+
+
+
+            var query = from ct in _dbContext.DictionaryConstructionType
+                        where ct.ConstructionTypeId == Id
+                        select ct;
+
+
+
+            DictionaryConstructionType selectedConstruction = query.FirstOrDefault();
+            return selectedConstruction;
+
+
+
+        }
     }
 }

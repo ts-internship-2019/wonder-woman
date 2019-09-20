@@ -4,12 +4,19 @@
 
 
 
-<p>Index</p>
+<td>
+    @(Html.Kendo().Button()
+        .Name("addbtn")
+        .Icon("add-btn")
+        .Content("Add Construction")
+        .HtmlAttributes(new { type = "button" })
+        .Events(ev => ev.Click("onClick")))
+</td>
 <div>
     <table>
         <tr>
             <td>
-                <label for="constructionNamer">Nume:</label>
+                <label for="constructionNamer">Nume constructie:</label>
                 @(Html.Kendo().TextBox()
                     .HtmlAttributes(new
                             {
@@ -43,14 +50,15 @@
     @(Html.Kendo().Grid(Model)
             .Name("Grid")
             .Columns(columns =>
-            {                
+            {
                 columns.Bound(c => c.Code).Width(100);
                 columns.Bound(c => c.Name).Width(100);
                 columns.Bound(c => c.Description);
-                columns.Command(cmd => { cmd.Edit(); cmd.Destroy(); });
+                columns.Template("<a class='k-button' href='/Dictionary/AddConstruction?Id=#=ConstructionTypeId# '> Edit</a>").Width(150);
+                columns.Command(cmd => { cmd.Destroy(); });
             })
             .HtmlAttributes(new { style = "height: 500dp;" })
-            .Scrollable()            
+            .Scrollable()
             .Sortable()
             .Pageable(pageable => pageable
                 .Refresh(true)
@@ -61,8 +69,13 @@
                 .PageSize(5)
                 .ServerOperation(true)
                 .Read(read => read.Action("GetConstruction", "Dictionary").Data("constructionReadData"))
+                 .Model(model => model.Id(p => p.ConstructionTypeId))
+                  .Destroy(update => update.Action("DestroyConstruction", "Dictionary"))
                )
+
     )
+    )
+    </div>
     <script type="text/javascript">
         var construction = "";
         function constructionReadData() {
