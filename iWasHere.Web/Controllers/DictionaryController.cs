@@ -306,24 +306,28 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public IActionResult CountrySubmit(Country model, string btnSave)
         {
-            string errorm;
             switch (btnSave)
             {
                 case "Save":
-                    if (string.IsNullOrWhiteSpace(errorm = _dictionaryService.UpdateCountry(model)))
-                        return Redirect("/Dictionary/IndexCountry");
-                    else
+                    _dictionaryService.UpdateCountry(model, out string errorMessage2);
+                    if(!string.IsNullOrEmpty(errorMessage2))
+                    {
+                        TempData["message"] = errorMessage2;
                         return RedirectToAction("AddNewCountry", new { id = model.CountryId });
+                    }
+                    return Redirect("/Dictionary/IndexCountry");
                 case "Save and New":
-                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
-                        return Redirect("/Dictionary/AddNewCountry");
-                    else
-                        return RedirectToAction("/Dictionary/AddNewCountry", new { id = model.CountryId });
+                    _dictionaryService.UpdateCountry(model, out string errorMessage);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        TempData["message"] = errorMessage;
+                        return RedirectToAction("AddNewCountry", new { id = model.CountryId });
+                    }
+                    return Redirect("/Dictionary/IndexCountry");
                 default:
                     return Redirect("/Dictionary/IndexCountry");
             }
         }
-
 
         //paginare tari
 
