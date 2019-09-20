@@ -250,6 +250,29 @@ namespace iWasHere.Web.Controllers
         }
 
 
+        //textbox
+        //updatebutton
+        [HttpPost]
+        public IActionResult CountrySubmit(Country model, string btnSave)
+        {
+            switch (btnSave)
+            {
+                case "Save":
+                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
+                        return Redirect("/Dictionary/IndexCountry");
+                    else
+                        return RedirectToAction("AddNewCountry", new { id = model.CountryId });
+                case "Save and New":
+                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
+                        return Redirect("/Dictionary/AddNewCountry");
+                    else
+                        return RedirectToAction("/Dictionary/AddNewCountry", new { id = model.CountryId });
+                default:
+                    return Redirect("/Dictionary/IndexCountry");
+            }
+        }
+
+
         //paginare tari
 
         [HttpPost]
@@ -279,9 +302,16 @@ namespace iWasHere.Web.Controllers
             return Json(request);
         }
 
-        public IActionResult AddNewCountry()
+        public IActionResult AddNewCountry(int id)
         {
-            return View();
+            if(id == 0)
+            {
+                return View();
+            }
+            else
+            {
+                return View(_dictionaryService.editFunctionForCountry(id));
+            }
         }
 
         public IActionResult CurrencyAdd(int id)
