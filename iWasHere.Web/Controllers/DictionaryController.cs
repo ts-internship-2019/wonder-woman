@@ -232,10 +232,11 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public IActionResult CountrySubmit(Country model, string btnSave)
         {
+            string errorm;
             switch (btnSave)
             {
                 case "Save":
-                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
+                    if (string.IsNullOrWhiteSpace(errorm = _dictionaryService.UpdateCountry(model)))
                         return Redirect("/Dictionary/IndexCountry");
                     else
                         return RedirectToAction("AddNewCountry", new { id = model.CountryId });

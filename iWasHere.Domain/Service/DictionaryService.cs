@@ -419,7 +419,7 @@ namespace iWasHere.Domain.Service
             }
             catch (Exception ex)
             {
-                return ex.ToString();
+                return ex.Message;
             }
             return null;
         }
