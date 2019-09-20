@@ -96,6 +96,7 @@
         .Action("Cities_Read", "Dictionary")
         .Data("citiesReadData"))
         .Destroy(update => update.Action("DestroyCity", "Dictionary"))
+        .Events(events=>events.Error("onGridError"))
     ))
 </div>
 
@@ -111,6 +112,12 @@
                 filterCounty: county
             };
         }
+    function onGridError(e) {
+            alert(e.errors);
+            $('#Grid').data("kendoGrid").dataSource.read();
+            $('#Grid').data("kendoGrid").dataSource.page(1);           
+        }
+
         function onClick(e) {
             if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
                 $('#cityName').val(null);

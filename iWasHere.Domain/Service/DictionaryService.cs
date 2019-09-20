@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -174,22 +175,30 @@ namespace iWasHere.Domain.Service
             return dictionaryCurrencyTypes.Skip(skip).Take(pageSize).ToList(); ;
         }
 
-        public void SaveCity(CityModel city)
+        public void SaveCity(CityModel city, out string errorMessage)
         {
-            City cityToSave = new City();
-            cityToSave.CityId = city.Id;
-            cityToSave.Name = city.Name;
-            cityToSave.Code = city.Code;
-            cityToSave.CountyId = city.CountyId;
-            if (city.Id == 0)
-            {                
-                _dbContext.City.Add(cityToSave);
+            errorMessage = "";
+            try
+            {
+                City cityToSave = new City();
+                cityToSave.CityId = city.Id;
+                cityToSave.Name = city.Name;
+                cityToSave.Code = city.Code;
+                cityToSave.CountyId = city.CountyId;
+                if (city.Id == 0)
+                {
+                    _dbContext.City.Add(cityToSave);
+                }
+                else
+                {
+                    _dbContext.City.Update(cityToSave);
+                }
+                _dbContext.SaveChanges();
             }
-            else
-            {                
-                _dbContext.City.Update(cityToSave);
+            catch (Exception)
+            {
+                errorMessage = "Salvarea/Editarea nu s-a putut efectua. Te rog mai incearca";
             }
-            _dbContext.SaveChanges();
 
         }
 
@@ -248,15 +257,33 @@ namespace iWasHere.Domain.Service
         /// Destroys a city
         /// </summary>
         /// <param name="cityToDestroy"></param>
-        public void DestroyCity(CityModel cityToDestroy)
+        public void DestroyCity(CityModel cityToDestroy, out string errorMessage)
         {
-            var db = _dbContext;
-            var cities = db.City.Where(pd => pd.CityId == cityToDestroy.Id);
-            foreach (var city in cities)
+            errorMessage = "";
+            var check = _dbContext.Landmark.Where(a => a.CityId.Equals(cityToDestroy.Id));
+            if(check.Count() == 0)
             {
-                db.City.Remove(city);
+                try
+                {
+                    var db = _dbContext;
+                    var cities = db.City.Where(pd => pd.CityId == cityToDestroy.Id);
+                    foreach (var city in cities)
+                    {
+                        db.City.Remove(city);
+                    }
+                    db.SaveChanges();
+                }
+                catch(SqlException ex)
+                {
+                    errorMessage = ex.Message;
+                }
+                
             }
-            db.SaveChanges();
+            else
+            {
+                errorMessage = "Orasul nu se poate sterge deoarece are " + check.Count() + " referinte";
+            }
+            
         }
         
 

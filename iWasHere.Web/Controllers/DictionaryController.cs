@@ -10,6 +10,11 @@ using System.Web.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using iWasHere.Web.Models;
+using Microsoft.AspNetCore.Routing;
 
 namespace iWasHere.Web.Controllers
 {
@@ -139,21 +144,47 @@ namespace iWasHere.Web.Controllers
         /// Adds a new city
         /// </summary>
         /// <returns></returns>
-        public IActionResult AddCity(int id)
+        public IActionResult AddCity(int id, string name = "", string code = "", int countyId = 0, string countyName = "")
         {
-            CityModel city = _dictionaryService.GetCityInfoById(id);
+            CityModel city = new CityModel();
+            if (!string.IsNullOrEmpty(name))
+            {
+                city.Id = id;
+                city.Name = name;
+                city.Code = code;
+                city.CountyId = countyId;
+                city.CountyName = countyName;
+            }
+            else
+            {
+                city = _dictionaryService.GetCityInfoById(id);
+            }            
             return View(city);
-        }
-       
+        }            
+
         public ActionResult SaveCity(CityModel city, string btn)
         {
             switch (btn)
             {
                 case "Salveaza si Nou":
-                    _dictionaryService.SaveCity(city);
+                    _dictionaryService.SaveCity(city, out string errorMessage);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        TempData["message"] = errorMessage;
+                        
+
+                        return RedirectToAction("AddCity", new RouteValueDictionary(city));
+                    }
                     return Redirect("/Dictionary/AddCity");
                 case "Salveaza":
-                    _dictionaryService.SaveCity(city);
+                    _dictionaryService.SaveCity(city,out string errorMessage2);
+                    if (!string.IsNullOrEmpty(errorMessage2))
+                    {
+                        TempData["message"] = errorMessage2;
+                        
+
+                        return RedirectToAction("AddCity", new RouteValueDictionary(city));
+                    }
                     return Redirect("/Dictionary/IndexCity");
                 case "Anuleaza":                    
                     return Redirect("/Dictionary/IndexCity");
@@ -170,8 +201,20 @@ namespace iWasHere.Web.Controllers
         /// <returns></returns>
         public IActionResult DestroyCity([DataSourceRequest] DataSourceRequest request, CityModel cityToDestroy)
         {
-            _dictionaryService.DestroyCity(cityToDestroy);
-            return Json(request);
+            _dictionaryService.DestroyCity(cityToDestroy, out string errorMessage);
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                return Json(request);
+            }
+            else
+            {
+                return Json(new DataSourceResult
+                {
+                    Errors = errorMessage
+                });
+            }         
+
         }
         public IActionResult Currency()
         {
