@@ -2,6 +2,7 @@
 using iWasHere.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -74,7 +75,8 @@ namespace iWasHere.Domain.Service
             count = 0;
             return new List<DictionaryTicketTypeModel>();
 
-        }
+        }        
+
         public void DestroyTicket(DictionaryTicketTypeModel ticketToDestroy)
         {
             var db = _dbContext;
@@ -221,7 +223,7 @@ namespace iWasHere.Domain.Service
             }).Where(a => a.Name.Contains(name)).ToList();
             count = dictionaryLandmarkTypes.Count();
             int skip = (page - 1) * pageSize;
-            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList(); ;
+            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList();
         }           
         /// <summary>
         /// Destroys a city
@@ -242,77 +244,67 @@ namespace iWasHere.Domain.Service
         /// <summary>
         /// Gets paged cities
         /// </summary>
-        /// <param name="skipRows">Represents rows to skip to show the desired page</param>
+        /// <param name="page">Represents the page</param>
         /// <param name="pageSize">Represents the # of rows to display per page</param>
-        /// <param name="filterName">Presents the City Name to filter by</param>
-        /// <param name="filterCounty">Represents the County ID to filter by</param>
         /// <param name="totalRows">Represents the total # of records in the DB mathincg the filtering criteria</param>
         /// <returns></returns>
-        public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
+        public List<CityModel> GetAllPagedCities(int page, int pageSize, out int totalRows)
         {
-            totalRows = 0;
-            if (String.IsNullOrEmpty(filterName) && filterCounty == 0)
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Select(a => new CityModel
             {
-                var query = _dbContext.City.Include(b => b.County);
-                var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                totalRows = query.Count();
-                var cities = page.Select(p => p);
-                return cities.ToList();
-            }
-            if (!String.IsNullOrEmpty(filterName))
-            {
-                if(filterCounty > 0)
-                {
-                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County).Where(b => b.CountyId.Equals(filterCounty));
-                    var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = query.Count();
-                    var cities = page.Select(p => p);
-                    return cities.ToList();
-                }
-                else
-                {
-                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County);
-                    var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = query.Count();
-                    var cities = page.Select(p => p);
-                    return cities.ToList();
-                }
-            }
-            return new List<CityModel>();
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
         }
+        public List<CityModel> GetFilteredPagedCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Where(a=>a.Name.Contains(filterName)).Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+        public List<CityModel> GetFilteredOnlyByNamePagedCities(int page, int pageSize, string filterName, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Where(a => a.Name.Contains(filterName)).Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+        public List<CityModel> GetFilteredOnlyByCountyPagedCities(int page, int pageSize, int filterCounty, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+
         /// <summary>
         /// Simple service method to get Counties for ComboBox
         /// </summary>

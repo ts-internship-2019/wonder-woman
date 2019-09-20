@@ -61,14 +61,35 @@ namespace iWasHere.Web.Controllers
         /// <returns></returns>
         public IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
         {
-            if (String.IsNullOrEmpty(filterName))
-            {
-                filterName = "";
-            }
             DataSourceResult result = new DataSourceResult();
-            List<CityModel> list = GetCities(request.Page, request.PageSize, filterName, filterCounty, out int totalRows);
-            result.Data = list;
-            result.Total = totalRows;
+            if (string.IsNullOrWhiteSpace(filterName))
+            {
+                if (filterCounty == 0)
+                {
+                    result.Data = _dictionaryService.GetAllPagedCities(request.Page, request.PageSize, out int count);
+                    result.Total = count;
+                }
+                else
+                {
+                    result.Data = _dictionaryService.GetFilteredOnlyByCountyPagedCities(request.Page, request.PageSize, filterCounty, out int count);
+                    result.Total = count;
+                }
+                
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(filterName) && filterCounty > 0)
+                {
+                    result.Data = _dictionaryService.GetFilteredPagedCities(request.Page, request.PageSize, filterName, filterCounty, out int count);
+                    result.Total = count;
+                }
+                else if(!string.IsNullOrWhiteSpace(filterName) && filterCounty == 0)
+                {
+                    result.Data = _dictionaryService.GetFilteredOnlyByNamePagedCities(request.Page, request.PageSize, filterName, out int count);
+                    result.Total = count;
+                }
+                
+            }
             return Json(result);
         }
         /// <summary>
@@ -77,11 +98,7 @@ namespace iWasHere.Web.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         public JsonResult Couties_Read_ForCB(string text)
-        {
-            if (String.IsNullOrEmpty(text))
-            {
-                text = "";
-            }
+        {            
             List<CountyModel> result = GetCountiesForCB(text);
             return Json(result);
         }
@@ -93,21 +110,10 @@ namespace iWasHere.Web.Controllers
         {
             List<CountyModel> countyModels = _dictionaryService.GetCounties(filterCounty);
             return countyModels;
-        }
-        /// <summary>
-        /// Test Gets Cities as a List<>
-        /// </summary>
-        /// <returns></returns>
-        private List<CityModel> GetCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
-        {
-            int skipRows = (page - 1) * pageSize;
-            List<CityModel> cityModels = _dictionaryService.GetAllPagedCities(skipRows, pageSize, filterName, filterCounty, out int rowsCount);
-            totalRows = rowsCount;
-            return cityModels;
-        }
+        }      
 
         /// <summary>
-        /// NOT IMplemeted Yet
+        /// Adds a new city
         /// </summary>
         /// <returns></returns>
         public IActionResult AddCity(int id)
@@ -321,11 +327,8 @@ namespace iWasHere.Web.Controllers
         }
 
         public JsonResult Countries_Read_ForCB(string text)
-        {
-            //DataSourceResult result = new DataSourceResult();
-            List<DictionaryCountryModel> list = GetCountriesForCB(text);
-            //result.Data = list;
-          //  DataSourceResult result = GetCountriesForCB(text);
+        {            
+            List<DictionaryCountryModel> list = GetCountriesForCB(text);          
             return Json(list);
         }
 
