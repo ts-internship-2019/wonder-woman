@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace iWasHere.Domain.Service
 {
@@ -231,10 +232,7 @@ namespace iWasHere.Domain.Service
                 Code = a.Code,
                 ParentId = a.ParentId
             }).Skip(skip).Take(pageSize).ToList();
-
             return country;
-        
-    
         }
 
         //filtrare Country
@@ -264,6 +262,11 @@ namespace iWasHere.Domain.Service
             db.SaveChanges();
         }
 
+        //edit with values
+        public Country editFunctionForCountry(int id)
+        {
+            return _dbContext.Country.First(a => a.CountryId == id);
+        }
 
         public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
         {
@@ -279,6 +282,28 @@ namespace iWasHere.Domain.Service
             }).Skip(skip).Take(pageSize).ToList();
 
             return listCounties ;
+        }
+
+        //updatenewpage
+        public string UpdateCountry(Country country)
+        {
+            if(country.CountryId == 0)
+            {
+                _dbContext.Country.Add(country);
+            }
+            else
+            {
+                _dbContext.Country.Update(country);
+            }
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+            return null;
         }
 
         public List<CountyModel> GetAllPagedCounties(int skipRows, int pageSize, string filterName, int filterCountry, out int totalRows)

@@ -7,7 +7,7 @@
     @(Html.Kendo().Button()
         .Name("btnAdd")
         .Content("Add Country")
-        .HtmlAttributes(new { type = "button" })
+        .HtmlAttributes(new { type = "button" , style = "background:green" })
         .Events(ev => ev.Click("onClick")))
 </div>
 
@@ -20,7 +20,7 @@
                 @(Html.Kendo().TextBox()
                     .HtmlAttributes(new
                             {
-                        id = "filterName"
+                        id = "filterName",
                             })
                     .Name("filterName")
                     .Value("")
@@ -31,7 +31,7 @@
                     .Name("filterBtn")
                     .Content("Filter")
                     .Icon("filter")
-                    .HtmlAttributes(new { type = "button" })
+                    .HtmlAttributes(new { type = "button", style = "background: blue" })
                     .Events(ev => ev.Click("onClick")))
             </td>
             <td>
@@ -39,7 +39,7 @@
                     .Name("clearFilterBtn")
                     .Icon("clear-filter")
                     .Content("Reset Filter")
-                    .HtmlAttributes(new { type = "button" })
+                    .HtmlAttributes(new { type = "button", style = "background: blue" })
                     .Events(ev => ev.Click("onClick")))
             </td>
         </tr>
@@ -53,11 +53,11 @@
                 {
                     columns.Bound(c => c.Name).Title("Country Name");
                     columns.Bound(c => c.Code).Title("Country Code");
-                    columns.Command(d => { d.Custom("Edit"); d.Destroy(); });
+                    columns.Template("<a class='k-button' href='/Dictionary/AddNewCountry?Id=#=CountryId# '>Edit</a>").Width(150);
+                    columns.Command(d => { /*d.Custom("Edit");*/ d.Destroy(); });
                 })
-                .HtmlAttributes(new { style = "height: 380px;" })
+                .HtmlAttributes(new { style = "height: 380px"})
                 .Scrollable()
-                .Groupable()
                 .Sortable()
                 .Pageable(pageable => pageable
                     .Refresh(true)
@@ -66,13 +66,12 @@
                 .DataSource(dataSource => dataSource
                     .Ajax()
                     .Read(read => read.Action("Paging_Orders_Country", "Dictionary").Data("filterName"))
-                    
+
                     .ServerOperation(true)
                     .Model(model => model.Id(p => p.CountryId))
                     .Destroy(update => update.Action("DestroyCountry", "Dictionary")))
                 .Scrollable(scr => scr.Height(430))
 )
-
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -83,31 +82,9 @@ $(document).ready(function () {
 });
 </script>
 
-<div id="grid"></div>
-<script>
-    $("#grid").kendoGrid({
-        columns: [
-            { field: "CountryName" },
-            { field: "CountryCode" },
-            {
-                command: [
-                    {
-                        name: "Edit",
-                        click: function (e) {
-                             window.location = '@Url.Action("AddNewCountry", "Dictionary")';
-                        }
-                    },
-                    {
-                        name: "destroy",
-                    }
-                ]
-            }
-        ],
-    });
-</script>
-
 
 <script type="text/javascript">
+
     var name;
     function filterName() {
         return {
