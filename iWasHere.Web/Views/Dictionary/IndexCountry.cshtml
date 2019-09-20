@@ -53,7 +53,8 @@
                 {
                     columns.Bound(c => c.Name).Title("Country Name");
                     columns.Bound(c => c.Code).Title("Country Code");
-                    columns.Command(d => { d.Custom("Edit"); d.Destroy(); });
+                    columns.Template("<a class='k-button' href='/Dictionary/AddNewCountry?Id=#=CountryId# '> Editeaza </a>").Width(150);
+                    columns.Command(d => { /*d.Custom("Edit");*/ d.Destroy(); });
                 })
                 .HtmlAttributes(new { style = "height: 380px;" })
                 .Scrollable()
@@ -66,7 +67,7 @@
                 .DataSource(dataSource => dataSource
                     .Ajax()
                     .Read(read => read.Action("Paging_Orders_Country", "Dictionary").Data("filterName"))
-                    
+
                     .ServerOperation(true)
                     .Model(model => model.Id(p => p.CountryId))
                     .Destroy(update => update.Action("DestroyCountry", "Dictionary")))
@@ -81,29 +82,6 @@ $(document).ready(function () {
       window.location = '@Url.Action("AddNewCountry", "Dictionary")';
   });
 });
-</script>
-
-<div id="grid"></div>
-<script>
-    $("#grid").kendoGrid({
-        columns: [
-            { field: "CountryName" },
-            { field: "CountryCode" },
-            {
-                command: [
-                    {
-                        name: "Edit",
-                        click: function (e) {
-                             window.location = '@Url.Action("AddNewCountry", "Dictionary")';
-                        }
-                    },
-                    {
-                        name: "destroy",
-                    }
-                ]
-            }
-        ],
-    });
 </script>
 
 
