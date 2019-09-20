@@ -7,7 +7,7 @@
     @(Html.Kendo().Button()
         .Name("btnAdd")
         .Content("Add Country")
-        .HtmlAttributes(new { type = "button" })
+        .HtmlAttributes(new { type = "button" , style = "background:green" })
         .Events(ev => ev.Click("onClick")))
 </div>
 
@@ -20,7 +20,7 @@
                 @(Html.Kendo().TextBox()
                     .HtmlAttributes(new
                             {
-                        id = "filterName"
+                        id = "filterName",
                             })
                     .Name("filterName")
                     .Value("")
@@ -31,7 +31,7 @@
                     .Name("filterBtn")
                     .Content("Filter")
                     .Icon("filter")
-                    .HtmlAttributes(new { type = "button" })
+                    .HtmlAttributes(new { type = "button", style = "background: blue" })
                     .Events(ev => ev.Click("onClick")))
             </td>
             <td>
@@ -39,7 +39,7 @@
                     .Name("clearFilterBtn")
                     .Icon("clear-filter")
                     .Content("Reset Filter")
-                    .HtmlAttributes(new { type = "button" })
+                    .HtmlAttributes(new { type = "button", style = "background: blue" })
                     .Events(ev => ev.Click("onClick")))
             </td>
         </tr>
@@ -53,12 +53,11 @@
                 {
                     columns.Bound(c => c.Name).Title("Country Name");
                     columns.Bound(c => c.Code).Title("Country Code");
-                    columns.Template("<a class='k-button' href='/Dictionary/AddNewCountry?Id=#=CountryId# '> Editeaza </a>").Width(150);
+                    columns.Template("<a class='k-button' href='/Dictionary/AddNewCountry?Id=#=CountryId# '>Edit</a>").Width(150);
                     columns.Command(d => { /*d.Custom("Edit");*/ d.Destroy(); });
                 })
-                .HtmlAttributes(new { style = "height: 380px;" })
+                .HtmlAttributes(new { style = "height: 380px"})
                 .Scrollable()
-                .Groupable()
                 .Sortable()
                 .Pageable(pageable => pageable
                     .Refresh(true)
@@ -74,7 +73,6 @@
                 .Scrollable(scr => scr.Height(430))
 )
 
-
 <script type="text/javascript">
 $(document).ready(function () {
     $('#btnAdd').click(function (e)
@@ -86,6 +84,7 @@ $(document).ready(function () {
 
 
 <script type="text/javascript">
+
     var name;
     function filterName() {
         return {

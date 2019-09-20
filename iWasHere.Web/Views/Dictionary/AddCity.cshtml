@@ -1,15 +1,70 @@
-﻿
+﻿@model iWasHere.Domain.DTOs.CityModel
+@using Kendo.Mvc.UI
 @{
-    Layout = null;
+    ViewData["Title"] = "AddCity";
 }
 
-<!DOCTYPE html>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>AddCity</title>
-</head>
-<body>
-</body>
-</html>
+@using (Html.BeginForm("SaveCity", "Dictionary", FormMethod.Post))
+{
+
+    <div>
+        <table>
+            <tr>
+                <td>
+                    <label for="cityName">Nume Oras:</label>
+                    @(Html.Kendo().TextBoxFor(a => a.Name)
+
+                    )
+                </td>
+                <td>
+                    <label for="cityCode">Cod Oras:</label>
+                    @(Html.Kendo().TextBoxFor(a => a.Code)
+
+                    )
+                </td>
+                <td>
+                    <label for="countiesCB">Nume Judet:</label>
+                </td>
+                <td>
+                    @(Html.Kendo().ComboBoxFor(a => a.CountyId)
+                            .Placeholder("Selecteaza judet")
+                            .DataTextField("Name")
+                            .DataValueField("CountyId")
+                            .HtmlAttributes(new { style = "width:100%;" })
+                            .Filter(FilterType.Contains)
+                            .AutoBind(false)
+                            .MinLength(3)
+                            .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                {
+                                    read.Action("Couties_Read_ForCB", "Dictionary");
+                                })
+                                    .ServerFiltering(true);
+                                })
+                            .Text(Model.CountyName)
+                    )
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <input type="submit" name="btn" value="Salveaza" />
+    @Html.HiddenFor(a => a.Id)
+    if (Model.Id == 0)
+    {
+        <input type="submit" name="btn" value="Salveaza si Nou" />
+    }
+    <input type="submit" name="btn" value="Anuleaza" />
+}
+
+
+
+
+
+
+
+
+
