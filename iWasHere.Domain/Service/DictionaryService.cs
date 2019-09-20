@@ -15,6 +15,19 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
         }
 
+        public void CurrencyUpdateInsert(DictionaryCurrencyType model)
+        {
+            if (model.CurrencyTypeId == 0)
+            {
+                _dbContext.DictionaryCurrencyType.Add(model);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                _dbContext.DictionaryCurrencyType.Update(model);
+                _dbContext.SaveChanges();
+            }
+        }
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
@@ -89,7 +102,39 @@ namespace iWasHere.Domain.Service
                 CurrencyCountry = a.CurrencyCountry
             }).Skip(skip).Take(pageSize).ToList();
             count = _dbContext.DictionaryCurrencyType.Count();
+
             return dictionaryCurrencyTypes;
+        }
+
+        public void CurrencyDelete(int id)
+        {
+            DictionaryCurrencyType deleted = _dbContext.DictionaryCurrencyType.First(a => a.CurrencyTypeId == id);
+            _dbContext.DictionaryCurrencyType.Remove(deleted);
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+            }
+        }
+
+        public void LandmarkDelete(int id)
+        {
+            DictionaryLandmarkType deleted = _dbContext.DictionaryLandmarkType.First(a => a.LandmarkTypeId == id);
+            _dbContext.DictionaryLandmarkType.Remove(deleted);
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public DictionaryCurrencyType GetCurrencyModel(int id)
+        {
+            return _dbContext.DictionaryCurrencyType.First(a => a.CurrencyTypeId == id);
         }
 
         public List<DictionaryCurrencyType> GetFilteredDictionaryCurrencyTypeModels(int page, int pageSize, string name, out int count)
