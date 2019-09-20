@@ -3,32 +3,35 @@
 @model iWasHere.Domain.Models.DictionaryLandmarkType
 
 @(Html.Kendo().TextBox()
-                        .HtmlAttributes(new
-                            {
-                                id = "filterName"
-                            })
-                        .Name("filterName")
+    .HtmlAttributes(new
+    {
+        id = "filterName"
+    })
+    .Name("filterName")
 )
 
 @(Html.Kendo().Button()
-                        .Name("filterBtn")
-                        .Content("Search")
-                        .Icon("filter")
-                        .HtmlAttributes(new { type = "button" })
-                        .Events(ev => ev.Click("onClick")))
+    .Name("filterBtn")
+    .Content("Search")
+    .Icon("filter")
+    .HtmlAttributes(new { type = "button" })
+    .Events(ev => ev.Click("onClick"))
+)
 
 @(Html.Kendo().Button()
     .Name("clearFilterBtn")
     .Icon("clear-filter")
     .Content("Reset")
     .HtmlAttributes(new { type = "button" })
-    .Events(ev => ev.Click("onClick")))
+    .Events(ev => ev.Click("onClick"))
+)
 
 @(Html.Kendo().Button()
-.Name("addNewBtn")
-.Content("Add New")
-.HtmlAttributes(new { type = "button" })
-.Events(ev => ev.Click("onClick")))
+    .Name("addNewBtn")
+    .Content("Add New")
+    .HtmlAttributes(new { type = "button" })
+    .Events(ev => ev.Click("onClick"))
+)
 
 
 @(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryLandmarkType>
@@ -53,6 +56,8 @@
     .ServerOperation(true)
     .PageSize(10)
     .Read(read => read.Action("LandmarkTypeRead", "Dictionary").Data("getfilter"))
+    .Model(m => m.Id(p => p.LandmarkTypeId))
+    .Destroy(destroy => destroy.Action("LandmarkDestroy", "Dictionary"))
     )
 )
 

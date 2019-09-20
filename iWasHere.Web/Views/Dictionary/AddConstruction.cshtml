@@ -1,0 +1,36 @@
+﻿@model iWasHere.Domain.Models.DictionaryConstructionType
+@{
+    ViewData["Title"] = "AddConstruction";
+}
+
+
+
+
+@using (Html.BeginForm("UpdateConstruction", "Dictionary", FormMethod.Post))
+{
+    <div>
+        <span>Nume Bilet:</span> @Html.TextBoxFor(m => m.Name)
+        <br />
+        <span>Cod Bilet: </span> @Html.TextBoxFor(m => m.Code)
+        <br />
+        <span>Descriere: </span>@Html.TextBoxFor(m => m.Description)
+        <br />
+        <input type="submit" name="submitButton" value="Salveaza" />
+        @(Html.Kendo().Button()
+            .Name("back")
+            .Content("Inapoi")
+            .HtmlAttributes(new { type = "button" })
+            .Events(ev => ev.Click("onClick")))
+
+
+
+    </div>
+}
+<script>
+
+    function onClick(e) {
+            if ($(e.event.target).closest(".k-button").attr("id") == "back") {
+                 window.location = '@Url.Action("UpdateConstruction", "Dictionary")';
+            }
+        }
+</script>
