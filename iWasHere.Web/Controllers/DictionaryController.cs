@@ -16,8 +16,8 @@ namespace iWasHere.Web.Controllers
     public class DictionaryController : Controller
     {
         private readonly DictionaryService _dictionaryService;
-    
-   
+
+
 
         public DictionaryController(DictionaryService dictionaryService)
         {
@@ -50,7 +50,7 @@ namespace iWasHere.Web.Controllers
         }
 
         public IActionResult IndexCity()
-        {            
+        {
             return View();
         }
         /// <summary>
@@ -59,13 +59,13 @@ namespace iWasHere.Web.Controllers
         /// <param name="request"></param>
         /// <param name="filterName"></param>
         /// <returns></returns>
-        public  IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
-        {            
+        public IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
+        {
             if (String.IsNullOrEmpty(filterName))
             {
                 filterName = "";
-            }            
-            DataSourceResult result = new DataSourceResult();            
+            }
+            DataSourceResult result = new DataSourceResult();
             List<CityModel> list = GetCities(request.Page, request.PageSize, filterName, filterCounty, out int totalRows);
             result.Data = list;
             result.Total = totalRows;
@@ -82,7 +82,7 @@ namespace iWasHere.Web.Controllers
             {
                 text = "";
             }
-            List<CountyModel> result = GetCountiesForCB(text);            
+            List<CountyModel> result = GetCountiesForCB(text);
             return Json(result);
         }
         /// <summary>
@@ -99,21 +99,51 @@ namespace iWasHere.Web.Controllers
         /// </summary>
         /// <returns></returns>
         private List<CityModel> GetCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
-        {            
+        {
             int skipRows = (page - 1) * pageSize;
             List<CityModel> cityModels = _dictionaryService.GetAllPagedCities(skipRows, pageSize, filterName, filterCounty, out int rowsCount);
             totalRows = rowsCount;
             return cityModels;
         }
+
         /// <summary>
         /// NOT IMplemeted Yet
         /// </summary>
         /// <returns></returns>
-        public IActionResult AddCity()
+        public IActionResult AddCity(int id)
         {
-            return View();
+            CityModel city = _dictionaryService.GetCityInfoById(id);
+            return View(city);
         }
-
+       
+        public ActionResult SaveCity(CityModel city, string btn)
+        {
+            switch (btn)
+            {
+                case "Salveaza si Nou":
+                    _dictionaryService.SaveCity(city);
+                    return Redirect("/Dictionary/AddCity");
+                case "Salveaza":
+                    _dictionaryService.SaveCity(city);
+                    return Redirect("/Dictionary/IndexCity");
+                case "Anuleaza":                    
+                    return Redirect("/Dictionary/IndexCity");
+                default:                    
+                    return Redirect("/Dictionary/IndexCity");
+            }                  
+            
+        }
+        /// <summary>
+        /// Destroys the selected city
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cityToDestroy"></param>
+        /// <returns></returns>
+        public IActionResult DestroyCity([DataSourceRequest] DataSourceRequest request, CityModel cityToDestroy)
+        {
+            _dictionaryService.DestroyCity(cityToDestroy);
+            return Json(request);
+        }
         public IActionResult Currency()
         {
             return View();
