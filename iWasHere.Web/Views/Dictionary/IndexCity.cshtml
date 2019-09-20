@@ -3,107 +3,114 @@
 @{
     ViewData["Title"] = "IndexCity";
 }
-    <div>
-        <table>
-            <tr>
-                <td>
-                    <label for="cityNamer">Nume Oras:</label>
-                    @(Html.Kendo().TextBox()
-                        .HtmlAttributes(new {
-                            id = "cityName" })
-                        .Name("cityName")
-                        .Value("")
-                    )
-                </td>
-                <td>
-                    <label for="countiesCB">Nume Judet:</label>
-                </td>
-                <td>
-                    @(Html.Kendo().ComboBox()
-          .Name("counties")
-          .Placeholder("Selecteaza judet")
-          .DataTextField("Name")
-          .DataValueField("Id")
-          .HtmlAttributes(new { style = "width:100%;" })
-          .Filter(FilterType.Contains)
-          .AutoBind(false)
-          .MinLength(3)
-          .DataSource(source =>
-          {
-              source.Read(read =>
-              {
-                  read.Action("Couties_Read_ForCB", "Dictionary");
-              })
-              .ServerFiltering(true);
-          })
-                    )
-                </td>
-                <td>
-                    @(Html.Kendo().Button()
-                        .Name("filterBtn")
-                        .Content("Filtreaza")
-                        .Icon("filter")
-                        .HtmlAttributes(new { type = "button" })
-                        .Events(ev => ev.Click("onClick")))
-                </td>
-                <td>
-                    @(Html.Kendo().Button()
-                        .Name("clearFilterBtn")
-                        .Icon("clear-filter")
-                        .Content("Reseteaza Filtru")
-                        .HtmlAttributes(new { type = "button" })
-                        .Events(ev => ev.Click("onClick")))
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div>
-        @(Html.Kendo().Grid(Model)
-        .Name("Grid")
-        .Columns(columns =>
-        {            
-            columns.Bound(c => c.Name).Width(140).Column.Title = "Nume";
-            columns.Bound(c => c.Code).Width(190).Column.Title = "Cod";
-            columns.Bound(c => c.CountyName).Width(190).Column.Title = "Judet";
-            columns.Command(command => { command.Edit(); command.Destroy(); }).Width(172).Column.Title = "Actiuni";
 
-        })
-        .HtmlAttributes(new { style = "height: 500dp;" })
-        .Scrollable()
-        .Sortable()
-        .Pageable(pageable => pageable
-                .Refresh(true)
-                .PageSizes(new[] { 5, 10, 30, 50, 100 })
-                .ButtonCount(10))
-        .DataSource(dataSource => dataSource
-            .Ajax()
-            .ServerOperation(true)
-            .PageSize(20)
-            .Read(read => read
-            .Action("Cities_Read", "Dictionary")
-            .Data("citiesReadData"))
-            )
-        )
-    </div>
+<div>
+    @(Html.Kendo().Button()
+                    .Name("addCityBtn")
+                    .Content("Adauga Oras")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+</div>
+<div>
+    <table>
+        <tr>
+            <td>
+                <label for="cityNamer">Nume Oras:</label>
+                @(Html.Kendo().TextBox()
+                    .HtmlAttributes(new
+                            {
+                        id = "cityName"
+                            })
+                    .Name("cityName")
+                    .Value("")
+                )
+            </td>
+            <td>
+                <label for="countiesCB">Nume Judet:</label>
+            </td>
+            <td>
+                @(Html.Kendo().ComboBox()
+                        .Name("counties")
+                        .Placeholder("Selecteaza judet")
+                        .DataTextField("Name")
+                        .DataValueField("Id")
+                        .HtmlAttributes(new { style = "width:100%;" })
+                        .Filter(FilterType.Contains)
+                        .AutoBind(false)
+                        .MinLength(3)
+                        .DataSource(source =>
+                            {
+                                source.Read(read =>
+                            {
+                                read.Action("Couties_Read_ForCB", "Dictionary");
+                            })
+                                .ServerFiltering(true);
+                            })
+                )
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("filterBtn")
+                    .Content("Filtreaza")
+                    .Icon("filter")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("clearFilterBtn")
+                    .Icon("clear-filter")
+                    .Content("Reseteaza Filtru")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+        </tr>
+    </table>
+</div>
+<div>
+    @(Html.Kendo().Grid(Model)
+    .Name("Grid")
+    .Columns(columns =>
+    {
+        columns.Bound(c => c.Id).Column.Hidden = true;
+        columns.Bound(c => c.Name).Width(140).Column.Title = "Nume";
+        columns.Bound(c => c.Code).Width(70).Column.Title = "Cod";
+        columns.Bound(c => c.CountyName).Width(120).Column.Title = "Judet";
+        columns.Template("<a class='k-button' href='/Dictionary/AddCity?Id=#=Id# '> Editeaza </a>").Width(70).Column.Title = "Editeaza";
+        columns.Command(command => { command.Destroy().Text("Sterge Oras"); }).Width(70).Column.Title = "Sterge";
 
-    <div>
-        @(Html.Kendo().Button()
-                        .Name("addCityBtn")
-                        .Content("Adauga Oras")
-                        .HtmlAttributes(new { type = "button" })
-                        .Events(ev => ev.Click("onClick")))
-    </div>
+    })
+    .HtmlAttributes(new { style = "height: 400dp;" })
+    .Scrollable()
+    .Sortable()
+    .Pageable(pageable => pageable
+            .Refresh(true)
+            .PageSizes(new[] { 5, 10, 30, 50, 100 })
+            .ButtonCount(10))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .ServerOperation(true)
+        .PageSize(20)
+        .Model(model => model.Id(p => p.Id))
+        .Read(read => read
+        .Action("Cities_Read", "Dictionary")
+        .Data("citiesReadData"))
+        .Destroy(update => update.Action("DestroyCity", "Dictionary"))
+    ))
+</div>
 
-    <script type="text/javascript">
+
+
+<script type="text/javascript">
         var city = "";
-        var county = 0; 
-        
-        function citiesReadData() {            
+        var county = 0;
+
+        function citiesReadData() {
             return {
                 filterName: city,
                 filterCounty: county
             };
-        }        
+        }
         function onClick(e) {
             if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
                 $('#cityName').val(null);
@@ -118,8 +125,12 @@
                 $('#Grid').data("kendoGrid").dataSource.read();
                 $('#Grid').data("kendoGrid").dataSource.page(1);
             }
+            if ($(e.event.target).closest(".k-button").attr("id") == "addCityBtn") {
+                 window.location = '@Url.Action("AddCity", "Dictionary")';
+            }
         }
-    </script>
+</script>
+
 
 
 

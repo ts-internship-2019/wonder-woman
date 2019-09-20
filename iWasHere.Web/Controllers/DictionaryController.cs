@@ -16,8 +16,8 @@ namespace iWasHere.Web.Controllers
     public class DictionaryController : Controller
     {
         private readonly DictionaryService _dictionaryService;
-    
-   
+
+
 
         public DictionaryController(DictionaryService dictionaryService)
         {
@@ -63,7 +63,7 @@ namespace iWasHere.Web.Controllers
             Tickets(new DataSourceRequest());
         }
         public IActionResult IndexCity()
-        {            
+        {
             return View();
         }
         /// <summary>
@@ -72,13 +72,13 @@ namespace iWasHere.Web.Controllers
         /// <param name="request"></param>
         /// <param name="filterName"></param>
         /// <returns></returns>
-        public  IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
-        {            
+        public IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
+        {
             if (String.IsNullOrEmpty(filterName))
             {
                 filterName = "";
-            }            
-            DataSourceResult result = new DataSourceResult();            
+            }
+            DataSourceResult result = new DataSourceResult();
             List<CityModel> list = GetCities(request.Page, request.PageSize, filterName, filterCounty, out int totalRows);
             result.Data = list;
             result.Total = totalRows;
@@ -95,7 +95,7 @@ namespace iWasHere.Web.Controllers
             {
                 text = "";
             }
-            List<CountyModel> result = GetCountiesForCB(text);            
+            List<CountyModel> result = GetCountiesForCB(text);
             return Json(result);
         }
         /// <summary>
@@ -112,21 +112,51 @@ namespace iWasHere.Web.Controllers
         /// </summary>
         /// <returns></returns>
         private List<CityModel> GetCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
-        {            
+        {
             int skipRows = (page - 1) * pageSize;
             List<CityModel> cityModels = _dictionaryService.GetAllPagedCities(skipRows, pageSize, filterName, filterCounty, out int rowsCount);
             totalRows = rowsCount;
             return cityModels;
         }
+
         /// <summary>
         /// NOT IMplemeted Yet
         /// </summary>
         /// <returns></returns>
-        public IActionResult AddCity()
+        public IActionResult AddCity(int id)
         {
-            return View();
+            CityModel city = _dictionaryService.GetCityInfoById(id);
+            return View(city);
         }
-
+       
+        public ActionResult SaveCity(CityModel city, string btn)
+        {
+            switch (btn)
+            {
+                case "Salveaza si Nou":
+                    _dictionaryService.SaveCity(city);
+                    return Redirect("/Dictionary/AddCity");
+                case "Salveaza":
+                    _dictionaryService.SaveCity(city);
+                    return Redirect("/Dictionary/IndexCity");
+                case "Anuleaza":                    
+                    return Redirect("/Dictionary/IndexCity");
+                default:                    
+                    return Redirect("/Dictionary/IndexCity");
+            }                  
+            
+        }
+        /// <summary>
+        /// Destroys the selected city
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cityToDestroy"></param>
+        /// <returns></returns>
+        public IActionResult DestroyCity([DataSourceRequest] DataSourceRequest request, CityModel cityToDestroy)
+        {
+            _dictionaryService.DestroyCity(cityToDestroy);
+            return Json(request);
+        }
         public IActionResult Currency()
         {
             return View();
@@ -138,20 +168,53 @@ namespace iWasHere.Web.Controllers
         }
 
         [HttpPost]
+        public ActionResult Index(DictionaryCurrencyType model)
+        {
+            int currencyTypeId = model.CurrencyTypeId;
+            string name = model.Name;
+            string code = model.Code;
+            string description = model.Description;
+
+            return View();
+        }
+
+        [HttpPost]
         public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string filterName)
         {
             DataSourceResult result = new DataSourceResult();
             if (string.IsNullOrWhiteSpace(filterName))
             {
-                result.Data = _dictionaryService.GetLandmarkTypeModels(request.Page, request.PageSize, out int count);
+                result.Data = _dictionaryService.GetDictionaryCurrencyTypeModels(request.Page, request.PageSize, out int count);
                 result.Total = count;
             }
             else
             {
-                result.Data = _dictionaryService.GetFilteredLandmarkTypeModels(request.Page, request.PageSize, filterName, out int count);
+                result.Data = _dictionaryService.GetFilteredDictionaryCurrencyTypeModels(request.Page, request.PageSize, filterName, out int count);
                 result.Total = count;
             }
             return Json(result);
+        }   
+
+        [HttpPost]
+        public ActionResult CurrencyDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryCurrencyType currency)
+        {
+            if (currency != null && ModelState.IsValid)
+            {
+                _dictionaryService.CurrencyDelete(currency.CurrencyTypeId);
+            }
+
+            return Json(ModelState.ToDataSourceResult());
+        }
+
+        [HttpPost]
+        public ActionResult LandmarkDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryLandmarkType landmark)
+        {
+            if (landmark != null && ModelState.IsValid)
+            {
+                _dictionaryService.LandmarkDelete(landmark.LandmarkTypeId);
+            }
+
+            return Json(ModelState.ToDataSourceResult());
         }
 
         [HttpPost]
@@ -211,9 +274,18 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public IActionResult CurrencyAdd()
-        {
-            return View();
+        public IActionResult CurrencyAdd(int id)
+        {   
+            if (id == 0)
+            {
+                return View();
+            }
+            else
+            {
+                DictionaryCurrencyType model = new DictionaryCurrencyType();
+                model = _dictionaryService.GetCurrencyModel(id);
+                return View(model);
+            }
         }
 
         public IActionResult LandmarkAdd()
@@ -261,25 +333,30 @@ namespace iWasHere.Web.Controllers
             return countyModels;
         }
 
-        public IActionResult Countries_Read_ForCB([DataSourceRequest] DataSourceRequest request)
+        public JsonResult Countries_Read_ForCB(string text)
         {
             //DataSourceResult result = new DataSourceResult();
-            //List<CountyModel> list = GetCountiesForCB();
+            List<DictionaryCountryModel> list = GetCountriesForCB(text);
             //result.Data = list;
-            DataSourceResult result = GetCountriesForCB().ToDataSourceResult(request);
-            return Json(result);
+          //  DataSourceResult result = GetCountriesForCB(text);
+            return Json(list);
         }
 
-        public List<DictionaryCountryModel> GetCountriesForCB()
+        public List<DictionaryCountryModel> GetCountriesForCB(string text)
         {
-            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountries();
+            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountries(text);
             return countryModels;
         }
 
 
-        public IActionResult AddNewCounty()
+        public IActionResult AddNewCounty(int id)
         {
-            return View();
+            if (id == 0)
+                return View();
+            else
+ 
+                return View(_dictionaryService.editCounty(id));
+                
         }
 
     
@@ -295,6 +372,36 @@ namespace iWasHere.Web.Controllers
             result.Data = dictionaryConstructionType;
             result.Total = count;
             return Json(result);
+        }
+        public ActionResult DestroyConstruction([DataSourceRequest] DataSourceRequest request, DictionaryConstructionTypeModel constructionToDelete)
+        {
+            _dictionaryService.DestroyConstruction(constructionToDelete);
+            //return Json(new[] { product }.ToDataSourceResult(request, ModelState));
+            return Json(request);
+        }
+
+        [HttpPost]
+        public ActionResult CurrencySubmit(DictionaryCurrencyType model, string submitButton)
+        {
+            switch(submitButton)
+            {
+                case "Save":
+                    _dictionaryService.CurrencyUpdateInsert(model);
+                    return Redirect("/Dictionary/Currency");
+
+                case "Save and New":
+                    _dictionaryService.CurrencyUpdateInsert(model);
+                    return Redirect("/Dictionary/CurrencyAdd");
+
+                default:
+                    return Redirect("/Dictionary/Currency");
+            }
+        }
+        public ActionResult DestroyCounty([DataSourceRequest] DataSourceRequest request, CountyModel countyToDelete)
+        {
+            _dictionaryService.DestroyCounty(countyToDelete);
+            //return Json(new[] { product }.ToDataSourceResult(request, ModelState));
+            return Json(request);
         }
 
     }
