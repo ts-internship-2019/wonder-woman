@@ -3,33 +3,35 @@
 @model iWasHere.Domain.Models.DictionaryCurrencyType
 
 @(Html.Kendo().TextBox()
-                        .HtmlAttributes(new
-                            {
-                                id = "filterName"
-                            })
-                        .Name("filterName")
+     .HtmlAttributes(new
+     {
+        id = "filterName"
+     })
+     .Name("filterName")
 )
 
 @(Html.Kendo().Button()
-                        .Name("filterBtn")
-                        .Content("Search")
-                        .Icon("filter")
-                        .HtmlAttributes(new { type = "button" })
-                        .Events(ev => ev.Click("onClick")))
+    .Name("filterBtn")
+    .Content("Search")
+    .Icon("filter")
+    .HtmlAttributes(new { type = "button" })
+    .Events(ev => ev.Click("onClick"))
+)
 
 @(Html.Kendo().Button()
     .Name("clearFilterBtn")
     .Icon("clear-filter")
     .Content("Reset")
     .HtmlAttributes(new { type = "button" })
-    .Events(ev => ev.Click("onClick")))
+    .Events(ev => ev.Click("onClick"))
+)
 
-        @(Html.Kendo().Button()
-        .Name("addNewBtn")
-        .Content("Add New")
-        .HtmlAttributes(new { type = "button" })
-        .Events(ev => ev.Click("onClick")))
-
+@(Html.Kendo().Button()
+    .Name("addNewBtn")
+    .Content("Add New")
+    .HtmlAttributes(new { type = "button" })
+    .Events(ev => ev.Click("onClick"))
+)
 
 @(Html.Kendo().Grid<iWasHere.Domain.Models.DictionaryCurrencyType>
     ()
@@ -40,7 +42,8 @@
         columns.Bound(p => p.Code).Title("Code");
         columns.Bound(p => p.Description).Title("Description");
         columns.Bound(p => p.CurrencyCountry).Title("Country");
-        columns.Command(d => { d.Custom("Edit"); d.Destroy(); }).Width(215) ;
+        columns.Command(d => { d.Custom("Edit"); d.Destroy(); }).Width(215);
+        columns.Template("<a class='k-button' href='/Dictionary/CurrencyAdd?Id=#=CurrencyTypeId# '> Edit </a>").Width(150);
     })
     .Filterable()
     .Selectable(selectable => selectable
@@ -54,17 +57,20 @@
     .ServerOperation(true)
     .PageSize(10)
     .Read(read => read.Action("CurrencyRead", "Dictionary").Data("getfilter"))
+    .Model(m => m.Id(p => p.CurrencyTypeId))
+    .Destroy(destroy => destroy.Action("CurrencyDestroy", "Dictionary"))
     )
 )
 
-    <script type="text/javascript">
+
+<script type="text/javascript">
 $(document).ready(function () {
     $('#addNewBtn').click(function (e)
   {
       window.location = '@Url.Action("CurrencyAdd", "Dictionary")';
   });
 });
-    </script>
+</script>
 
 <script type="text/javascript">
     var name;

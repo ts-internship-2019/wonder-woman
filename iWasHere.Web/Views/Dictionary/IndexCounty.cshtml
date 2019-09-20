@@ -1,10 +1,8 @@
-﻿
-@model IEnumerable<iWasHere.Domain.DTOs.CountyModel>
-@using Kendo.Mvc.UI
-
+﻿@model IEnumerable<iWasHere.Domain.DTOs.CountyModel>
 @{
     ViewData["Title"] = "IndexCounty";
 }
+
 <div class="demo-section k-content">
     @(Html.Kendo().Button()
         .Name("btnAdd")
@@ -18,124 +16,143 @@
     <table>
         <tr>
             <td>
-                <label for="countyNamer">Nume Judet:</label>
+                <label for="countyName">County Name:</label>
                 @(Html.Kendo().TextBox()
-                 .HtmlAttributes(new { id="countyName"})
-                    .Name("countyName")
+                    .HtmlAttributes(new
+                            {
+                        id = "filterName"
+                            })
+                    .Name("filterName")
                     .Value("")
                 )
             </td>
             <td>
-                <label for="countriesCB">Nume Tara:</label>
+                <label for="countriesCB">Country Name:</label>
             </td>
             <td>
                 @(Html.Kendo().ComboBox()
-                      .Name("countriesCB")
-                      .Placeholder("Selecteaza tara")
-                      .DataTextField("ProductName")
-                      .DataValueField("CountryId")
-                      .HtmlAttributes(new { style = "width:100%;" })
-                      .HtmlAttributes(new { id="cbId"})
-                      .Filter(FilterType.Contains)
-                      .AutoBind(false)
-                      .MinLength(3)
-               
-                      .DataSource(source =>
-                      {
-                          source.Read(read =>
-                          {
-                              read.Action("Countries_Read_ForCB", "Dictionary");
-                          })
-                          .ServerFiltering(true);
-                      })
-                      .Events(e =>
-
-            {
-
-                e.Select("onSelect");
-
-            })
+                        .Name("countries")
+                        .Placeholder("Select a country")
+                        .DataTextField("Name")
+                        .DataValueField("CountryId")
+                        .HtmlAttributes(new { style = "width:100%;" })
+                        .Filter(FilterType.Contains)
+                        .AutoBind(false)
+                        .MinLength(3)
+                        .DataSource(source =>
+                            {
+                                source.Read(read =>
+                            {
+                                read.Action("Countries_Read_ForCB", "Dictionary");
+                            })
+                                .ServerFiltering(true);
+                            })
                 )
             </td>
             <td>
                 @(Html.Kendo().Button()
                     .Name("filterBtn")
-                    .Content("Filtreaza")
+                    .Content("Filter")
+                    .Icon("filter")
                     .HtmlAttributes(new { type = "button" })
                     .Events(ev => ev.Click("onClick")))
             </td>
             <td>
                 @(Html.Kendo().Button()
                     .Name("clearFilterBtn")
-                    .Icon("refresh")
-                    .Content("Reseteaza Filtru")
+                    .Icon("clear-filter")
+                    .Content("Reset Filter")
                     .HtmlAttributes(new { type = "button" })
                     .Events(ev => ev.Click("onClick")))
             </td>
         </tr>
     </table>
 </div>
-<div>
-    @(Html.Kendo().Grid(Model)
-    .Name("Grid")
-    .Columns(columns =>
-                {
-        columns.Bound(c => c.Name).Width(140).Column.Title = "Nume";
-        columns.Bound(c => c.Code).Width(190).Column.Title = "Cod";
-        columns.Bound(c => c.CountryName).Width(190).Column.Title = "Tara";
-        columns.Command(command => { command.Edit(); command.Destroy(); }).Width(172).Column.Title = "Actiuni";
 
-    })
-    .HtmlAttributes(new { style = "height: 380px;" })
-    .Scrollable()
-    .Sortable()
-    .Pageable(pageable => pageable
-            .Refresh(true)
-            .PageSizes(new[] { 5, 10, 30, 50, 100 })
-            .ButtonCount(10))
-    .DataSource(dataSource => dataSource
-        .Ajax()
-        .ServerOperation(true)
-        .PageSize(20)
-        .Read(read => read
-        .Action("Counties_Read", "Dictionary")
-        .Data("countiesReadData"))
-        )
-    )
-</div>
+
+@(Html.Kendo().Grid<iWasHere.Domain.DTOs.CountyModel>()
+                .Name("grid")
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.Name).Title("County Name");
+                    columns.Bound(c => c.Code).Title("County Code");
+                    columns.Bound(c => c.CountryName).Title("Country Name");
+                    columns.Command(d => { d.Destroy(); });
+                    columns.Template("<a class='k-button' href='/Dictionary/AddNewCounty?Id=#=CountyId# '> Edit </a>").Width(150);
+                })
+                .HtmlAttributes(new { style = "height: 380px;" })
+                .Scrollable()
+                .Groupable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                .DataSource(dataSource => dataSource
+                    .Ajax()
+                    .Read(read => read.Action("Counties_Read", "Dictionary").Data("filterName"))
+            .PageSize(5)
+            .ServerOperation(true)
+            .Model(model => model.Id(p => p.CountyId))
+            .Destroy(update => update.Action("DestroyCounty", "Dictionary"))
+         )
+                .Scrollable(scr => scr.Height(430))
+            
+         )
+
+
+
 <script type="text/javascript">
 $(document).ready(function () {
     $('#btnAdd').click(function (e)
   {
-      window.location = '@Url.Action("AddNewCounty", "Dictionary")';
+      window.location = '@Url.Action("AddNewCountry", "Dictionary")';
   });
 });
 </script>
 
+<div id="grid"></div>
+@*<script>
+    $("#grid").kendoGrid({
+        columns: [
+            { field: "CountryName" },
+            { field: "CountryCode" },
+            {
+                command: [
+                    {
+                        name: "Edit",
+                        click: function (e) {
+                             window.location = '@Url.Action("AddNewCountry", "Dictionary")';
+                        }
+                    },
+                    {
+                        name: "destroy",
+                    }
+                ]
+            }
+        ],
+    });
+</script>*@
+
+
 <script type="text/javascript">
-    var county = "";
-    var country = 0;
-    function countiesReadData() {
+    var name;
+    function filterName() {
         return {
-            filterName: county,
-            filterCounty: country
+            filterName: name,
         };
     }
     function onClick(e) {
-    
         if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
-            $('#countyName').val(null);
-            county = "";
-            
-            $('#Grid').data("kendoGrid").dataSource.read();
-            $('#Grid').data("kendoGrid").dataSource.page(1);
+            $('#filterName').val(null);
+            name = "";
+            $('#grid').data("kendoGrid").dataSource.read();
+            $('#grid').data("kendoGrid").dataSource.page(1);
         }
         if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
-            county = $('#countyName').val();
-            $('#Grid').data("kendoGrid").dataSource.read();
-            $('#Grid').data("kendoGrid").dataSource.page(1);
+            name = $('#filterName').val();
+            $('#grid').data("kendoGrid").dataSource.read();
+            $('#grid').data("kendoGrid").dataSource.page(1);
         }
     }
-
-
 </script>
