@@ -77,6 +77,39 @@ namespace iWasHere.Domain.Service
 
             db.SaveChanges();
         }
+        public int UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
+        {
+            var db = _dbContext;
+            if (ticketToUpdate.TicketTypeId == 0)
+            {
+                db.DictionaryTicketType.Add(new DictionaryTicketType() {
+                    TicketTypeId = ticketToUpdate.TicketTypeId,
+                    Code = ticketToUpdate.Code,
+                    Name = ticketToUpdate.Name,
+                    Description = ticketToUpdate.Description
+                });
+                db.SaveChanges();
+            }
+            else
+            {
+                //update
+            }
+            return 0;
+        }
+        public DictionaryTicketTypeModel GetTicketById(int Id)
+        {
+
+            var rawTicket = _dbContext.DictionaryTicketType.First(a => a.TicketTypeId == Id);
+            DictionaryTicketTypeModel selectedTicket = new DictionaryTicketTypeModel()
+            {
+                TicketTypeId = rawTicket.TicketTypeId,
+                Code = rawTicket.Code,
+                Name = rawTicket.Name,
+                Description = rawTicket.Description
+            };
+            return selectedTicket;
+
+        }
 
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
         {

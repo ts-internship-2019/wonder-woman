@@ -48,7 +48,20 @@ namespace iWasHere.Web.Controllers
             _dictionaryService.DestroyTicket(ticketToDelete);
             return Json(request);
         }
+        public IActionResult AddTicket(int Id)
+        {
+            DictionaryTicketTypeModel ticket = new DictionaryTicketTypeModel();
+            if (Id != 0)
+                ticket = _dictionaryService.GetTicketById(Id);
 
+
+            return View(ticket);
+        }
+        public void UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
+        {
+            int status = _dictionaryService.UpdateTicket(ticketToUpdate);
+            Tickets(new DataSourceRequest());
+        }
         public IActionResult IndexCity()
         {            
             return View();

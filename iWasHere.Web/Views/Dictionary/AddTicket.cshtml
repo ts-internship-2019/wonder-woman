@@ -1,7 +1,41 @@
-﻿
+﻿@*@model iWasHere.Domain.DTOs.DictionaryTicketTypeModel
+
 @{
-    ViewData["Title"] = "AddTicket";
+    ViewData["Title"] = "Editare/Adaugare Tip Bilet";
 }
 
-<h1>AddTicket</h1>
+@using (Html.BeginForm("UpdateTicket", "Dictionary", FormMethod.Post))
+{
 
+    <span>Nume Bilet:</span> @Html.Kendo().TextBoxFor(m => m.Name)
+    <br />
+    <span>Cod Bilet: </span> @Html.Kendo().TextBoxFor(m => m.Code))
+    <br />
+    <span>Descriere: </span>  @Html.Kendo().TextBoxFor(m => m.Description)
+    <br />
+    @Html.HiddenFor(m => m.TicketTypeId);
+    @(Html.Kendo().Button()
+            .Name("save")
+            .Content("Salveaza")
+            .HtmlAttributes(new { type = "submit", name = "save", value = "Salveaza" }))
+    @(Html.Kendo().Button()
+            .Name("savenew")
+            .Content("Salveaza + nou")
+            .HtmlAttributes(new { type = "submit", name = "saveclose", value = "Salveaza + nou" }))
+
+    @(Html.Kendo().Button()
+           .Name("back")
+           .Content("Inapoi")
+           .HtmlAttributes(new { type = "button" })
+           .Events(ev => ev.Click("onClick")))
+}
+
+<script>
+    function onClick(e)
+    {
+        if ($(e.event.target).closest(".k-button").attr("id") == "back")
+        {
+                    window.location = '@Url.Action("UpdateTickets", "Dictionary")';
+        }
+    }
+</script>*@
