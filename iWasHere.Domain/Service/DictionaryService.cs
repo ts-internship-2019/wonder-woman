@@ -18,19 +18,30 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
         }
 
-        public void CurrencyUpdateInsert(DictionaryCurrencyType model)
+        public bool CurrencyUpdateInsert(DictionaryCurrencyType model)
         {
             if (model.CurrencyTypeId == 0)
             {
                 _dbContext.DictionaryCurrencyType.Add(model);
-                _dbContext.SaveChanges();
             }
             else
             {
                 _dbContext.DictionaryCurrencyType.Update(model);
-                _dbContext.SaveChanges();
             }
+
+            try
+            {
+                _dbContext.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
         }
+
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
@@ -128,17 +139,21 @@ namespace iWasHere.Domain.Service
             return dictionaryCurrencyTypes;
         }
 
-        public void CurrencyDelete(int id)
-        {
+        public string CurrencyDelete(int id)
+        {   
             DictionaryCurrencyType deleted = _dbContext.DictionaryCurrencyType.First(a => a.CurrencyTypeId == id);
+
             _dbContext.DictionaryCurrencyType.Remove(deleted);
             try
             {
                 _dbContext.SaveChanges();
             }
             catch(Exception ex)
-            {
+            {   
+                if(string.IsNullOrWhiteSpace(ex.ToString()))
+                    return ex.ToString();
             }
+            return null;
         }
 
         public void LandmarkDelete(int id)
@@ -456,7 +471,7 @@ namespace iWasHere.Domain.Service
             }
             catch (Exception ex)
             {
-                return ex.ToString();
+                return ex.Message;
             }
             return null;
         }

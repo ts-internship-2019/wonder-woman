@@ -257,11 +257,13 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public ActionResult CurrencyDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryCurrencyType currency)
         {
+            string error;
             if (currency != null && ModelState.IsValid)
             {
-                _dictionaryService.CurrencyDelete(currency.CurrencyTypeId);
+                error = _dictionaryService.CurrencyDelete(currency.CurrencyTypeId);
+                if(!string.IsNullOrWhiteSpace(error))
+                    ModelState.AddModelError("a", error);
             }
-
             return Json(ModelState.ToDataSourceResult());
         }
 
@@ -304,10 +306,11 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public IActionResult CountrySubmit(Country model, string btnSave)
         {
+            string errorm;
             switch (btnSave)
             {
                 case "Save":
-                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
+                    if (string.IsNullOrWhiteSpace(errorm = _dictionaryService.UpdateCountry(model)))
                         return Redirect("/Dictionary/IndexCountry");
                     else
                         return RedirectToAction("AddNewCountry", new { id = model.CountryId });
@@ -472,12 +475,17 @@ namespace iWasHere.Web.Controllers
             switch(submitButton)
             {
                 case "Save":
-                    _dictionaryService.CurrencyUpdateInsert(model);
-                    return Redirect("/Dictionary/Currency");
+                    if (_dictionaryService.CurrencyUpdateInsert(model))
+                        return Redirect("/Dictionary/Currency");
+                    else
+                        return RedirectToAction("CurrencyAdd", new { id = model.CurrencyTypeId });
+
 
                 case "Save and New":
-                    _dictionaryService.CurrencyUpdateInsert(model);
-                    return Redirect("/Dictionary/CurrencyAdd");
+                    if (_dictionaryService.CurrencyUpdateInsert(model))
+                        return Redirect("/Dictionary/CurrencyAdd");
+                    else
+                        return RedirectToAction("CurrencyAdd", new { id = model.CurrencyTypeId });
 
                 default:
                     return Redirect("/Dictionary/Currency");
