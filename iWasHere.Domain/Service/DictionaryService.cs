@@ -153,6 +153,49 @@ namespace iWasHere.Domain.Service
             return dictionaryCurrencyTypes.Skip(skip).Take(pageSize).ToList(); ;
         }
 
+        public void SaveCity(CityModel city)
+        {
+            City cityToSave = new City();
+            cityToSave.CityId = city.Id;
+            cityToSave.Name = city.Name;
+            cityToSave.Code = city.Code;
+            cityToSave.CountyId = city.CountyId;
+            if (city.Id == 0)
+            {                
+                _dbContext.City.Add(cityToSave);
+            }
+            else
+            {                
+                _dbContext.City.Update(cityToSave);
+            }
+            _dbContext.SaveChanges();
+
+        }
+
+        public CityModel GetCityInfoById(int id)
+        {
+            CityModel city = new CityModel();
+            List<CityModel> cities = new List<CityModel>(); 
+            var query = _dbContext.City.Where(a => a.CityId.Equals(id)).Include(b => b.County);
+            if (query.Count() == 1)
+            {
+                var page = query.Select(a => new CityModel
+                {
+                    Id = a.CityId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    CountyId = a.County.CountyId,
+                    CountyName = a.County.Name
+                });
+                cities = page.ToList();
+            }
+            if(cities.Count == 1)
+            {
+                city = cities[0];
+            }
+            return city;
+        }
+
         public List<DictionaryLandmarkType> GetLandmarkTypeModels(int page, int pageSize, out int count)
         {
             int skip = (page - 1) * pageSize;
@@ -180,7 +223,22 @@ namespace iWasHere.Domain.Service
             int skip = (page - 1) * pageSize;
             return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList(); ;
         }           
-     
+        /// <summary>
+        /// Destroys a city
+        /// </summary>
+        /// <param name="cityToDestroy"></param>
+        public void DestroyCity(CityModel cityToDestroy)
+        {
+            var db = _dbContext;
+            var cities = db.City.Where(pd => pd.CityId == cityToDestroy.Id);
+            foreach (var city in cities)
+            {
+                db.City.Remove(city);
+            }
+            db.SaveChanges();
+        }
+        
+
         /// <summary>
         /// Gets paged cities
         /// </summary>
@@ -191,13 +249,32 @@ namespace iWasHere.Domain.Service
         /// <param name="totalRows">Represents the total # of records in the DB mathincg the filtering criteria</param>
         /// <returns></returns>
         public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
-        {           
+        {
             totalRows = 0;
-            if (filterCounty > 0)
+            if (String.IsNullOrEmpty(filterName) && filterCounty == 0)
             {
-                var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County).Where(b => b.CountyId.Equals(filterCounty));
-                if (query.Count() > 0)
+                var query = _dbContext.City.Include(b => b.County);
+                var page = query.OrderBy(p => p.CityId)
+                                .Select(p => new CityModel()
+                                {
+                                    Id = p.CityId,
+                                    Name = p.Name,
+                                    Code = p.Code,
+                                    CountyId = p.CountyId,
+                                    CountyName = p.County.Name
+                                })
+                                .Skip(skipRows).Take(pageSize)
+                                .GroupBy(p => new { Total = query.Count() })
+                                .First();
+                totalRows = query.Count();
+                var cities = page.Select(p => p);
+                return cities.ToList();
+            }
+            if (!String.IsNullOrEmpty(filterName))
+            {
+                if(filterCounty > 0)
                 {
+                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County).Where(b => b.CountyId.Equals(filterCounty));
                     var page = query.OrderBy(p => p.CityId)
                                 .Select(p => new CityModel()
                                 {
@@ -210,16 +287,13 @@ namespace iWasHere.Domain.Service
                                 .Skip(skipRows).Take(pageSize)
                                 .GroupBy(p => new { Total = query.Count() })
                                 .First();
-                    totalRows = page.Key.Total;
+                    totalRows = query.Count();
                     var cities = page.Select(p => p);
                     return cities.ToList();
                 }
-            }
-            else
-            {
-                var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County);
-                if (query.Count() > 0)
+                else
                 {
+                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County);
                     var page = query.OrderBy(p => p.CityId)
                                 .Select(p => new CityModel()
                                 {
@@ -232,13 +306,12 @@ namespace iWasHere.Domain.Service
                                 .Skip(skipRows).Take(pageSize)
                                 .GroupBy(p => new { Total = query.Count() })
                                 .First();
-                    totalRows = page.Key.Total;
+                    totalRows = query.Count();
                     var cities = page.Select(p => p);
                     return cities.ToList();
                 }
             }
-            
-            return new List<CityModel>();            
+            return new List<CityModel>();
         }
         /// <summary>
         /// Simple service method to get Counties for ComboBox
