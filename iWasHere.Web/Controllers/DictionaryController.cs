@@ -296,5 +296,27 @@ namespace iWasHere.Web.Controllers
             return Json(request);
         }
 
+        [HttpPost]
+        public ActionResult CountySubmit(County model, string submitButton)
+        {
+            switch (submitButton)
+            {
+                case "Save":
+                    _dictionaryService.CountyUpdateInsert(model);
+                    return Redirect("/Dictionary/IndexCounty");
+
+
+
+                case "Save and New":
+                    _dictionaryService.CountyUpdateInsert(model);
+                    return Redirect("/Dictionary/AddNewCounty");
+
+
+
+                default:
+                    return Redirect("/Dictionary/IndexCounty");
+            }
+        }
+
     }
 }

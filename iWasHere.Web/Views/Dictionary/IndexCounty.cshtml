@@ -137,20 +137,24 @@ $(document).ready(function () {
 
 <script type="text/javascript">
     var name;
+     var country = 0; 
     function filterName() {
         return {
             filterName: name,
+            filterCountry: country
         };
     }
     function onClick(e) {
         if ($(e.event.target).closest(".k-button").attr("id") == "clearFilterBtn") {
             $('#filterName').val(null);
             name = "";
+            county = 0;;
             $('#grid').data("kendoGrid").dataSource.read();
             $('#grid').data("kendoGrid").dataSource.page(1);
         }
         if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
             name = $('#filterName').val();
+             country = $('#CountriesCB').val();
             $('#grid').data("kendoGrid").dataSource.read();
             $('#grid').data("kendoGrid").dataSource.page(1);
         }

@@ -375,6 +375,7 @@ namespace iWasHere.Domain.Service
             }
             count = 0;
             return new List<DictionaryConstructionTypeModel>();
+        }
         public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
@@ -411,9 +412,18 @@ namespace iWasHere.Domain.Service
 
             db.SaveChanges();
         }
-        public County editCounty(int id)
+        public CountyModel editCounty(int id)
         {
-            return _dbContext.County.First(a => a.CountyId == id);
+            var cty = _dbContext.County.First(a => a.CountyId == id);
+            CountyModel ctymdl = new CountyModel()
+            {
+                CountyId = cty.CountyId,
+                Name = cty.Name,
+                Code = cty.Code,
+                CountryId = cty.CountryId
+
+            };
+            return ctymdl;
         }
 
         public CountyModel GetCountyInfoById(int id)
@@ -438,6 +448,21 @@ namespace iWasHere.Domain.Service
                 county = counties[0];
             }
             return county;
+        }
+
+
+        public void CountyUpdateInsert(County model)
+        {
+            if (model.CountyId == 0)
+            {
+                _dbContext.County.Add(model);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                _dbContext.County.Update(model);
+                _dbContext.SaveChanges();
+            }
         }
     }
 }

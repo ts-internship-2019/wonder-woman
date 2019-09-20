@@ -57,7 +57,7 @@
         </tr>
     </table>
 </div>
-<div>
+@*<div>
     @(Html.Kendo().Button()
                         .Name("addCountyAndNewBtn")
                         .Content("Salveaza si nou")
@@ -79,7 +79,25 @@
                         .Content("Anuleaza")
                         .HtmlAttributes(new { type = "button", position = "" })
                         .Events(ev => ev.Click("onClick")))
-</div>
+</div>*@
+
+
+@*@using (Html.BeginForm("CountySubmit", "Dictionary", FormMethod.Post))
+{
+    <span>Enter Your Name:</span> @Html.TextBoxFor(m => m.Name)
+    <br />
+    <span>Enter Your Code: </span> @Html.TextBoxFor(m => m.Code)
+    <br />*@
+   
+
+    @Html.HiddenFor(a => a.CountyId)
+
+
+
+    <input type="submit" name="submitButton" value="Save" />
+    <input type="submit" name="submitButton" value="Save and New" />
+    <input type="submit" name="submitButton" value="Cancel" />
+
 
 <script>
     function onClick(e) {
