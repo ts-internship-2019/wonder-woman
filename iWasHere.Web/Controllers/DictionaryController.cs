@@ -17,8 +17,6 @@ namespace iWasHere.Web.Controllers
     {
         private readonly DictionaryService _dictionaryService;
 
-
-
         public DictionaryController(DictionaryService dictionaryService)
         {
             _dictionaryService = dictionaryService;
@@ -48,7 +46,32 @@ namespace iWasHere.Web.Controllers
             _dictionaryService.DestroyTicket(ticketToDelete);
             return Json(request);
         }
+        public IActionResult AddTicket(int Id)
+        {
+            DictionaryTicketTypeModel ticket = new DictionaryTicketTypeModel();
+            if (Id != 0)
+                ticket = _dictionaryService.GetTicketById(Id);
 
+
+            return View(ticket);
+        }
+        [HttpPost]
+        public ActionResult UpdateTicket(DictionaryTicketTypeModel ticketToUpdate, string submit)
+        {
+            switch (submit)
+            {
+                case "Salveaza si nou":
+                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                    return Redirect("/Dictionary/AddTicket");
+                case "Salveaza":
+                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                    return Redirect("/Dictionary/Tickets");
+                case "Anuleaza":
+                    return Redirect("/Dictionary/Tickets");
+                default:
+                    return Redirect("/Dictionary/Tickets");
+            }
+        }
         public IActionResult IndexCity()
         {
             return View();
@@ -233,6 +256,29 @@ namespace iWasHere.Web.Controllers
         }
 
 
+        //textbox
+        //updatebutton
+        [HttpPost]
+        public IActionResult CountrySubmit(Country model, string btnSave)
+        {
+            switch (btnSave)
+            {
+                case "Save":
+                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
+                        return Redirect("/Dictionary/IndexCountry");
+                    else
+                        return RedirectToAction("AddNewCountry", new { id = model.CountryId });
+                case "Save and New":
+                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
+                        return Redirect("/Dictionary/AddNewCountry");
+                    else
+                        return RedirectToAction("/Dictionary/AddNewCountry", new { id = model.CountryId });
+                default:
+                    return Redirect("/Dictionary/IndexCountry");
+            }
+        }
+
+
         //paginare tari
 
         [HttpPost]
@@ -262,9 +308,16 @@ namespace iWasHere.Web.Controllers
             return Json(request);
         }
 
-        public IActionResult AddNewCountry()
+        public IActionResult AddNewCountry(int id)
         {
-            return View();
+            if(id == 0)
+            {
+                return View();
+            }
+            else
+            {
+                return View(_dictionaryService.editFunctionForCountry(id));
+            }
         }
 
         public IActionResult CurrencyAdd(int id)

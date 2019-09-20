@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace iWasHere.Domain.Service
 {
@@ -32,51 +33,35 @@ namespace iWasHere.Domain.Service
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
-
-            if (!String.IsNullOrWhiteSpace(filterName))
+            if (string.IsNullOrWhiteSpace(filterName))
             {
-                var query = _dbContext.DictionaryTicketType.Where(a => a.Name.Contains(filterName));
-                if (query.Count() > 0)
+                List<DictionaryTicketTypeModel> ticketModels = _dbContext.DictionaryTicketType.Select(a => new DictionaryTicketTypeModel()
                 {
-                    var page = query.OrderBy(p => p.TicketTypeId)
-                                .Select(p => new DictionaryTicketTypeModel()
-                                {
-                                    TicketTypeId = p.TicketTypeId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    Description = p.Description
-                                })
-                                .Skip(rowsToSkip).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    count = page.Key.Total;
-                    var tickets = page.Select(p => p);
-                    return tickets.ToList();
-                }
+                    TicketTypeId = a.TicketTypeId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    Description = a.Description
+                }).Skip(rowsToSkip).Take(pageSize).ToList();
+
+                count = _dbContext.DictionaryTicketType.Count();
+
+                return ticketModels;
             }
             else
             {
-                 var page = _dbContext.DictionaryTicketType.OrderBy(p => p.TicketTypeId)
-                                .Select(p => new DictionaryTicketTypeModel()
-                                {
-                                    TicketTypeId = p.TicketTypeId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    Description = p.Description
-                                })
-                                .Skip(rowsToSkip).Take(pageSize)
-                                .GroupBy(p => new { Total = _dbContext.DictionaryTicketType.Count() })
-                                .First();
-                    count = page.Key.Total;
-                    var tickets = page.Select(p => p);
-                    return tickets.ToList();
-                
+                var query = _dbContext.DictionaryTicketType.Where(a => a.Name.Contains(filterName));
+                count = query.Count();
+
+                List<DictionaryTicketTypeModel> ticketModels = query.Select(a => new DictionaryTicketTypeModel()
+                {
+                    TicketTypeId = a.TicketTypeId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    Description = a.Description
+                }).Skip(rowsToSkip).Take(pageSize).ToList();
+                return ticketModels;
             }
-            count = 0;
-            return new List<DictionaryTicketTypeModel>();
-
-        }        
-
+        }
         public void DestroyTicket(DictionaryTicketTypeModel ticketToDestroy)
         {
             var db = _dbContext;
@@ -89,6 +74,40 @@ namespace iWasHere.Domain.Service
             }
 
             db.SaveChanges();
+        }
+        public void UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
+        {
+            DictionaryTicketType ticket = new DictionaryTicketType()
+            {
+                TicketTypeId = ticketToUpdate.TicketTypeId,
+                Code = ticketToUpdate.Code,
+                Name = ticketToUpdate.Name,
+                Description = ticketToUpdate.Description
+            };
+            if (ticketToUpdate.TicketTypeId == 0)
+            {
+                _dbContext.DictionaryTicketType.Add(ticket);
+            }
+            else
+            {
+                _dbContext.DictionaryTicketType.Update(ticket);
+            }
+            _dbContext.SaveChanges();
+
+        }
+        public DictionaryTicketTypeModel GetTicketById(int Id)
+        {
+
+            var rawTicket = _dbContext.DictionaryTicketType.First(a => a.TicketTypeId == Id);
+            DictionaryTicketTypeModel selectedTicket = new DictionaryTicketTypeModel()
+            {
+                TicketTypeId = rawTicket.TicketTypeId,
+                Code = rawTicket.Code,
+                Name = rawTicket.Name,
+                Description = rawTicket.Description
+            };
+            return selectedTicket;
+
         }
 
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
@@ -341,10 +360,7 @@ namespace iWasHere.Domain.Service
                 Code = a.Code,
                 ParentId = a.ParentId
             }).Skip(skip).Take(pageSize).ToList();
-
             return country;
-        
-    
         }
 
         //filtrare Country
@@ -374,6 +390,11 @@ namespace iWasHere.Domain.Service
             db.SaveChanges();
         }
 
+        //edit with values
+        public Country editFunctionForCountry(int id)
+        {
+            return _dbContext.Country.First(a => a.CountryId == id);
+        }
 
         public List<CountyModel> GetCountyModels(int page,int pageSize,out int count)
         {
@@ -389,6 +410,28 @@ namespace iWasHere.Domain.Service
             }).Skip(skip).Take(pageSize).ToList();
 
             return listCounties ;
+        }
+
+        //updatenewpage
+        public string UpdateCountry(Country country)
+        {
+            if(country.CountryId == 0)
+            {
+                _dbContext.Country.Add(country);
+            }
+            else
+            {
+                _dbContext.Country.Update(country);
+            }
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+            return null;
         }
 
         public List<CountyModel> GetAllPagedCounties(int skipRows, int pageSize, string filterName, int filterCountry, out int totalRows)
