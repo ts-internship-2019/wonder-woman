@@ -2,6 +2,7 @@
 using iWasHere.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -16,65 +17,61 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
         }
 
-        public void CurrencyUpdateInsert(DictionaryCurrencyType model)
+        public bool CurrencyUpdateInsert(DictionaryCurrencyType model)
         {
             if (model.CurrencyTypeId == 0)
             {
                 _dbContext.DictionaryCurrencyType.Add(model);
-                _dbContext.SaveChanges();
             }
             else
             {
                 _dbContext.DictionaryCurrencyType.Update(model);
-                _dbContext.SaveChanges();
             }
+
+            try
+            {
+                _dbContext.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
         }
+
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
-
-            if (!String.IsNullOrWhiteSpace(filterName))
+            if (string.IsNullOrWhiteSpace(filterName))
             {
-                var query = _dbContext.DictionaryTicketType.Where(a => a.Name.Contains(filterName));
-                if (query.Count() > 0)
+                List<DictionaryTicketTypeModel> ticketModels = _dbContext.DictionaryTicketType.Select(a => new DictionaryTicketTypeModel()
                 {
-                    var page = query.OrderBy(p => p.TicketTypeId)
-                                .Select(p => new DictionaryTicketTypeModel()
-                                {
-                                    TicketTypeId = p.TicketTypeId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    Description = p.Description
-                                })
-                                .Skip(rowsToSkip).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    count = page.Key.Total;
-                    var tickets = page.Select(p => p);
-                    return tickets.ToList();
-                }
+                    TicketTypeId = a.TicketTypeId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    Description = a.Description
+                }).Skip(rowsToSkip).Take(pageSize).ToList();
+
+                count = _dbContext.DictionaryTicketType.Count();
+
+                return ticketModels;
             }
             else
             {
-                 var page = _dbContext.DictionaryTicketType.OrderBy(p => p.TicketTypeId)
-                                .Select(p => new DictionaryTicketTypeModel()
-                                {
-                                    TicketTypeId = p.TicketTypeId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    Description = p.Description
-                                })
-                                .Skip(rowsToSkip).Take(pageSize)
-                                .GroupBy(p => new { Total = _dbContext.DictionaryTicketType.Count() })
-                                .First();
-                    count = page.Key.Total;
-                    var tickets = page.Select(p => p);
-                    return tickets.ToList();
-                
-            }
-            count = 0;
-            return new List<DictionaryTicketTypeModel>();
+                var query = _dbContext.DictionaryTicketType.Where(a => a.Name.Contains(filterName));
+                count = query.Count();
 
+                List<DictionaryTicketTypeModel> ticketModels = query.Select(a => new DictionaryTicketTypeModel()
+                {
+                    TicketTypeId = a.TicketTypeId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    Description = a.Description
+                }).Skip(rowsToSkip).Take(pageSize).ToList();
+                return ticketModels;
+            }
         }
         public void DestroyTicket(DictionaryTicketTypeModel ticketToDestroy)
         {
@@ -88,6 +85,40 @@ namespace iWasHere.Domain.Service
             }
 
             db.SaveChanges();
+        }
+        public void UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
+        {
+            DictionaryTicketType ticket = new DictionaryTicketType()
+            {
+                TicketTypeId = ticketToUpdate.TicketTypeId,
+                Code = ticketToUpdate.Code,
+                Name = ticketToUpdate.Name,
+                Description = ticketToUpdate.Description
+            };
+            if (ticketToUpdate.TicketTypeId == 0)
+            {
+                _dbContext.DictionaryTicketType.Add(ticket);
+            }
+            else
+            {
+                _dbContext.DictionaryTicketType.Update(ticket);
+            }
+            _dbContext.SaveChanges();
+
+        }
+        public DictionaryTicketTypeModel GetTicketById(int Id)
+        {
+
+            var rawTicket = _dbContext.DictionaryTicketType.First(a => a.TicketTypeId == Id);
+            DictionaryTicketTypeModel selectedTicket = new DictionaryTicketTypeModel()
+            {
+                TicketTypeId = rawTicket.TicketTypeId,
+                Code = rawTicket.Code,
+                Name = rawTicket.Name,
+                Description = rawTicket.Description
+            };
+            return selectedTicket;
+
         }
 
         public List<DictionaryCurrencyType> GetDictionaryCurrencyTypeModels(int page, int pageSize, out int count)
@@ -107,17 +138,21 @@ namespace iWasHere.Domain.Service
             return dictionaryCurrencyTypes;
         }
 
-        public void CurrencyDelete(int id)
-        {
+        public string CurrencyDelete(int id)
+        {   
             DictionaryCurrencyType deleted = _dbContext.DictionaryCurrencyType.First(a => a.CurrencyTypeId == id);
+
             _dbContext.DictionaryCurrencyType.Remove(deleted);
             try
             {
                 _dbContext.SaveChanges();
             }
             catch(Exception ex)
-            {
+            {   
+                if(string.IsNullOrWhiteSpace(ex.ToString()))
+                    return ex.ToString();
             }
+            return null;
         }
 
         public void LandmarkDelete(int id)
@@ -222,7 +257,7 @@ namespace iWasHere.Domain.Service
             }).Where(a => a.Name.Contains(name)).ToList();
             count = dictionaryLandmarkTypes.Count();
             int skip = (page - 1) * pageSize;
-            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList(); ;
+            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList();
         }           
         /// <summary>
         /// Destroys a city
@@ -243,77 +278,67 @@ namespace iWasHere.Domain.Service
         /// <summary>
         /// Gets paged cities
         /// </summary>
-        /// <param name="skipRows">Represents rows to skip to show the desired page</param>
+        /// <param name="page">Represents the page</param>
         /// <param name="pageSize">Represents the # of rows to display per page</param>
-        /// <param name="filterName">Presents the City Name to filter by</param>
-        /// <param name="filterCounty">Represents the County ID to filter by</param>
         /// <param name="totalRows">Represents the total # of records in the DB mathincg the filtering criteria</param>
         /// <returns></returns>
-        public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
+        public List<CityModel> GetAllPagedCities(int page, int pageSize, out int totalRows)
         {
-            totalRows = 0;
-            if (String.IsNullOrEmpty(filterName) && filterCounty == 0)
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Select(a => new CityModel
             {
-                var query = _dbContext.City.Include(b => b.County);
-                var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                totalRows = query.Count();
-                var cities = page.Select(p => p);
-                return cities.ToList();
-            }
-            if (!String.IsNullOrEmpty(filterName))
-            {
-                if(filterCounty > 0)
-                {
-                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County).Where(b => b.CountyId.Equals(filterCounty));
-                    var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = query.Count();
-                    var cities = page.Select(p => p);
-                    return cities.ToList();
-                }
-                else
-                {
-                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County);
-                    var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = query.Count();
-                    var cities = page.Select(p => p);
-                    return cities.ToList();
-                }
-            }
-            return new List<CityModel>();
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
         }
+        public List<CityModel> GetFilteredPagedCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Where(a=>a.Name.Contains(filterName)).Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+        public List<CityModel> GetFilteredOnlyByNamePagedCities(int page, int pageSize, string filterName, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Where(a => a.Name.Contains(filterName)).Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+        public List<CityModel> GetFilteredOnlyByCountyPagedCities(int page, int pageSize, int filterCounty, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+
         /// <summary>
         /// Simple service method to get Counties for ComboBox
         /// </summary>
