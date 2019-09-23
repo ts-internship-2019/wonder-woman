@@ -36,7 +36,6 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public IActionResult Landmark_Read()
         public IActionResult Landmark_Read(int id)
         {
             LandmarkModel model = new LandmarkModel();
