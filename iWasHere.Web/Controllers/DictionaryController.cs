@@ -122,14 +122,35 @@ namespace iWasHere.Web.Controllers
         }
         public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCountry)
         {
-            if (String.IsNullOrEmpty(filterName))
-            {
-                filterName = "";
-            }
             DataSourceResult result = new DataSourceResult();
-            List<CountyModel> list = GetCounties(request.Page, request.PageSize, filterName, filterCountry, out int totalRows);
-            result.Data = list;
-            result.Total = totalRows;
+            if (string.IsNullOrWhiteSpace(filterName))
+            {
+                if (filterCountry == 0)
+                {
+                    result.Data = _dictionaryService.GetAllPagedCounties(request.Page, request.PageSize, out int count);
+                    result.Total = count;
+                }
+                else
+                {
+                    result.Data = _dictionaryService.GetFilteredOnlyByCountyPagedCities(request.Page, request.PageSize, filterCountry, out int count);
+                    result.Total = count;
+                }
+
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(filterName) && filterCountry > 0)
+                {
+                    result.Data = _dictionaryService.GetFilteredPagedCounties(request.Page, request.PageSize, filterName, filterCountry, out int count);
+                    result.Total = count;
+                }
+                else if (!string.IsNullOrWhiteSpace(filterName) && filterCountry == 0)
+                {
+                    result.Data = _dictionaryService.GetFilteredOnlyByNamePagedCounties(request.Page, request.PageSize, filterName, out int count);
+                    result.Total = count;
+                }
+
+            }
             return Json(result);
         }
         /// <summary>
@@ -187,20 +208,23 @@ namespace iWasHere.Web.Controllers
             else
             {
                 city = _dictionaryService.GetCityInfoById(id);
-            }            
+            }
+
+            return View(city);
+            /*
             int skipRows = (page - 1) * pageSize;
             List<CityModel> cityModels = _dictionaryService.GetAllPagedCities(skipRows, pageSize, filterName, filterCounty, out int rowsCount);
             totalRows = rowsCount;
             return cityModels;
-        }
+        */}
 
-        private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
-        {
-            int skipRows = (page - 1) * pageSize;
-            List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
-            totalRows = rowsCount;
-            return countyModels;
-        }
+        //private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
+        //{
+        //    int skipRows = (page - 1) * pageSize;
+        //    List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
+        //    totalRows = rowsCount;
+        //    return countyModels;
+        //}
 
         /// <summary>
         /// NOT IMplemeted Yet
@@ -289,9 +313,6 @@ namespace iWasHere.Web.Controllers
                 });
             }         
 
-        }
-            _dictionaryService.DestroyCity(cityToDestroy);
-            return Json(request);
         }
         public IActionResult DestroyCounty([DataSourceRequest] DataSourceRequest request, CountyModel countyToDestroy)
         {
@@ -485,28 +506,30 @@ namespace iWasHere.Web.Controllers
             return Json(result);
         }
 
-        public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName)
-        {
-            if (String.IsNullOrEmpty(filterName))
-            {
-                filterName = "";
-            }
-            int filterCountry = 1;
-            DataSourceResult result = new DataSourceResult();
-            List<CountyModel> list = GetCounties(request.Page, request.PageSize, filterName, filterCountry, out int totalRows);
-            result.Data = list;
-            result.Total = totalRows;
-            return Json(result);
-        }
+        //public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName)
+        //{
+        //    if (String.IsNullOrEmpty(filterName))
+        //    {
+        //        filterName = "";
+        //    }
+        //    int filterCountry = 1;
+        //    DataSourceResult result = new DataSourceResult();
+        //    List<CountyModel> list = GetCounties(request.Page, request.PageSize, filterName, filterCountry, out int totalRows);
+        //    result.Data = list;
+        //    result.Total = totalRows;
+        //    return Json(result);
+        //}
 
-        private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
-        {
-            int skipRows = (page - 1) * pageSize;
-            List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
-            totalRows = rowsCount;
-            return countyModels;
-        }
-
+      
+        //private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
+        //{
+        //    int skipRows = (page - 1) * pageSize;
+        //    List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
+        //    totalRows = rowsCount;
+        //    return countyModels;
+        //}
+        
+        /*
         public JsonResult Countries_Read_ForCB(string text)
         {            
             List<DictionaryCountryModel> list = GetCountriesForCB(text);          
@@ -527,9 +550,9 @@ namespace iWasHere.Web.Controllers
             else
  
                 return View(_dictionaryService.editCounty(id));
-                
-        }
 
+        }
+         */
     
         public IActionResult Construction([DataSourceRequest] DataSourceRequest request)
         {

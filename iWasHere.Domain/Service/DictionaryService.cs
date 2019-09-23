@@ -379,6 +379,20 @@ namespace iWasHere.Domain.Service
             totalRows = _dbContext.City.Count();
             return cities;
         }
+        public List<CountyModel> GetFilteredPagedCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> counties = _dbContext.County.Where(a => a.Name.Contains(filterName)).Select(a => new CountyModel
+            {
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Where(a => a.CountryId.Equals(filterCountry)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return counties;
+        }
         public List<CityModel> GetFilteredOnlyByNamePagedCities(int page, int pageSize, string filterName, out int totalRows)
         {
             int skip = (page - 1) * pageSize;
@@ -393,6 +407,20 @@ namespace iWasHere.Domain.Service
             totalRows = _dbContext.City.Count();
             return cities;
         }
+        public List<CountyModel> GetFilteredOnlyByNamePagedCounties(int page, int pageSize, string filterName, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> counties = _dbContext.County.Where(a => a.Name.Contains(filterName)).Select(a => new CountyModel
+            {
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return counties;
+        }
         public List<CityModel> GetFilteredOnlyByCountyPagedCities(int page, int pageSize, int filterCounty, out int totalRows)
         {
             int skip = (page - 1) * pageSize;
@@ -406,6 +434,21 @@ namespace iWasHere.Domain.Service
             }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
             totalRows = _dbContext.City.Count();
             return cities;
+        }
+
+        public List<CountyModel> GetFilteredOnlyByCountryPagedCounties(int page, int pageSize, int filterCountry, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> counties = _dbContext.County.Select(a => new CountyModel
+            {
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Where(a => a.CountryId.Equals(filterCountry)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return counties;
         }
 
         /// <summary>
@@ -518,55 +561,19 @@ namespace iWasHere.Domain.Service
             return null;
         }
 
-        public List<CountyModel> GetAllPagedCounties(int skipRows, int pageSize, string filterName, int filterCountry, out int totalRows)
+        public List<CountyModel> GetAllPagedCounties(int page, int pageSize, out int totalRows)
         {
-            totalRows = 0;
-            if (filterCountry > 0)
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> county = _dbContext.County.Select(a => new CountyModel
             {
-                var query = _dbContext.County.Where(a => a.Name.Contains(filterName)).Include(b => b.Country).Where(b => b.CountryId.Equals(filterCountry));
-                if (query.Count() > 0)
-                {
-                    var page = query.OrderBy(p => p.CountyId)
-                                .Select(p => new CountyModel()
-                                {
-                                    CountyId = p.CountyId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountryId = p.CountryId,
-                                    CountryName = p.Country.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = page.Key.Total;
-                    var counties = page.Select(p => p);
-                    return counties.ToList();
-                }
-            }
-            else
-            {
-                var query = _dbContext.County.Where(a => a.Name.Contains(filterName)).Include(b => b.Country);
-                if (query.Count() > 0)
-                {
-                    var page = query.OrderBy(p => p.CountyId)
-                                .Select(p => new CountyModel()
-                                {
-                                    CountyId = p.CountyId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountryId = p.CountryId,
-                                    CountryName = p.Country.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = page.Key.Total;
-                    var counties = page.Select(p => p);
-                    return counties.ToList();
-                }
-            }
-
-            return new List<CountyModel>();
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return county;
         }
 
         public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(string filterName, int currentPage, int pageSize, out int count)
