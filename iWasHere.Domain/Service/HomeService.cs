@@ -26,7 +26,40 @@ namespace iWasHere.Domain.Service
             }).ToList();
             return landmarkList;
         }
+        public LandmarkModel GetLandmarkById(int id)
+        {
+            var landmark = _dbContext.Landmark.First(a => a.LandmarkId == id);
+            LandmarkModel selectedlandmark = new LandmarkModel()
+            {
+                LandmarkId = landmark.LandmarkId,
+                Code = landmark.Code,
+                Name = landmark.Name,
+                Descr = landmark.Descr,
+                ConstructionTypeId = landmark.ConstructionTypeId,
+                HistoricalPeriodTypeId = landmark.HistoricalPeriodTypeId,
+                LandmarkTypeId = landmark.LandmarkTypeId,
+                Latitude = landmark.Latitude,
+                Longitude = landmark.Longitude,
+                CountryId = landmark.CountryId,
+                CountyId = landmark.CountyId,
+                CityId = landmark.CityId
+            };
+            return selectedlandmark;
+        }
 
+       public List<String> GetImagesForLandmarkId(int id)
+        {
+            List<Photo> photopaths = _dbContext.Photo.Where(a => a.LandmarkId == id).Select(a => new Photo()
+            {
+                ImagePath = a.ImagePath,
+            }).ToList();
+            List<String> filepaths = new List<String>();
+            foreach (Photo ph in photopaths)
+            {
+                filepaths.Add(ph.ImagePath);
+            }
+            return filepaths;
+        }
         public void UpdateLandmark(LandmarkModel lm, out string errorMessage)
         {
 
