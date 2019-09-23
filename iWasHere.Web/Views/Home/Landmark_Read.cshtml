@@ -18,12 +18,14 @@
 </div>
 
 <div id="images">
-    @{
-        foreach (string image in images)
-        {
-            <img src="@Url.Content(image)"  />
-        }
-    }
+        <table>
+                <tr>
+                    @foreach (string image in images)
+                    {
+                    <td><img src="@Url.Content(image)" /></td>
+                    }
+                </tr>
+        </table>
 </div>
     <iframe width="500" height="350" frameborder="0" style="border:0"
             src="@Html.Raw(@Model.MapUrl)"></iframe>

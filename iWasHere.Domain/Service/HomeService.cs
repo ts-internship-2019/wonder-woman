@@ -49,10 +49,16 @@ namespace iWasHere.Domain.Service
 
        public List<String> GetImagesForLandmarkId(int id)
         {
-            //var images = _dbContext.Photo.Where(a => a.LandmarkId == id).ToList();
-            List<String> imagepaths = new List<String>();
-
-            return imagepaths;
+            List<Photo> photopaths = _dbContext.Photo.Where(a => a.LandmarkId == id).Select(a => new Photo()
+            {
+                ImagePath = a.ImagePath,
+            }).ToList();
+            List<String> filepaths = new List<String>();
+            foreach (Photo ph in photopaths)
+            {
+                filepaths.Add(ph.ImagePath);
+            }
+            return filepaths;
         }
         public void UpdateLandmark(LandmarkModel lm, out string errorMessage)
         {
