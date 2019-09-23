@@ -87,24 +87,32 @@ namespace iWasHere.Domain.Service
 
             db.SaveChanges();
         }
-        public void UpdateTicket(DictionaryTicketTypeModel ticketToUpdate)
+        public void UpdateTicket(DictionaryTicketTypeModel ticketToUpdate, out string errorMessage)
         {
-            DictionaryTicketType ticket = new DictionaryTicketType()
+            errorMessage = string.Empty;
+            try
             {
-                TicketTypeId = ticketToUpdate.TicketTypeId,
-                Code = ticketToUpdate.Code,
-                Name = ticketToUpdate.Name,
-                Description = ticketToUpdate.Description
-            };
-            if (ticketToUpdate.TicketTypeId == 0)
-            {
-                _dbContext.DictionaryTicketType.Add(ticket);
+                DictionaryTicketType ticket = new DictionaryTicketType()
+                {
+                    TicketTypeId = ticketToUpdate.TicketTypeId,
+                    Code = ticketToUpdate.Code,
+                    Name = ticketToUpdate.Name,
+                    Description = ticketToUpdate.Description
+                };
+                if (ticketToUpdate.TicketTypeId == 0)
+                {
+                    _dbContext.DictionaryTicketType.Add(ticket);
+                }
+                else
+                {
+                    _dbContext.DictionaryTicketType.Update(ticket);
+                }
+                _dbContext.SaveChanges();
             }
-            else
+            catch (Exception)
             {
-                _dbContext.DictionaryTicketType.Update(ticket);
+                errorMessage = "Salvarea/Editarea nu s-a putut efectua. Te rog mai incearca";
             }
-            _dbContext.SaveChanges();
 
         }
         public DictionaryTicketTypeModel GetTicketById(int Id)

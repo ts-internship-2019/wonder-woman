@@ -1,0 +1,39 @@
+﻿@Model IEnumerable<iWasHere.Domain.DTOs.LandmarkListModel>
+    @using Kendo.Mvc.UI
+    @{
+        ViewData["Title"] = "Lista Obiective";
+    }
+
+
+    @*<div>
+        @(Html.Kendo().Grid(Model)
+            .Name("Grid")
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.TicketTypeId).Title("TicketTypeId");
+                columns.Bound(p => p.Code).Title("Code");
+                columns.Bound(p => p.Name).Title("Name");
+                columns.Bound(p => p.Description).Title("Description");
+                columns.Template("<a class='k-button' href='/Dictionary/AddTicket?Id=#=TicketTypeId# '> Editeaza </a>").Width(150);
+                columns.Command(command => command.Destroy().Text("Sterge"));
+
+            })
+            .HtmlAttributes(new { style = "height: 500dp;" })
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .PageSizes(true)
+                .ButtonCount(5))
+            .Sortable()
+            .Selectable()
+            .Scrollable(scr => scr.Height(430))
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(5)
+                .ServerOperation(true)
+                .Model(model => model.Id(p => p.TicketTypeId))
+                .Read(read => { read.Action("GetAllTickets", "Dictionary"); read.Data("ticketReadData"); })
+                .Destroy(update => update.Action("DestroyTicket", "Dictionary"))
+                .Events(events => events.Error("onGridError"))
+             )
+        )
+    </div>*@

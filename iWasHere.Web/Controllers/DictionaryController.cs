@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using iWasHere.Web.Models;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.IdentityModel.Protocols;
+using System.Data.SqlClient;
 
 namespace iWasHere.Web.Controllers
 {
@@ -63,19 +65,33 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public ActionResult UpdateTicket(DictionaryTicketTypeModel ticketToUpdate, string submit)
         {
-            switch (submit)
-            {
-                case "Salveaza si nou":
-                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                switch (submit)
+                {
+                    case "Salveaza si nou":
+                        _dictionaryService.UpdateTicket(ticketToUpdate, out string errorMessage);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        TempData["message"] = errorMessage;
+
+
+                        return RedirectToAction("AddTicket", new RouteValueDictionary(ticketToUpdate));
+                    }
                     return Redirect("/Dictionary/AddTicket");
-                case "Salveaza":
-                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                    case "Salveaza":
+                        _dictionaryService.UpdateTicket(ticketToUpdate, out string errorMessage2);
+                    if (!string.IsNullOrEmpty(errorMessage2))
+                    {
+                        TempData["message"] = errorMessage2;
+
+
+                        return RedirectToAction("AddTicket", new RouteValueDictionary(ticketToUpdate));
+                    }
                     return Redirect("/Dictionary/Tickets");
-                case "Anuleaza":
-                    return Redirect("/Dictionary/Tickets");
-                default:
-                    return Redirect("/Dictionary/Tickets");
-            }
+                    case "Anuleaza":
+                        return Redirect("/Dictionary/Tickets");
+                    default:
+                        return Redirect("/Dictionary/Tickets");
+                }
         }
         public IActionResult IndexCity()
         {
@@ -323,19 +339,9 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public IActionResult Landmark()
+        #region Currency
+        public IActionResult Currency()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Index(DictionaryCurrencyType model)
-        {
-            int currencyTypeId = model.CurrencyTypeId;
-            string name = model.Name;
-            string code = model.Code;
-            string description = model.Description;
-
             return View();
         }
 
@@ -368,6 +374,13 @@ namespace iWasHere.Web.Controllers
             }
             return Json(ModelState.ToDataSourceResult());
         }
+        #endregion
+
+        #region Landmark
+        public IActionResult Landmark()
+        {
+            return View();
+        }
 
         [HttpPost]
         public ActionResult LandmarkDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryLandmarkType landmark)
@@ -396,6 +409,7 @@ namespace iWasHere.Web.Controllers
             }
             return Json(result);
         }
+        #endregion
 
         public IActionResult IndexCountry()
         {
@@ -480,9 +494,7 @@ namespace iWasHere.Web.Controllers
             }
             else
             {
-                DictionaryCurrencyType model = new DictionaryCurrencyType();
-                model = _dictionaryService.GetCurrencyModel(id);
-                return View(model);
+                return View(_dictionaryService.GetCurrencyModel(id));
             }
         }
 
@@ -607,4 +619,5 @@ namespace iWasHere.Web.Controllers
         {
             return View();
         }
-    } }
+    }
+}
