@@ -9,8 +9,6 @@ using iWasHere.Domain.Service;
 using Kendo.Mvc.UI;
 using iWasHere.Domain.DTOs;
 using iWasHere.Domain.Models;
-using iWasHere.Domain.Service;
-using iWasHere.Domain.DTOs;
 
 namespace iWasHere.Web.Controllers
 {
@@ -29,6 +27,11 @@ namespace iWasHere.Web.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult AddEditNewLandmark()
         {
             return View();
         }
@@ -71,7 +74,7 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage2;
                         return RedirectToAction("AddEditNewLandmark", new { id = landmark.LandmarkId });
                     }
-                    return Redirect("/Dictionary/Landmark");
+                    return Redirect("/Home/Landmark");
                 case "Save and New":
                     _homeService.UpdateLandmark(landmark, out string errorMessage);
                     if (!string.IsNullOrEmpty(errorMessage))
@@ -79,10 +82,27 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage;
                         return RedirectToAction("AddEditNewLandmark", new { id = landmark.LandmarkId });
                     }
-                    return Redirect("/Dictionary/Landmark");
+                    return Redirect("/Home/Landmark");
                 default:
-                    return Redirect("/Dictionary/Landmark");
+                    return Redirect("/Home/Landmark");
             }
+        }
+
+        public JsonResult Landmarks_Read_ForCB(string text)
+        {
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+
+            List<LandmarkModel> list = GetLandmarksForCB(text);
+
+            return Json(list);
+        }
+        public List<LandmarkModel> GetLandmarksForCB(string text)
+        {
+            List<LandmarkModel> landmarks = _homeService.GetLandmarks(text);
+            return landmarks;
         }
     }
 }

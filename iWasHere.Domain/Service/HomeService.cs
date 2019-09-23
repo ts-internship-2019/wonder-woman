@@ -71,5 +71,15 @@ namespace iWasHere.Domain.Service
                 errorMessage = "Salvarea/Editarea nu a putut fi efectuata cu succes! Te rog sa mai incearci o data!";
             }
         }
+
+        public List<LandmarkModel> GetLandmarks(string text)
+        {
+            var query = _dbContext.Landmark.Select(c => new LandmarkModel()
+            {
+                LandmarkId = c.LandmarkId,
+                Name = c.Name,
+            }).Where(c => c.Name.Contains(text)).Take(100);
+            return query.ToList();
+        }
     }
 }
