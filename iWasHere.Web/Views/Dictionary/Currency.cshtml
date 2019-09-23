@@ -59,10 +59,9 @@
     .Read(read => read.Action("CurrencyRead", "Dictionary").Data("getfilter"))
     .Model(m => m.Id(p => p.CurrencyTypeId))
     .Destroy(destroy => destroy.Action("CurrencyDestroy", "Dictionary"))
-    .Events(events => events.Error("error_handler")) 
+    .Events(events => events.Error("error_handler"))
     )
 )
-
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -109,7 +108,7 @@ $(document).ready(function () {
             });
             alert(message);
         }
-    } 
+    }
 </script>
 
 
