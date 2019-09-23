@@ -29,7 +29,7 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public IActionResult Landmark_Read()
+        public IActionResult Landmark_Read(int Id)
         {
             LandmarkModel model = new LandmarkModel();
             model.MapUrl = "https://www.google.com/maps/embed/v1/directions?origin=1%20Foxfield%20Lawn2C%20Raheny%2C%20Ireland&destination=128%20Old%20County%20Road%2C%20Crumlin%2C%20Ireland&key=AIzaSyC0vB7-K0LOaHIDEGEgHba6Wo2f099UFvE";
