@@ -2,7 +2,9 @@
 using iWasHere.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -16,19 +18,30 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
         }
 
-        public void CurrencyUpdateInsert(DictionaryCurrencyType model)
+        public bool CurrencyUpdateInsert(DictionaryCurrencyType model)
         {
             if (model.CurrencyTypeId == 0)
             {
                 _dbContext.DictionaryCurrencyType.Add(model);
-                _dbContext.SaveChanges();
             }
             else
             {
                 _dbContext.DictionaryCurrencyType.Update(model);
-                _dbContext.SaveChanges();
             }
+
+            try
+            {
+                _dbContext.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
         }
+
         public List<DictionaryTicketTypeModel> GetDictionaryTicketTypeModels(string filterName, int currentPage, int pageSize, out int count)
         {
             int rowsToSkip = (currentPage - 1) * pageSize;
@@ -126,17 +139,21 @@ namespace iWasHere.Domain.Service
             return dictionaryCurrencyTypes;
         }
 
-        public void CurrencyDelete(int id)
-        {
+        public string CurrencyDelete(int id)
+        {   
             DictionaryCurrencyType deleted = _dbContext.DictionaryCurrencyType.First(a => a.CurrencyTypeId == id);
+
             _dbContext.DictionaryCurrencyType.Remove(deleted);
             try
             {
                 _dbContext.SaveChanges();
             }
             catch(Exception ex)
-            {
+            {   
+                if(string.IsNullOrWhiteSpace(ex.ToString()))
+                    return ex.ToString();
             }
+            return null;
         }
 
         public void LandmarkDelete(int id)
@@ -173,22 +190,30 @@ namespace iWasHere.Domain.Service
             return dictionaryCurrencyTypes.Skip(skip).Take(pageSize).ToList(); ;
         }
 
-        public void SaveCity(CityModel city)
+        public void SaveCity(CityModel city, out string errorMessage)
         {
-            City cityToSave = new City();
-            cityToSave.CityId = city.Id;
-            cityToSave.Name = city.Name;
-            cityToSave.Code = city.Code;
-            cityToSave.CountyId = city.CountyId;
-            if (city.Id == 0)
-            {                
-                _dbContext.City.Add(cityToSave);
+            errorMessage = "";
+            try
+            {
+                City cityToSave = new City();
+                cityToSave.CityId = city.Id;
+                cityToSave.Name = city.Name;
+                cityToSave.Code = city.Code;
+                cityToSave.CountyId = city.CountyId;
+                if (city.Id == 0)
+                {
+                    _dbContext.City.Add(cityToSave);
+                }
+                else
+                {
+                    _dbContext.City.Update(cityToSave);
+                }
+                _dbContext.SaveChanges();
             }
-            else
-            {                
-                _dbContext.City.Update(cityToSave);
+            catch (Exception)
+            {
+                errorMessage = "Salvarea/Editarea nu s-a putut efectua. Te rog mai incearca";
             }
-            _dbContext.SaveChanges();
 
         }
 
@@ -241,98 +266,106 @@ namespace iWasHere.Domain.Service
             }).Where(a => a.Name.Contains(name)).ToList();
             count = dictionaryLandmarkTypes.Count();
             int skip = (page - 1) * pageSize;
-            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList(); ;
+            return dictionaryLandmarkTypes.Skip(skip).Take(pageSize).ToList();
         }           
         /// <summary>
         /// Destroys a city
         /// </summary>
         /// <param name="cityToDestroy"></param>
-        public void DestroyCity(CityModel cityToDestroy)
+        public void DestroyCity(CityModel cityToDestroy, out string errorMessage)
         {
-            var db = _dbContext;
-            var cities = db.City.Where(pd => pd.CityId == cityToDestroy.Id);
-            foreach (var city in cities)
+            errorMessage = "";
+            var check = _dbContext.Landmark.Where(a => a.CityId.Equals(cityToDestroy.Id));
+            if(check.Count() == 0)
             {
-                db.City.Remove(city);
+                try
+                {
+                    var db = _dbContext;
+                    var cities = db.City.Where(pd => pd.CityId == cityToDestroy.Id);
+                    foreach (var city in cities)
+                    {
+                        db.City.Remove(city);
+                    }
+                    db.SaveChanges();
+                }
+                catch(SqlException ex)
+                {
+                    errorMessage = ex.Message;
+                }
+                
             }
-            db.SaveChanges();
+            else
+            {
+                errorMessage = "Orasul nu se poate sterge deoarece are " + check.Count() + " referinte";
+            }
+            
         }
         
 
         /// <summary>
         /// Gets paged cities
         /// </summary>
-        /// <param name="skipRows">Represents rows to skip to show the desired page</param>
+        /// <param name="page">Represents the page</param>
         /// <param name="pageSize">Represents the # of rows to display per page</param>
-        /// <param name="filterName">Presents the City Name to filter by</param>
-        /// <param name="filterCounty">Represents the County ID to filter by</param>
         /// <param name="totalRows">Represents the total # of records in the DB mathincg the filtering criteria</param>
         /// <returns></returns>
-        public List<CityModel> GetAllPagedCities(int skipRows, int pageSize, string filterName, int filterCounty, out int totalRows)
+        public List<CityModel> GetAllPagedCities(int page, int pageSize, out int totalRows)
         {
-            totalRows = 0;
-            if (String.IsNullOrEmpty(filterName) && filterCounty == 0)
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Select(a => new CityModel
             {
-                var query = _dbContext.City.Include(b => b.County);
-                var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                totalRows = query.Count();
-                var cities = page.Select(p => p);
-                return cities.ToList();
-            }
-            if (!String.IsNullOrEmpty(filterName))
-            {
-                if(filterCounty > 0)
-                {
-                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County).Where(b => b.CountyId.Equals(filterCounty));
-                    var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = query.Count();
-                    var cities = page.Select(p => p);
-                    return cities.ToList();
-                }
-                else
-                {
-                    var query = _dbContext.City.Where(a => a.Name.Contains(filterName)).Include(b => b.County);
-                    var page = query.OrderBy(p => p.CityId)
-                                .Select(p => new CityModel()
-                                {
-                                    Id = p.CityId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountyId = p.CountyId,
-                                    CountyName = p.County.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = query.Count();
-                    var cities = page.Select(p => p);
-                    return cities.ToList();
-                }
-            }
-            return new List<CityModel>();
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
         }
+        public List<CityModel> GetFilteredPagedCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Where(a=>a.Name.Contains(filterName)).Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+        public List<CityModel> GetFilteredOnlyByNamePagedCities(int page, int pageSize, string filterName, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Where(a => a.Name.Contains(filterName)).Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+        public List<CityModel> GetFilteredOnlyByCountyPagedCities(int page, int pageSize, int filterCounty, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CityModel> cities = _dbContext.City.Select(a => new CityModel
+            {
+                Id = a.CityId,
+                Name = a.Name,
+                Code = a.Code,
+                CountyId = a.CountyId,
+                CountyName = a.County.Name
+            }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.City.Count();
+            return cities;
+        }
+
         /// <summary>
         /// Simple service method to get Counties for ComboBox
         /// </summary>
@@ -370,6 +403,11 @@ namespace iWasHere.Domain.Service
                 ParentId = a.ParentId
             }).Skip(skip).Take(pageSize).ToList();
             return country;
+        }
+
+        public void UpdateConstruction(object constructionTonUpdate)
+        {
+            throw new NotImplementedException();
         }
 
         //filtrare Country
@@ -422,8 +460,9 @@ namespace iWasHere.Domain.Service
         }
 
         //updatenewpage
-        public string UpdateCountry(Country country)
+        public void UpdateCountry(Country country, out string errorMessage)
         {
+            errorMessage = "";
             if(country.CountryId == 0)
             {
                 _dbContext.Country.Add(country);
@@ -436,11 +475,10 @@ namespace iWasHere.Domain.Service
             {
                 _dbContext.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return ex.ToString();
+                errorMessage = "Salvarea/Editarea nu a putut fi efectuata cu succes! Te rog sa mai incearci o data!";
             }
-            return null;
         }
 
         public List<CountyModel> GetAllPagedCounties(int skipRows, int pageSize, string filterName, int filterCountry, out int totalRows)
@@ -632,7 +670,8 @@ namespace iWasHere.Domain.Service
             }
             else
             {
-                //update
+                db.DictionaryConstructionType.Update(ConstructionToUpdate);
+                db.SaveChanges();
             }
             return 0;
         }

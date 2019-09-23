@@ -90,6 +90,10 @@
                 $('#Grid').data("kendoGrid").dataSource.read();
                 $('#Grid').data("kendoGrid").dataSource.page(1);
             }
+            if
+                ($(e.event.target).closest(".k-button").attr("id") == "addbtn") {
+                window.location = '@Url.Action("AddConstruction","Dictionary")';
+            }
             if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
                 construction = $('#constructionName').val();
                 $('#Grid').data("kendoGrid").dataSource.read();
