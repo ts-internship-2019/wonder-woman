@@ -26,6 +26,32 @@ namespace iWasHere.Domain.Service
             }).ToList();
             return landmarkList;
         }
+        public List<Photo> GetPhoto()
+        {
+            List<Photo> photo = _dbContext.Photo.Select(a => new Photo()
+            {
+                PhotoId = a.PhotoId,
+                LandmarkId = a.LandmarkId
+            }).ToList();
+            return photo;
+        }
+
+        public void SaveImagesDB(string path,int id)
+        { 
+
+            Photo photo = new Photo()
+            {
+                ImagePath = path,
+                LandmarkId = id
+            };
+
+            _dbContext.Photo.Add(photo);
+
+            _dbContext.SaveChanges();
+
+        }
+
+
 
     }
 }

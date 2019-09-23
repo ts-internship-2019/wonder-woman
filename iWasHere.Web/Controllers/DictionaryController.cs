@@ -191,6 +191,7 @@ namespace iWasHere.Web.Controllers
      
             return Json(list);
         }
+    
         /// <summary>
         /// Test Gets Counties as a List<>
         /// </summary>
@@ -340,10 +341,8 @@ namespace iWasHere.Web.Controllers
         }
 
         #region Currency
-        public IActionResult Currency()
-        {
-            return View();
-        }
+
+      
 
         [HttpPost]
         public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string filterName)
@@ -615,9 +614,6 @@ namespace iWasHere.Web.Controllers
         }
 
 
-        public IActionResult Images()
-        {
-            return View();
-        }
+      
     }
 }
