@@ -4,7 +4,7 @@
     ViewData["Title"] = "Editare/Adaugare Tip Bilet";
 }
 
-@using (Html.BeginForm("UpdateTicket", "Dictionary", FormMethod.Post))
+@using (Html.BeginForm("UpdateTicket", "Dictionary", FormMethod.Post, new { onsubmit = "onSubmit(e)" }))
 {
     <div>
         <span>Nume Bilet:</span> @Html.Kendo().TextBoxFor(m => m.Name)

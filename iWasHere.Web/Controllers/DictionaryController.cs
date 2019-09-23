@@ -58,19 +58,19 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public ActionResult UpdateTicket(DictionaryTicketTypeModel ticketToUpdate, string submit)
         {
-            switch (submit)
-            {
-                case "Salveaza si nou":
-                    _dictionaryService.UpdateTicket(ticketToUpdate);
-                    return Redirect("/Dictionary/AddTicket");
-                case "Salveaza":
-                    _dictionaryService.UpdateTicket(ticketToUpdate);
-                    return Redirect("/Dictionary/Tickets");
-                case "Anuleaza":
-                    return Redirect("/Dictionary/Tickets");
-                default:
-                    return Redirect("/Dictionary/Tickets");
-            }
+                switch (submit)
+                {
+                    case "Salveaza si nou":
+                        _dictionaryService.UpdateTicket(ticketToUpdate);
+                        return Redirect("/Dictionary/AddTicket");
+                    case "Salveaza":
+                        _dictionaryService.UpdateTicket(ticketToUpdate);
+                        return Redirect("/Dictionary/Tickets");
+                    case "Anuleaza":
+                        return Redirect("/Dictionary/Tickets");
+                    default:
+                        return Redirect("/Dictionary/Tickets");
+                }
         }
         public IActionResult IndexCity()
         {
