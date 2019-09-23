@@ -334,12 +334,7 @@ namespace iWasHere.Web.Controllers
             }         
 
         }
-   
-        public IActionResult Currency()
-        {
-            return View();
-        }
-
+ 
         #region Currency
 
       
