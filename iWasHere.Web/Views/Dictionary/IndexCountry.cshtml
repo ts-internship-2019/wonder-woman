@@ -3,11 +3,12 @@
     ViewData["Title"] = "IndexCountry";
 }
 
+@TempData["message"]
 <div class="demo-section k-content">
     @(Html.Kendo().Button()
         .Name("btnAdd")
         .Content("Add Country")
-        .HtmlAttributes(new { type = "button" , style = "background:green"})
+        .HtmlAttributes(new { type = "button", style = "background:green" })
         .Events(ev => ev.Click("onClick")))
 </div>
 
@@ -56,7 +57,7 @@
                     columns.Template("<a class='k-button' href='/Dictionary/AddNewCountry?Id=#=CountryId# '>Edit</a>").Width(150);
                     columns.Command(d => { /*d.Custom("Edit");*/ d.Destroy(); });
                 })
-                .HtmlAttributes(new { style = "height: 380px"})
+                .HtmlAttributes(new { style = "height: 380px" })
                 .Scrollable()
                 .Sortable()
                 .Pageable(pageable => pageable

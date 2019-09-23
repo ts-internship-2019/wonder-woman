@@ -490,6 +490,11 @@ namespace iWasHere.Domain.Service
             return country;
         }
 
+        public void UpdateConstruction(object constructionTonUpdate)
+        {
+            throw new NotImplementedException();
+        }
+
         //filtrare Country
         public List<DictionaryCountryModel> GetFilteredCountryModels(int page, int pageSize, out int count, string filterName)
         {
@@ -540,8 +545,9 @@ namespace iWasHere.Domain.Service
         }
 
         //updatenewpage
-        public string UpdateCountry(Country country)
+        public void UpdateCountry(Country country, out string errorMessage)
         {
+            errorMessage = "";
             if(country.CountryId == 0)
             {
                 _dbContext.Country.Add(country);
@@ -554,11 +560,10 @@ namespace iWasHere.Domain.Service
             {
                 _dbContext.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return ex.Message;
+                errorMessage = "Salvarea/Editarea nu a putut fi efectuata cu succes! Te rog sa mai incearci o data!";
             }
-            return null;
         }
 
         public List<CountyModel> GetAllPagedCounties(int page, int pageSize, out int totalRows)
@@ -700,7 +705,8 @@ namespace iWasHere.Domain.Service
             }
             else
             {
-                //update
+                db.DictionaryConstructionType.Update(ConstructionToUpdate);
+                db.SaveChanges();
             }
             return 0;
         }
