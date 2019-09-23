@@ -9,16 +9,21 @@ using iWasHere.Domain.Service;
 using Kendo.Mvc.UI;
 using iWasHere.Domain.DTOs;
 using iWasHere.Domain.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace iWasHere.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly HomeService _homeService;
+        private IHostingEnvironment _environment;
 
-        public HomeController(HomeService homeService)
+        public HomeController(HomeService homeService, IHostingEnvironment environment)
         {
             _homeService = homeService;
+            _environment = environment;
         }
 
         public IActionResult Index()
@@ -76,7 +81,7 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage2;
                         return RedirectToAction("AddEditNewLandmark", new { id = landmark.LandmarkId });
                     }
-                    return Redirect("/Home/Landmark");
+                    return Redirect("/Home/Landmarks_List_Read");
                 case "Save and New":
                     _homeService.UpdateLandmark(landmark, out string errorMessage);
                     if (!string.IsNullOrEmpty(errorMessage))
@@ -84,9 +89,9 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage;
                         return RedirectToAction("AddEditNewLandmark", new { id = landmark.LandmarkId });
                     }
-                    return Redirect("/Home/Landmark");
+                    return Redirect("/Home/AddEditNewLandmark");
                 default:
-                    return Redirect("/Home/Landmark");
+                    return Redirect("/Home/Landmarks_List_Read");
             }
         }
 
@@ -101,10 +106,29 @@ namespace iWasHere.Web.Controllers
 
             return Json(list);
         }
+
         public List<LandmarkModel> GetLandmarksForCB(string text)
         {
             List<LandmarkModel> landmarks = _homeService.GetLandmarks(text);
             return landmarks;
+        }
+
+        public JsonResult Countries_Read_ForCB(string text)
+        {
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+
+            List<DictionaryCountryModel> list = GetCountriesForCB(text);
+
+            return Json(list);
+        }
+
+        public List<DictionaryCountryModel> GetCountriesForCB(string text)
+        {
+            List<DictionaryCountryModel> countryModels = _homeService.GetCountries(text);
+            return countryModels;
         }
     }
 }
