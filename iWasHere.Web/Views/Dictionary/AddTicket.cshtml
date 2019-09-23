@@ -4,8 +4,9 @@
     ViewData["Title"] = "Editare/Adaugare Tip Bilet";
 }
 
-@using (Html.BeginForm("UpdateTicket", "Dictionary", FormMethod.Post))
+@using (Html.BeginForm("UpdateTicket", "Dictionary", FormMethod.Post, new { onsubmit = "onSubmit(e)" }))
 {
+    @TempData["message"];
     <div>
         <span>Nume Bilet:</span> @Html.Kendo().TextBoxFor(m => m.Name)
         <br />
@@ -14,20 +15,17 @@
         <span>Descriere: </span>  @Html.Kendo().TextBoxFor(m => m.Description)
         <br />
         @Html.HiddenFor(m => m.TicketTypeId)
-        @if(Model.TicketTypeId != 0)
+        @if (Model.TicketTypeId == 0)
         {
-        @(Html.Kendo().Button()
-                .Name("save")
-                .Content("Salveaza")
-                .HtmlAttributes(new { type = "submit", name = "submit", value = "Salveaza" }))
-        }
-        else
-        {
-        @(Html.Kendo().Button()
+            @(Html.Kendo().Button()
                 .Name("savenew")
                 .Content("Salveaza si nou")
                 .HtmlAttributes(new { type = "submit", name = "submit", value = "Salveaza si nou" }))
         }
+        @(Html.Kendo().Button()
+                   .Name("save")
+                   .Content("Salveaza")
+                   .HtmlAttributes(new { type = "submit", name = "submit", value = "Salveaza" }))
 
         @(Html.Kendo().Button()
                .Name("back")
