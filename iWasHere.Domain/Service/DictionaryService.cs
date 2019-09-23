@@ -224,6 +224,32 @@ namespace iWasHere.Domain.Service
             }
 
         }
+        public void SaveCounty(CountyModel county, out string errorMessage)
+        {
+            errorMessage = "";
+            try
+            {
+                County countyToSave = new County();
+                countyToSave.CountyId = county.CountyId;
+                countyToSave.Name = county.Name;
+                countyToSave.Code = county.Code;
+                countyToSave.CountryId = county.CountryId;
+                if (county.CountyId == 0)
+                {
+                    _dbContext.County.Add(countyToSave);
+                }
+                else
+                {
+                    _dbContext.County.Update(countyToSave);
+                }
+                _dbContext.SaveChanges();
+            }
+            catch(Exception)
+            {
+                errorMessage = "Salvarea/Editarea nu s-a putut efectua. Te rog mai incearca";
+            }
+
+        }
 
         public CityModel GetCityInfoById(int id)
         {
@@ -248,6 +274,30 @@ namespace iWasHere.Domain.Service
             }
             return city;
         }
+        public CountyModel GetCountyInfoById(int id)
+        {
+            CountyModel county = new CountyModel();
+            List<CountyModel> counties = new List<CountyModel>();
+            var query = _dbContext.County.Where(a => a.CountyId.Equals(id)).Include(b => b.Country);
+            if (query.Count() == 1)
+            {
+                var page = query.Select(a => new CountyModel
+                {
+                    CountyId = a.CountyId,
+                    Name = a.Name,
+                    Code = a.Code,
+                    CountryId = a.Country.CountryId,
+                    CountryName = a.Country.Name
+                });
+                counties = page.ToList();
+            }
+            if (counties.Count == 1)
+            {
+                county = counties[0];
+            }
+            return county;
+        }
+
 
         public List<DictionaryLandmarkType> GetLandmarkTypeModels(int page, int pageSize, out int count)
         {
@@ -345,6 +395,20 @@ namespace iWasHere.Domain.Service
             totalRows = _dbContext.City.Count();
             return cities;
         }
+        public List<CountyModel> GetFilteredPagedCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> counties = _dbContext.County.Where(a => a.Name.Contains(filterName)).Select(a => new CountyModel
+            {
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Where(a => a.CountryId.Equals(filterCountry)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.County.Count();
+            return counties;
+        }
         public List<CityModel> GetFilteredOnlyByNamePagedCities(int page, int pageSize, string filterName, out int totalRows)
         {
             int skip = (page - 1) * pageSize;
@@ -359,6 +423,20 @@ namespace iWasHere.Domain.Service
             totalRows = _dbContext.City.Count();
             return cities;
         }
+        public List<CountyModel> GetFilteredOnlyByNamePagedCounties(int page, int pageSize, string filterName, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> counties = _dbContext.County.Where(a => a.Name.Contains(filterName)).Select(a => new CountyModel
+            {
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.County.Count();
+            return counties;
+        }
         public List<CityModel> GetFilteredOnlyByCountyPagedCities(int page, int pageSize, int filterCounty, out int totalRows)
         {
             int skip = (page - 1) * pageSize;
@@ -372,6 +450,21 @@ namespace iWasHere.Domain.Service
             }).Where(a=>a.CountyId.Equals(filterCounty)).Skip(skip).Take(pageSize).ToList();
             totalRows = _dbContext.City.Count();
             return cities;
+        }
+
+        public List<CountyModel> GetFilteredOnlyByCountryPagedCounties(int page, int pageSize, int filterCountry, out int totalRows)
+        {
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> counties = _dbContext.County.Select(a => new CountyModel
+            {
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Where(a => a.CountryId.Equals(filterCountry)).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.County.Count();
+            return counties;
         }
 
         /// <summary>
@@ -394,7 +487,7 @@ namespace iWasHere.Domain.Service
             {
                 CountryId = c.CountryId,
                 Name = c.Name
-            }).Where(c=>c.Name.Contains(text));
+            }).Where(c=>c.Name.Contains(text)).Take(100);
             return query.ToList();
         }
 
@@ -489,55 +582,19 @@ namespace iWasHere.Domain.Service
             }
         }
 
-        public List<CountyModel> GetAllPagedCounties(int skipRows, int pageSize, string filterName, int filterCountry, out int totalRows)
+        public List<CountyModel> GetAllPagedCounties(int page, int pageSize, out int totalRows)
         {
-            totalRows = 0;
-            if (filterCountry > 0)
+            int skip = (page - 1) * pageSize;
+            List<CountyModel> county = _dbContext.County.Select(a => new CountyModel
             {
-                var query = _dbContext.County.Where(a => a.Name.Contains(filterName)).Include(b => b.Country).Where(b => b.CountryId.Equals(filterCountry));
-                if (query.Count() > 0)
-                {
-                    var page = query.OrderBy(p => p.CountyId)
-                                .Select(p => new CountyModel()
-                                {
-                                    CountyId = p.CountyId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountryId = p.CountryId,
-                                    CountryName = p.Country.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = page.Key.Total;
-                    var counties = page.Select(p => p);
-                    return counties.ToList();
-                }
-            }
-            else
-            {
-                var query = _dbContext.County.Where(a => a.Name.Contains(filterName)).Include(b => b.Country);
-                if (query.Count() > 0)
-                {
-                    var page = query.OrderBy(p => p.CountyId)
-                                .Select(p => new CountyModel()
-                                {
-                                    CountyId = p.CountyId,
-                                    Name = p.Name,
-                                    Code = p.Code,
-                                    CountryId = p.CountryId,
-                                    CountryName = p.Country.Name
-                                })
-                                .Skip(skipRows).Take(pageSize)
-                                .GroupBy(p => new { Total = query.Count() })
-                                .First();
-                    totalRows = page.Key.Total;
-                    var counties = page.Select(p => p);
-                    return counties.ToList();
-                }
-            }
-
-            return new List<CountyModel>();
+                CountyId = a.CountyId,
+                Name = a.Name,
+                Code = a.Code,
+                CountryId = a.CountryId,
+                CountryName = a.Country.Name
+            }).Skip(skip).Take(pageSize).ToList();
+            totalRows = _dbContext.County.Count();
+            return county;
         }
 
         public List<DictionaryConstructionTypeModel> GetDictionaryConstructionTypeModels(string filterName, int currentPage, int pageSize, out int count)
@@ -601,54 +658,39 @@ namespace iWasHere.Domain.Service
             return dictionaryConstructionTypeModels;
         }
 
-        public void DestroyCounty(CountyModel countyToDestroy)
+        public void DestroyCounty(CountyModel countyToDestroy, out string errorMessage)
         {
-            var db = _dbContext;
-
-
-
-            var county = db.County.Where(pd => pd.CountyId == countyToDestroy.CountyId);
-
-
-
-            foreach (var c in county)
-            {
-                db.County.Remove(c);
-            }
-
-
-
-            db.SaveChanges();
-        }
-        public County editCounty(int id)
-        {
-            return _dbContext.County.First(a => a.CountyId == id);
-        }
-
-        public CountyModel GetCountyInfoById(int id)
-        {
-            CountyModel county = new CountyModel();
-            List<CountyModel> counties = new List<CountyModel>();
-            var query = _dbContext.County.Where(a => a.CountyId.Equals(id)).Include(b => b.Country);
-            if (query.Count() == 1)
-            {
-                var page = query.Select(a => new CountyModel
+            
+                errorMessage = "";
+                var check = _dbContext.County.Where(a => a.CountyId.Equals(countyToDestroy.CountyId));
+                if (check.Count() == 0)
                 {
-                    CountyId = a.CountyId,
-                    Name = a.Name,
-                    Code = a.Code,
-                    CountryId = a.Country.CountryId,
-                    CountryName = a.Country.Name
-                });
-                counties = page.ToList();
-            }
-            if (counties.Count == 1)
-            {
-                county = counties[0];
-            }
-            return county;
-        }
+                    try
+                    {
+                        var db = _dbContext;
+                        var counties = db.County.Where(pd => pd.CountyId == countyToDestroy.CountyId);
+                        foreach (var county in counties)
+                        {
+                            db.County.Remove(county);
+                        }
+                        db.SaveChanges();
+                    }
+                    catch (SqlException ex)
+                    {
+                        errorMessage = ex.Message;
+                    }
 
+                }
+                else
+                {
+                    errorMessage = "Judetul nu se poate sterge deoarece are " + check.Count() + " referinte";
+                }
+
+            
+        }
+  
+
+      
         public void DestroyConstruction(DictionaryConstructionTypeModel constructionToDestroy)
         {
             var db = _dbContext;
@@ -699,6 +741,34 @@ namespace iWasHere.Domain.Service
 
 
 
+        }
+
+
+        public void CountyUpdateInsert(County model)
+        {
+            if (model.CountyId == 0)
+            {
+                _dbContext.County.Add(model);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                _dbContext.County.Update(model);
+                _dbContext.SaveChanges();
+            }
+        }
+        public void CountryUpdateInsert(Country model)
+        {
+            if (model.CountryId == 0)
+            {
+                _dbContext.Country.Add(model);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                _dbContext.Country.Update(model);
+                _dbContext.SaveChanges();
+            }
         }
     }
 }
