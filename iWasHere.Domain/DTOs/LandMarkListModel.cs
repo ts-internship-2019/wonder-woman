@@ -4,7 +4,7 @@ using System.Text;
 
 namespace iWasHere.Domain.DTOs
 {
-    public class LandMarkListModel
+    public class LandmarkListModel
     {
         public int LandmarkId { get; set; }
         public string Name { get; set; }

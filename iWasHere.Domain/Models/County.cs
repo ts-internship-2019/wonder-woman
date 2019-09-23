@@ -7,7 +7,7 @@ namespace iWasHere.Domain.Models
     {
         public County()
         {
-            City = new HashSet<City>();
+           City = new HashSet<City>();
             Landmark = new HashSet<Landmark>();
         }
 

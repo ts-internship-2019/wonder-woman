@@ -17,6 +17,15 @@ namespace iWasHere.Domain.Service
         {
             _dbContext = databaseContext;
         }
+        public List<LandmarkListModel> GetLandmarkListModels()
+        {
+            List<LandmarkListModel> landmarkList = _dbContext.Landmark.Select(a => new LandmarkListModel()
+            {
+                LandmarkId = a.LandmarkId,
+                Name = a.Name
+            }).ToList();
+            return landmarkList;
+        }
 
         public void UpdateLandmark(LandmarkModel lm, out string errorMessage)
         {

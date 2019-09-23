@@ -1,31 +1,79 @@
-﻿@Model IEnumerable<iWasHere.Domain.DTOs.LandMarkListModel>
-    @{
-        ViewData["Title"] = "Lista Obiective";
-    }
+﻿@model IEnumerable<iWasHere.Domain.DTOs.LandmarkListModel>
+@using Kendo.Mvc.UI
+@{
+    ViewData["Title"] = "Lista Obiective";
+}
 
-
-
-    <script type="text/x-kendo-tmpl" id="template">
-        <div class="product">
-            <img src="@Url.Content("~/shared/web/foods/")#:ProductID#.jpg" alt="#:ProductName# image" />
-            <h3>#:ProductName#</h3>
-            <p>#:kendo.toString(UnitPrice, "c")#</p>
-        </div>
-    </script>
-    <div class="demo-section k-content wide">
-        @(Html.Kendo().ListView(Model)
-        .Name("listView")
-        .TagName("div")
-        .ClientTemplateId("template")
+<div>
+    <table>
+        <tr>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("addBtn")
+                    .Content("Adauga")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("editBtn")
+                    .Content("Editeaza")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("deleteBtn")
+                    .Content("Sterge")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+        </tr>
+    </table>
+</div>
+<div>
+    @(Html.Kendo().Grid(Model)
+        .Name("Grid")
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.LandmarkId).Title("Id").Width(80);
+            columns.Template("<a class='k-button' href='/Home/Landmark_Read?Id=#=LandmarkId# '> #=Name# </a>");
+        })
+        .HtmlAttributes(new { style = "height: 500dp;" })
+        .Pageable(pageable => pageable
+            .Refresh(true)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .Sortable()
+        .Selectable()
+        .Scrollable(scr => scr.Height(430))
         .DataSource(dataSource => dataSource
-                .Ajax()
-                .Read(read => read.Action("Products_Read", "ListView"))
-                .PageSize(21)
-            )
-            .Pageable(pageable => pageable
-               .Refresh(true)
-               .ButtonCount(5)
-               .PageSizes(new[] { 5, 15, 21 })
-            )
-        )
-    </div>
+            .Ajax()
+            .PageSize(10)
+            .Model(model => model.Id(p => p.LandmarkId))
+            .Read(read => read.Action("GetLandmarks", "Home"))
+
+         )
+    )
+</div>
+
+<script type="text/javascript">
+
+
+    function onClick(e) {
+
+        var Grid = $("#Grid").data("kendoGrid");
+        var selectedItem = Grid.dataItem(Grid.select());
+
+        if ($(e.event.target).closest(".k-button").attr("id") == "addBtn") {
+
+        }
+        if ($(e.event.target).closest(".k-button").attr("id") == "editBtn") {
+
+        }
+        if ($(e.event.target).closest(".k-button").attr("id") == "deleteBtn") {
+
+        }
+    }
+</script>
+
