@@ -37,8 +37,10 @@ namespace iWasHere.Web.Controllers
         }
 
         public IActionResult Landmark_Read(int id)
-        {
+        {   
+
             LandmarkModel model = new LandmarkModel();
+            model = _homeService.GetLandmarks("Test");
             model.Latitude = 40.7127837m;
             model.Longitude = -74.0059413m;
             model.MapUrl = "https://www.google.com/maps/embed/v1/place?q=" + model.Latitude.ToString() + "," + model.Longitude.ToString() + "&amp;&key=AIzaSyC0vB7-K0LOaHIDEGEgHba6Wo2f099UFvE";

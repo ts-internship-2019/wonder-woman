@@ -295,6 +295,7 @@ namespace iWasHere.Domain.Service
             {
                 county = counties[0];
             }
+
             return county;
         }
 
