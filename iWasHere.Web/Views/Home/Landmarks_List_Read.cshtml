@@ -1,4 +1,79 @@
-﻿@Model IEnumerable<iWasHere.Domain.DTOs.LandMarkListModel>
-    @{
-        ViewData["Title"] = "Lista Obiective";
+﻿@model IEnumerable<iWasHere.Domain.DTOs.LandmarkListModel>
+@using Kendo.Mvc.UI
+@{
+    ViewData["Title"] = "Lista Obiective";
+}
+
+<div>
+    <table>
+        <tr>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("addBtn")
+                    .Content("Adauga")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("editBtn")
+                    .Content("Editeaza")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+            <td>
+                @(Html.Kendo().Button()
+                    .Name("deleteBtn")
+                    .Content("Sterge")
+                    .HtmlAttributes(new { type = "button" })
+                    .Events(ev => ev.Click("onClick")))
+            </td>
+        </tr>
+    </table>
+</div>
+<div>
+    @(Html.Kendo().Grid(Model)
+        .Name("Grid")
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.LandmarkId).Title("Id").Width(80);
+            columns.Template("<a class='k-button' href='/Home/Landmark_Read?Id=#=LandmarkId# '> #=Name# </a>");
+        })
+        .HtmlAttributes(new { style = "height: 500dp;" })
+        .Pageable(pageable => pageable
+            .Refresh(true)
+            .PageSizes(true)
+            .ButtonCount(5))
+        .Sortable()
+        .Selectable()
+        .Scrollable(scr => scr.Height(430))
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(10)
+            .Model(model => model.Id(p => p.LandmarkId))
+            .Read(read => read.Action("GetLandmarks", "Home"))
+
+         )
+    )
+</div>
+
+<script type="text/javascript">
+
+
+    function onClick(e) {
+
+        var Grid = $("#Grid").data("kendoGrid");
+        var selectedItem = Grid.dataItem(Grid.select());
+
+        if ($(e.event.target).closest(".k-button").attr("id") == "addBtn") {
+
+        }
+        if ($(e.event.target).closest(".k-button").attr("id") == "editBtn") {
+
+        }
+        if ($(e.event.target).closest(".k-button").attr("id") == "deleteBtn") {
+
+        }
     }
+</script>
+
