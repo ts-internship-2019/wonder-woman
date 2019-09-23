@@ -37,9 +37,12 @@ namespace iWasHere.Web.Controllers
         }
 
         public IActionResult Landmark_Read()
+        public IActionResult Landmark_Read(int id)
         {
             LandmarkModel model = new LandmarkModel();
-            model.MapUrl = "https://www.google.com/maps/embed/v1/directions?origin=1%20Foxfield%20Lawn2C%20Raheny%2C%20Ireland&destination=128%20Old%20County%20Road%2C%20Crumlin%2C%20Ireland&key=AIzaSyC0vB7-K0LOaHIDEGEgHba6Wo2f099UFvE";
+            model.Latitude = 40.7127837m;
+            model.Longitude = -74.0059413m;
+            model.MapUrl = "https://www.google.com/maps/embed/v1/place?q=" + model.Latitude.ToString() + "," + model.Longitude.ToString() + "&amp;&key=AIzaSyC0vB7-K0LOaHIDEGEgHba6Wo2f099UFvE";
             return View(model);
         }
 
