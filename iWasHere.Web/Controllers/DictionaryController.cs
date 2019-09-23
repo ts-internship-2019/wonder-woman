@@ -10,14 +10,17 @@ using System.Web.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using iWasHere.Web.Models;
+using Microsoft.AspNetCore.Routing;
 
 namespace iWasHere.Web.Controllers
 {
     public class DictionaryController : Controller
     {
         private readonly DictionaryService _dictionaryService;
-
-
 
         public DictionaryController(DictionaryService dictionaryService)
         {
@@ -48,7 +51,32 @@ namespace iWasHere.Web.Controllers
             _dictionaryService.DestroyTicket(ticketToDelete);
             return Json(request);
         }
+        public IActionResult AddTicket(int Id)
+        {
+            DictionaryTicketTypeModel ticket = new DictionaryTicketTypeModel();
+            if (Id != 0)
+                ticket = _dictionaryService.GetTicketById(Id);
 
+
+            return View(ticket);
+        }
+        [HttpPost]
+        public ActionResult UpdateTicket(DictionaryTicketTypeModel ticketToUpdate, string submit)
+        {
+            switch (submit)
+            {
+                case "Salveaza si nou":
+                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                    return Redirect("/Dictionary/AddTicket");
+                case "Salveaza":
+                    _dictionaryService.UpdateTicket(ticketToUpdate);
+                    return Redirect("/Dictionary/Tickets");
+                case "Anuleaza":
+                    return Redirect("/Dictionary/Tickets");
+                default:
+                    return Redirect("/Dictionary/Tickets");
+            }
+        }
         public IActionResult IndexCity()
         {
             return View();
@@ -61,14 +89,35 @@ namespace iWasHere.Web.Controllers
         /// <returns></returns>
         public IActionResult Cities_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCounty)
         {
-            if (String.IsNullOrEmpty(filterName))
-            {
-                filterName = "";
-            }
             DataSourceResult result = new DataSourceResult();
-            List<CityModel> list = GetCities(request.Page, request.PageSize, filterName, filterCounty, out int totalRows);
-            result.Data = list;
-            result.Total = totalRows;
+            if (string.IsNullOrWhiteSpace(filterName))
+            {
+                if (filterCounty == 0)
+                {
+                    result.Data = _dictionaryService.GetAllPagedCities(request.Page, request.PageSize, out int count);
+                    result.Total = count;
+                }
+                else
+                {
+                    result.Data = _dictionaryService.GetFilteredOnlyByCountyPagedCities(request.Page, request.PageSize, filterCounty, out int count);
+                    result.Total = count;
+                }
+                
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(filterName) && filterCounty > 0)
+                {
+                    result.Data = _dictionaryService.GetFilteredPagedCities(request.Page, request.PageSize, filterName, filterCounty, out int count);
+                    result.Total = count;
+                }
+                else if(!string.IsNullOrWhiteSpace(filterName) && filterCounty == 0)
+                {
+                    result.Data = _dictionaryService.GetFilteredOnlyByNamePagedCities(request.Page, request.PageSize, filterName, out int count);
+                    result.Total = count;
+                }
+                
+            }
             return Json(result);
         }
         public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName, int filterCountry)
@@ -89,11 +138,7 @@ namespace iWasHere.Web.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         public JsonResult Couties_Read_ForCB(string text)
-        {
-            if (String.IsNullOrEmpty(text))
-            {
-                text = "";
-            }
+        {            
             List<CountyModel> result = GetCountiesForCB(text);
             return Json(result);
         }
@@ -125,11 +170,24 @@ namespace iWasHere.Web.Controllers
             return countryModels;
         }
         /// <summary>
-        /// Test Gets Cities as a List<>
+        /// Adds a new city
         /// </summary>
         /// <returns></returns>
-        private List<CityModel> GetCities(int page, int pageSize, string filterName, int filterCounty, out int totalRows)
+        public IActionResult AddCity(int id, string name = "", string code = "", int countyId = 0, string countyName = "")
         {
+            CityModel city = new CityModel();
+            if (!string.IsNullOrEmpty(name))
+            {
+                city.Id = id;
+                city.Name = name;
+                city.Code = code;
+                city.CountyId = countyId;
+                city.CountyName = countyName;
+            }
+            else
+            {
+                city = _dictionaryService.GetCityInfoById(id);
+            }            
             int skipRows = (page - 1) * pageSize;
             List<CityModel> cityModels = _dictionaryService.GetAllPagedCities(skipRows, pageSize, filterName, filterCounty, out int rowsCount);
             totalRows = rowsCount;
@@ -165,10 +223,24 @@ namespace iWasHere.Web.Controllers
             switch (btn)
             {
                 case "Salveaza si Nou":
-                    _dictionaryService.SaveCity(city);
+                    _dictionaryService.SaveCity(city, out string errorMessage);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        TempData["message"] = errorMessage;
+                        
+
+                        return RedirectToAction("AddCity", new RouteValueDictionary(city));
+                    }
                     return Redirect("/Dictionary/AddCity");
                 case "Salveaza":
-                    _dictionaryService.SaveCity(city);
+                    _dictionaryService.SaveCity(city,out string errorMessage2);
+                    if (!string.IsNullOrEmpty(errorMessage2))
+                    {
+                        TempData["message"] = errorMessage2;
+                        
+
+                        return RedirectToAction("AddCity", new RouteValueDictionary(city));
+                    }
                     return Redirect("/Dictionary/IndexCity");
                 case "Anuleaza":                    
                     return Redirect("/Dictionary/IndexCity");
@@ -203,6 +275,21 @@ namespace iWasHere.Web.Controllers
         /// <returns></returns>
         public IActionResult DestroyCity([DataSourceRequest] DataSourceRequest request, CityModel cityToDestroy)
         {
+            _dictionaryService.DestroyCity(cityToDestroy, out string errorMessage);
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                return Json(request);
+            }
+            else
+            {
+                return Json(new DataSourceResult
+                {
+                    Errors = errorMessage
+                });
+            }         
+
+        }
             _dictionaryService.DestroyCity(cityToDestroy);
             return Json(request);
         }
@@ -252,11 +339,13 @@ namespace iWasHere.Web.Controllers
         [HttpPost]
         public ActionResult CurrencyDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryCurrencyType currency)
         {
+            string error;
             if (currency != null && ModelState.IsValid)
             {
-                _dictionaryService.CurrencyDelete(currency.CurrencyTypeId);
+                error = _dictionaryService.CurrencyDelete(currency.CurrencyTypeId);
+                if(!string.IsNullOrWhiteSpace(error))
+                    ModelState.AddModelError("a", error);
             }
-
             return Json(ModelState.ToDataSourceResult());
         }
 
@@ -294,6 +383,30 @@ namespace iWasHere.Web.Controllers
         }
 
 
+        //textbox
+        //updatebutton
+        [HttpPost]
+        public IActionResult CountrySubmit(Country model, string btnSave)
+        {
+            string errorm;
+            switch (btnSave)
+            {
+                case "Save":
+                    if (string.IsNullOrWhiteSpace(errorm = _dictionaryService.UpdateCountry(model)))
+                        return Redirect("/Dictionary/IndexCountry");
+                    else
+                        return RedirectToAction("AddNewCountry", new { id = model.CountryId });
+                case "Save and New":
+                    if (string.IsNullOrWhiteSpace(_dictionaryService.UpdateCountry(model)))
+                        return Redirect("/Dictionary/AddNewCountry");
+                    else
+                        return RedirectToAction("/Dictionary/AddNewCountry", new { id = model.CountryId });
+                default:
+                    return Redirect("/Dictionary/IndexCountry");
+            }
+        }
+
+
         //paginare tari
 
         [HttpPost]
@@ -323,9 +436,16 @@ namespace iWasHere.Web.Controllers
             return Json(request);
         }
 
-        public IActionResult AddNewCountry()
+        public IActionResult AddNewCountry(int id)
         {
-            return View();
+            if(id == 0)
+            {
+                return View();
+            }
+            else
+            {
+                return View(_dictionaryService.editFunctionForCountry(id));
+            }
         }
 
         public IActionResult CurrencyAdd(int id)
@@ -365,6 +485,52 @@ namespace iWasHere.Web.Controllers
             return Json(result);
         }
 
+        public IActionResult Counties_Read([DataSourceRequest] DataSourceRequest request, string filterName)
+        {
+            if (String.IsNullOrEmpty(filterName))
+            {
+                filterName = "";
+            }
+            int filterCountry = 1;
+            DataSourceResult result = new DataSourceResult();
+            List<CountyModel> list = GetCounties(request.Page, request.PageSize, filterName, filterCountry, out int totalRows);
+            result.Data = list;
+            result.Total = totalRows;
+            return Json(result);
+        }
+
+        private List<CountyModel> GetCounties(int page, int pageSize, string filterName, int filterCountry, out int totalRows)
+        {
+            int skipRows = (page - 1) * pageSize;
+            List<CountyModel> countyModels = _dictionaryService.GetAllPagedCounties(skipRows, pageSize, filterName, filterCountry, out int rowsCount);
+            totalRows = rowsCount;
+            return countyModels;
+        }
+
+        public JsonResult Countries_Read_ForCB(string text)
+        {            
+            List<DictionaryCountryModel> list = GetCountriesForCB(text);          
+            return Json(list);
+        }
+
+        public List<DictionaryCountryModel> GetCountriesForCB(string text)
+        {
+            List<DictionaryCountryModel> countryModels = _dictionaryService.GetCountries(text);
+            return countryModels;
+        }
+
+
+        public IActionResult AddNewCounty(int id)
+        {
+            if (id == 0)
+                return View();
+            else
+ 
+                return View(_dictionaryService.editCounty(id));
+                
+        }
+
+    
         public IActionResult Construction([DataSourceRequest] DataSourceRequest request)
         {
             return View();
@@ -391,12 +557,17 @@ namespace iWasHere.Web.Controllers
             switch(submitButton)
             {
                 case "Save":
-                    _dictionaryService.CurrencyUpdateInsert(model);
-                    return Redirect("/Dictionary/Currency");
+                    if (_dictionaryService.CurrencyUpdateInsert(model))
+                        return Redirect("/Dictionary/Currency");
+                    else
+                        return RedirectToAction("CurrencyAdd", new { id = model.CurrencyTypeId });
+
 
                 case "Save and New":
-                    _dictionaryService.CurrencyUpdateInsert(model);
-                    return Redirect("/Dictionary/CurrencyAdd");
+                    if (_dictionaryService.CurrencyUpdateInsert(model))
+                        return Redirect("/Dictionary/CurrencyAdd");
+                    else
+                        return RedirectToAction("CurrencyAdd", new { id = model.CurrencyTypeId });
 
                 default:
                     return Redirect("/Dictionary/Currency");
