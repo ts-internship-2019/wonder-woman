@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using iWasHere.Web.Models;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.IdentityModel.Protocols;
+using System.Data.SqlClient;
 
 namespace iWasHere.Web.Controllers
 {
@@ -230,24 +232,10 @@ namespace iWasHere.Web.Controllers
             }         
 
         }
+
+        #region Currency
         public IActionResult Currency()
         {
-            return View();
-        }
-
-        public IActionResult Landmark()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Index(DictionaryCurrencyType model)
-        {
-            int currencyTypeId = model.CurrencyTypeId;
-            string name = model.Name;
-            string code = model.Code;
-            string description = model.Description;
-
             return View();
         }
 
@@ -280,6 +268,13 @@ namespace iWasHere.Web.Controllers
             }
             return Json(ModelState.ToDataSourceResult());
         }
+        #endregion
+
+        #region Landmark
+        public IActionResult Landmark()
+        {
+            return View();
+        }
 
         [HttpPost]
         public ActionResult LandmarkDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryLandmarkType landmark)
@@ -308,6 +303,7 @@ namespace iWasHere.Web.Controllers
             }
             return Json(result);
         }
+        #endregion
 
         public IActionResult IndexCountry()
         {
@@ -392,9 +388,7 @@ namespace iWasHere.Web.Controllers
             }
             else
             {
-                DictionaryCurrencyType model = new DictionaryCurrencyType();
-                model = _dictionaryService.GetCurrencyModel(id);
-                return View(model);
+                return View(_dictionaryService.GetCurrencyModel(id));
             }
         }
 
@@ -545,4 +539,5 @@ namespace iWasHere.Web.Controllers
                     
             }
         }
-    } }
+    }
+}

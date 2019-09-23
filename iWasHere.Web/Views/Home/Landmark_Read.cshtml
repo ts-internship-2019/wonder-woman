@@ -1,7 +1,10 @@
-﻿
+﻿@model iWasHere.Domain.DTOs.LandmarkModel
+
 @{
     ViewData["Title"] = "Landmark_Read";
 }
 
 <h1>Landmark_Read</h1>
+
+<iframe width="500" height="350" frameborder="0" style="border:0" src="@Uri.EscapeDataString(Model.MapUrl);"></iframe>
 
