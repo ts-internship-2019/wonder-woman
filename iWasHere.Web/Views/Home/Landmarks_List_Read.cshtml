@@ -1,7 +1,31 @@
-﻿
-@{
-    ViewData["Title"] = "Lista Obiective";
-}
+﻿@Model IEnumerable<iWasHere.Domain.DTOs.LandMarkListModel>
+    @{
+        ViewData["Title"] = "Lista Obiective";
+    }
 
-<h1>LandmarksReadonly</h1>
 
+
+    <script type="text/x-kendo-tmpl" id="template">
+        <div class="product">
+            <img src="@Url.Content("~/shared/web/foods/")#:ProductID#.jpg" alt="#:ProductName# image" />
+            <h3>#:ProductName#</h3>
+            <p>#:kendo.toString(UnitPrice, "c")#</p>
+        </div>
+    </script>
+    <div class="demo-section k-content wide">
+        @(Html.Kendo().ListView(Model)
+        .Name("listView")
+        .TagName("div")
+        .ClientTemplateId("template")
+        .DataSource(dataSource => dataSource
+                .Ajax()
+                .Read(read => read.Action("Products_Read", "ListView"))
+                .PageSize(21)
+            )
+            .Pageable(pageable => pageable
+               .Refresh(true)
+               .ButtonCount(5)
+               .PageSizes(new[] { 5, 15, 21 })
+            )
+        )
+    </div>
