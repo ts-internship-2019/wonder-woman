@@ -34,7 +34,7 @@
                         .Name("countries")
                         .Placeholder("Selecteaza tara")
                         .DataTextField("Name")
-                        .DataValueField("CountyId")
+                        .DataValueField("CountryId")
                         .HtmlAttributes(new { style = "width:100%;" })
                         .Filter(FilterType.Contains)
                         .AutoBind(false)
@@ -122,7 +122,7 @@
             }
             if ($(e.event.target).closest(".k-button").attr("id") == "filterBtn") {
                 county = $('#countyName').val();
-                country = $('#CountriesCB').val();
+                country = $('#countries').val();
                 $('#Grid').data("kendoGrid").dataSource.read();
                 $('#Grid').data("kendoGrid").dataSource.page(1);
             }
