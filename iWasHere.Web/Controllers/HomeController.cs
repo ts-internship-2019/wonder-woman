@@ -14,6 +14,10 @@ namespace iWasHere.Web.Controllers
     public class HomeController : Controller
     {
         private readonly HomeService _homeService;
+        public HomeController(HomeService homeService)
+        {
+            _homeService = homeService;
+        }
 
         public IActionResult Index()
         {
@@ -31,6 +35,10 @@ namespace iWasHere.Web.Controllers
             DataSourceResult result = new DataSourceResult();
             result.Data = landmarkList;
             return Json(result);
+        }
+            public IActionResult Landmarks_List_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
