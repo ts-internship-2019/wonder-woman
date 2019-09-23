@@ -66,11 +66,25 @@ namespace iWasHere.Web.Controllers
                 switch (submit)
                 {
                     case "Salveaza si nou":
-                        _dictionaryService.UpdateTicket(ticketToUpdate);
-                        return Redirect("/Dictionary/AddTicket");
+                        _dictionaryService.UpdateTicket(ticketToUpdate, out string errorMessage);
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        TempData["message"] = errorMessage;
+
+
+                        return RedirectToAction("AddTicket", new RouteValueDictionary(ticketToUpdate));
+                    }
+                    return Redirect("/Dictionary/AddTicket");
                     case "Salveaza":
-                        _dictionaryService.UpdateTicket(ticketToUpdate);
-                        return Redirect("/Dictionary/Tickets");
+                        _dictionaryService.UpdateTicket(ticketToUpdate, out string errorMessage2);
+                    if (!string.IsNullOrEmpty(errorMessage2))
+                    {
+                        TempData["message"] = errorMessage2;
+
+
+                        return RedirectToAction("AddTicket", new RouteValueDictionary(ticketToUpdate));
+                    }
+                    return Redirect("/Dictionary/Tickets");
                     case "Anuleaza":
                         return Redirect("/Dictionary/Tickets");
                     default:
