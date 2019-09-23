@@ -37,7 +37,7 @@
         .Columns(columns =>
         {
             columns.Bound(p => p.LandmarkId).Title("Id").Width(80);
-            columns.Template("<a class='k-button' href='/Home/Landmark_Read?Id=#=LandmarkId# '> #=Name# </a>");
+            columns.Template("<a class='k-button' href='/Home/Landmark_Read?id=#=LandmarkId# '> #=Name# </a>");
         })
         .HtmlAttributes(new { style = "height: 500dp;" })
         .Pageable(pageable => pageable

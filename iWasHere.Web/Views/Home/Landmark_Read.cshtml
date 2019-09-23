@@ -1,10 +1,29 @@
 ﻿@model iWasHere.Domain.DTOs.LandmarkModel
 
 @{
-    ViewData["Title"] = "Landmark_Read";
+    ViewData["Title"] = Model.Name;
+    List<string> images = ViewData["Images"] as List<string>;
 }
 
-<h1>Landmark_Read</h1>
+    <h1>@Model.Name</h1>
+<div id="header">   
+    Cod Obiectiv : @Model.Code <br />
+    Tip Constructie : @Model.ConstructionTypeId <br />
+    Perioada Istorica : @Model.HistoricalPeriodTypeId<br />
+    Locatie: @Model.CountryId , @Model.CountyId , @Model.CityId <br />
+</div>
 
-<iframe width="500" height="350" frameborder="0" style="border:0"
-        src="@Html.Raw(@Model.MapUrl)"></iframe>
+<div id="description">
+    <p>@Model.Descr</p>
+</div>
+
+<div id="images">
+    @{
+        foreach (string image in images)
+        {
+            <img src="@Url.Content(image)"  />
+        }
+    }
+</div>
+    <iframe width="500" height="350" frameborder="0" style="border:0"
+            src="@Html.Raw(@Model.MapUrl)"></iframe>
