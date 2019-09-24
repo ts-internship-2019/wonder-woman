@@ -1,4 +1,5 @@
 ﻿@model iWasHere.Domain.DTOs.LandmarkModel
+
 @{
     ViewData["Title"] = "Adauga/Editeaza obiective";
 }
@@ -66,11 +67,11 @@
 
     <label for="LandmarkType">Landmark Type :</label>
     <td>
-        @(Html.Kendo().ComboBoxFor(c=> c.LandmarkTypeId)
+        @(Html.Kendo().ComboBoxFor(c => c.LandmarkTypeId)
                 //.Name("landmarks")
                 .Placeholder("Selecteaza tip atractie!")
                 .DataTextField("Name")
-                .DataValueField("LandmarkId")
+                .DataValueField("LandmarkTypeId")
                 .HtmlAttributes(new { style = "width:100%;" })
                 .Filter(FilterType.Contains)
                 .AutoBind(true)
@@ -112,7 +113,7 @@
 
     <label for="City">City :</label>
     <td>
-        @(Html.Kendo().ComboBoxFor(c=>c.CityId)
+        @(Html.Kendo().ComboBoxFor(c => c.CityId)
                 //.Name("cities")
                 .Placeholder("Selecteaza orasul!")
                 .DataTextField("Name")
@@ -135,7 +136,7 @@
 
     <label for="Construction">Construction :</label>
     <td>
-        @(Html.Kendo().ComboBoxFor(c=>c.ConstructionTypeId)
+        @(Html.Kendo().ComboBoxFor(c => c.ConstructionTypeId)
                 //.Name("constructions")
                 .Placeholder("Selecteaza constructia!")
                 .DataTextField("Name")
