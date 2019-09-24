@@ -70,21 +70,23 @@ namespace iWasHere.Domain.Service
                 landmark.Code = lm.Code;
             if (!(string.IsNullOrWhiteSpace(lm.Name)))
                 landmark.Name = lm.Name;
-            if (lm.ConstructionTypeId != 0)
+            if (!string.IsNullOrWhiteSpace(lm.Descr))
+                landmark.Descr = lm.Descr;
+            if (lm.ConstructionTypeId != null)
                 landmark.ConstructionTypeId = lm.ConstructionTypeId;
-            if (landmark.HistoricalPeriodTypeId != 0)
+            if (landmark.HistoricalPeriodTypeId != null)
                 landmark.HistoricalPeriodTypeId = lm.HistoricalPeriodTypeId;
-            if (landmark.LandmarkTypeId != 0)
+            if (landmark.LandmarkTypeId != null)
                 landmark.LandmarkTypeId = lm.LandmarkTypeId;
-            if (landmark.Latitude != 0)
+            if (landmark.Latitude != null)
                 landmark.Latitude = lm.Latitude;
-            if (landmark.Longitude != 0)
+            if (landmark.Longitude != null)
                 landmark.Longitude = lm.Longitude;
-            if (landmark.CountryId != 0)
+            if (landmark.CountryId != null)
                 landmark.CountryId = lm.CountryId;
-            if (landmark.CountyId != 0)
+            if (landmark.CountyId != null)
                 landmark.CountyId = lm.CountyId;
-            if (landmark.CityId != 0)
+            if (landmark.CityId != null)
                 landmark.CityId = lm.CityId;
             errorMessage = "";
             if (lm.LandmarkId == 0)
@@ -135,11 +137,21 @@ namespace iWasHere.Domain.Service
 
         }
 
-        public List<DictionaryCountryModel> GetCountries(string text)
+        public List<CityModel> GetCities(string text)
         {
-            var query = _dbContext.Country.Select(c => new DictionaryCountryModel()
+            var query = _dbContext.City.Select(c => new CityModel()
             {
-                CountryId = c.CountryId,
+                Id = c.CityId,
+                Name = c.Name
+            }).Where(c => c.Name.Contains(text)).Take(100);
+            return query.ToList();
+        }
+
+        public List<DictionaryConstructionTypeModel> GetConstructions(string text)
+        {
+            var query = _dbContext.DictionaryConstructionType.Select(c => new DictionaryConstructionTypeModel()
+            {
+                ConstructionTypeId = c.ConstructionTypeId,
                 Name = c.Name
             }).Where(c => c.Name.Contains(text)).Take(100);
             return query.ToList();

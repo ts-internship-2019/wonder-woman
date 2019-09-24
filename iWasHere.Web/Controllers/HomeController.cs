@@ -180,22 +180,40 @@ namespace iWasHere.Web.Controllers
             return landmarks;
         }
 
-        public JsonResult Countries_Read_ForCB(string text)
+        public JsonResult Cities_Read_ForCB(string text)
         {
             if (String.IsNullOrEmpty(text))
             {
                 text = "";
             }
 
-            List<DictionaryCountryModel> list = GetCountriesForCB(text);
+            List<CityModel> list = GetCountriesForCB(text);
 
             return Json(list);
         }
 
-        public List<DictionaryCountryModel> GetCountriesForCB(string text)
+        public List<CityModel> GetCountriesForCB(string text)
         {
-            List<DictionaryCountryModel> countryModels = _homeService.GetCountries(text);
-            return countryModels;
+            List<CityModel> cityModels = _homeService.GetCities(text);
+            return cityModels;
+        }
+
+        public JsonResult Constructions_Read_ForCB(string text)
+        {
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+
+            List<DictionaryConstructionTypeModel> list = GetConstructionsForCB(text);
+
+            return Json(list);
+        }
+
+        public List<DictionaryConstructionTypeModel> GetConstructionsForCB(string text)
+        {
+            List<DictionaryConstructionTypeModel> constructionModels = _homeService.GetConstructions(text);
+            return constructionModels;
         }
     }
 }
