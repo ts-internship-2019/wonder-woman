@@ -66,23 +66,23 @@
 
     <label for="LandmarkType">Landmark Type :</label>
     <td>
-        @(Html.Kendo().ComboBox()
-                .Name("landmarks")
+        @(Html.Kendo().ComboBoxFor(c=> c.LandmarkTypeId)
+                //.Name("landmarks")
                 .Placeholder("Selecteaza tip atractie!")
                 .DataTextField("Name")
-                .DataValueField("LandmarkId")
+                .DataValueField("LandmarkTypeId")
                 .HtmlAttributes(new { style = "width:100%;" })
                 .Filter(FilterType.Contains)
                 .AutoBind(true)
                 .MinLength(3)
                 .DataSource(source =>
-                    {
-                        source.Read(read =>
+                {
+                    source.Read(read =>
                     {
                         read.Action("Landmarks_Read_ForCB", "Home");
                     })
-                        .ServerFiltering(true);
-                    })
+                    .ServerFiltering(true);
+                })
         )
     </td>
     <br />
@@ -112,31 +112,31 @@
 
     <label for="City">City :</label>
     <td>
-        @(Html.Kendo().ComboBox()
-                .Name("cities")
+        @(Html.Kendo().ComboBoxFor(c=>c.CityId)
+                //.Name("cities")
                 .Placeholder("Selecteaza orasul!")
                 .DataTextField("Name")
-                .DataValueField("CityId")
+                .DataValueField("Id")
                 .HtmlAttributes(new { style = "width:100%;" })
                 .Filter(FilterType.Contains)
                 .AutoBind(true)
                 .MinLength(3)
                 .DataSource(source =>
-                    {
-                        source.Read(read =>
+                {
+                    source.Read(read =>
                     {
                         read.Action("Cities_Read_ForCB", "Home");
                     })
-                        .ServerFiltering(true);
-                    })
+                    .ServerFiltering(true);
+                })
         )
     </td>
     <br />
 
     <label for="Construction">Construction :</label>
     <td>
-        @(Html.Kendo().ComboBox()
-                .Name("constructions")
+        @(Html.Kendo().ComboBoxFor(c=>c.ConstructionTypeId)
+                //.Name("constructions")
                 .Placeholder("Selecteaza constructia!")
                 .DataTextField("Name")
                 .DataValueField("ConstructionTypeId")
@@ -145,13 +145,13 @@
                 .AutoBind(true)
                 .MinLength(3)
                 .DataSource(source =>
-                    {
-                        source.Read(read =>
+                {
+                    source.Read(read =>
                     {
                         read.Action("Constructions_Read_ForCB", "Home");
                     })
-                        .ServerFiltering(true);
-                    })
+                    .ServerFiltering(true);
+                })
         )
     </td>
     <br />

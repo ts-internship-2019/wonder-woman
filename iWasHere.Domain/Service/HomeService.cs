@@ -115,37 +115,33 @@ namespace iWasHere.Domain.Service
                 landmark.Descr = lm.Descr;
             if (lm.ConstructionTypeId != null)
                 landmark.ConstructionTypeId = lm.ConstructionTypeId;
-            if (landmark.HistoricalPeriodTypeId != null)
+            if (lm.HistoricalPeriodTypeId != null)
                 landmark.HistoricalPeriodTypeId = lm.HistoricalPeriodTypeId;
-            if (landmark.LandmarkTypeId != null)
+            if (lm.LandmarkTypeId != null)
                 landmark.LandmarkTypeId = lm.LandmarkTypeId;
-            if (landmark.Latitude != null)
+            if (lm.Latitude != null)
                 landmark.Latitude = lm.Latitude;
-            if (landmark.Longitude != null)
+            if (lm.Longitude != null)
                 landmark.Longitude = lm.Longitude;
-            if (landmark.CountryId != null)
+            if (lm.CountryId != null)
                 landmark.CountryId = lm.CountryId;
-            if (landmark.CountyId != null)
+            if (lm.CountyId != null)
                 landmark.CountyId = lm.CountyId;
-            if (landmark.CityId != null)
+            if (lm.CityId != null)
                 landmark.CityId = lm.CityId;
             errorMessage = "";
             if (lm.LandmarkId == 0)
             {
                 _dbContext.Landmark.Add(landmark);
-            
-             
             }
             else
             {
                 _dbContext.Landmark.Update(landmark);
-          
             }
            
             try
             {
                 _dbContext.SaveChanges();
-               
             }
             catch (Exception)
             {
