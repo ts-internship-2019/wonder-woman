@@ -130,6 +130,24 @@ namespace iWasHere.Domain.Service
             _dbContext.SaveChanges();
 
         }
+        public string DeleteImagesDB( int id)
+        {
+
+            Photo deleted = _dbContext.Photo.First(a => a.PhotoId == id);
+
+            _dbContext.Photo.Remove(deleted);
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                if (string.IsNullOrWhiteSpace(ex.ToString()))
+                    return ex.ToString();
+            }
+            return null;
+
+        }
 
         public List<CityModel> GetCities(string text)
         {

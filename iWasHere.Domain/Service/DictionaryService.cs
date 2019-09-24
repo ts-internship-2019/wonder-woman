@@ -660,34 +660,32 @@ namespace iWasHere.Domain.Service
 
         public void DestroyCounty(CountyModel countyToDestroy, out string errorMessage)
         {
-            
-                errorMessage = "";
-                var check = _dbContext.County.Where(a => a.CountyId.Equals(countyToDestroy.CountyId));
-                if (check.Count() == 0)
+            errorMessage = "";
+         //   var check = _dbContext.Landmark.Where(a => a.CountyId.Equals(countyToDestroy.CountyId));
+        //    if (check.Count() == 0)
+          //  {
+                try
                 {
-                    try
+                    var db = _dbContext;
+                    var counties = db.County.Where(pd => pd.CountyId == countyToDestroy.CountyId);
+                    foreach (var county in counties)
                     {
-                        var db = _dbContext;
-                        var counties = db.County.Where(pd => pd.CountyId == countyToDestroy.CountyId);
-                        foreach (var county in counties)
-                        {
-                            db.County.Remove(county);
-                        }
-                        db.SaveChanges();
+                        db.County.Remove(county);
                     }
-                    catch (SqlException ex)
-                    {
-                        errorMessage = ex.Message;
-                    }
-
+                    db.SaveChanges();
                 }
-                else
+                catch (SqlException ex)
                 {
-                    errorMessage = "Judetul nu se poate sterge deoarece are " + check.Count() + " referinte";
+                    errorMessage = ex.Message;
                 }
 
-            
-        }
+            }
+        //    else
+       //     {
+          //      errorMessage = "Judetul nu se poate sterge deoarece are " + check.Count() + " referinte";
+         //   }
+
+
   
 
       
