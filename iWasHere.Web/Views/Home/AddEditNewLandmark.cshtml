@@ -171,18 +171,20 @@
                 </div>
                 <br />
 
-                @Html.HiddenFor(h => h.LandmarkId);
-                @Html.HiddenFor(h => h.ConstructionTypeId);
-                @Html.HiddenFor(h => h.HistoricalPeriodTypeId);
-                @Html.HiddenFor(h => h.LandmarkTypeId);
-                @Html.HiddenFor(h => h.CountryId);
-                @Html.HiddenFor(h => h.CountyId);
-                @Html.HiddenFor(h => h.CityId);
-            }
-            <script>
-                var viewModel = kendo.observable({
-                    isChecked: false
-                });
+    @Html.HiddenFor(h => h.LandmarkId);
+    @Html.HiddenFor(h => h.ConstructionTypeId);
+    @Html.HiddenFor(h => h.HistoricalPeriodTypeId);
+    @Html.HiddenFor(h => h.LandmarkTypeId);
+    @Html.HiddenFor(h => h.CountryId);
+    @Html.HiddenFor(h => h.CountyId);
+    @Html.HiddenFor(h => h.CityId);
+}
+
+<script>
+    
+    var viewModel = kendo.observable({
+        isChecked: false
+    });
 
                 kendo.bind($("input"), viewModel);
             </script>
