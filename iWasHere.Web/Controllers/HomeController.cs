@@ -48,18 +48,18 @@ namespace iWasHere.Web.Controllers
             }
             return View();
         }
-        public IActionResult AddEditNewLandmark(int id,string name="")
-        {
-            Landmark landmark = new Landmark();
-            if (!string.IsNullOrEmpty(name))
-            {
+        //public IActionResult AddEditNewLandmark(int id,string name="")
+        //{
+        //    Landmark landmark = new Landmark();
+        //    if (!string.IsNullOrEmpty(name))
+        //    {
 
-                landmark.LandmarkId = id;
+        //        landmark.LandmarkId = id;
 
-            }
+        //    }
 
-            return View(landmark);
-        }
+        //    return View(landmark);
+        //}
 
         public IActionResult Landmark_Read(int id)
         {
