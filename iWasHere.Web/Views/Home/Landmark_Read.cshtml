@@ -1,47 +1,79 @@
 ﻿@model iWasHere.Domain.DTOs.LandmarkModel
-
 @{
     ViewData["Title"] = Model.Name;
     List<string> images = ViewData["Images"] as List<string>;
 }
 
-    <h1>@Model.Name</h1>
-<div id="header">   
+<h1>@Model.Name</h1>
+<div id="header">
     Cod Obiectiv : @Model.Code <br />
     Tip Constructie : @Model.ConstructionTypeId <br />
     Perioada Istorica : @Model.HistoricalPeriodTypeId<br />
     Locatie: @Model.CountryId , @Model.CountyId , @Model.CityId <br />
 </div>
 
+<label for="Description">Descriere :</label>
 <div id="description">
     <p>@Model.Descr</p>
 </div>
 
+@using (Html.BeginForm("CommentSubmit", "Home", FormMethod.Post))
+{
+    <label for="Comentariu">Comment :</label>
+
+    @*@(Html.Kendo().TextBoxFor(comments[0].Text)
+                    .HtmlAttributes(new
+                    {
+                        id = "Text",
+                    })
+                    .Value(""))
+    <br />*@
+
+    <div class="demo-section k-content">
+        @(Html.Kendo().Button()
+            .Name("btnSave")
+            .Content("SAVE")
+            .HtmlAttributes(new { name = "btnSave", style = "background:green", type = "submit", value = "SAVE" })
+            .Events(ev => ev.Click("onClick")))
+    </div>
+    @Html.HiddenFor(m=> m.LandmarkId);
+}
+
+<div id="comment">
+    <table>
+        @foreach (var comment in comments)
+        {
+            <td><@comment.Text></td>
+        }
+    </table>
+</div>
+
+
 <div id="images">
     <table>
-        @{int  i = 0;
-        foreach (string image in images)
-        {
-            if (i == 0)
+        @{int i = 0;
+            foreach (string image in images)
             {
-                @:<tr>
-            }
+                if (i == 0)
+                {
+                    @:<tr>
+                    }
 
-            <td><img src="@Url.Content(image)" class=" img-fluid" /></td>
-                    
-            if (i == 3)
-             {
-                i = 0;
-                @:</tr>
-             }
+                    <td><img src="@Url.Content(image)" class=" img-fluid" /></td>
+
+                    if (i == 3)
+                    {
+                        i = 0;
+                    @:</tr>
+                }
                 ++i;
 
             }
         }
     </table>
 </div>
-@if(Model.Latitude != null && Model.Longitude != null)
+@if (Model.Latitude != null && Model.Longitude != null)
 {
     <iframe width="500" height="350" frameborder="0" style="border:0"
-            src="@Html.Raw(@Model.MapUrl)"></iframe>
+            src="@Html.Raw(Model.MapUrl)"></iframe>
 }

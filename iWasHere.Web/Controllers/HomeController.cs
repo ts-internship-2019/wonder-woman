@@ -215,6 +215,17 @@ namespace iWasHere.Web.Controllers
             List<DictionaryConstructionTypeModel> constructionModels = _homeService.GetConstructions(text);
             return constructionModels;
         }
+
+        [HttpPost]
+        public IActionResult CommentSubmit(Comment comm)
+        {
+            _homeService.AddComments(comm, out string errorMessage2);
+            if (!string.IsNullOrEmpty(errorMessage2))
+            {
+                TempData["message"] = errorMessage2;
+            }
+            return RedirectToAction("Landmark_Read", new { id = comm.LandmarkId });
+        }
     }
 }
 
