@@ -8,6 +8,9 @@ using iWasHere.Web.Models;
 using iWasHere.Domain.Service;
 using Kendo.Mvc.UI;
 using iWasHere.Domain.DTOs;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
+using System.IO;
 using iWasHere.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
@@ -19,7 +22,7 @@ namespace iWasHere.Web.Controllers
     {
         private readonly HomeService _homeService;
         private IHostingEnvironment _environment;
-
+     
         public HomeController(HomeService homeService, IHostingEnvironment environment)
         {
             _homeService = homeService;
@@ -38,8 +41,25 @@ namespace iWasHere.Web.Controllers
 
         public IActionResult AddEditNewLandmark(int id)
         {
+            if(id != 0)
+            {
+                LandmarkModel model = _homeService.GetLandmarkById(id);
+                return View(model);
+            }
             return View();
         }
+        //public IActionResult AddEditNewLandmark(int id,string name="")
+        //{
+        //    Landmark landmark = new Landmark();
+        //    if (!string.IsNullOrEmpty(name))
+        //    {
+
+        //        landmark.LandmarkId = id;
+
+        //    }
+
+        //    return View(landmark);
+        //}
 
         public IActionResult Landmark_Read(int id)
         {
@@ -71,14 +91,60 @@ namespace iWasHere.Web.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+
+        public IActionResult Images(int id,string name="")
+        {
+            Landmark landmark = new Landmark();
+            if(!string.IsNullOrEmpty(name)) {
+          
+                landmark.LandmarkId = id;
+           
+            }
+         
+            return View(landmark);
+       
+        }
+
+        public void SubmitImage(List<IFormFile> files,int LandmarkId)
+        {
+            List<string> path = new List<string>();
+            foreach (var image in files)
+            {
+
+                if (image.Length > 0)
+                {
+                    //var fileName = Guid.NewGuid().ToString().Replace("-", "") + Path.GetExtension(file.FileName);
+
+                    var a = Guid.NewGuid().ToString();
+                    var fileName = Path.Combine(_environment.WebRootPath + "/images", a + Path.GetExtension(image.FileName));
+                    image.CopyTo(new FileStream(fileName, FileMode.Create));
+                    path.Add(a + Path.GetExtension(image.FileName));
+
+                }
+
+            }
+            foreach (string p in path)
+            {
+                _homeService.SaveImagesDB(p,LandmarkId);
+
+            }
+
+            //  return RedirectToAction("Edit", new { id = employee.Id,name=employee.FirstName});
+
+
+
+        }
+
+
         //updatebutton
         [HttpPost]
-        public IActionResult LandmarkSubmit(LandmarkModel landmark, string btnSave)
+        public IActionResult LandmarkSubmit(LandmarkModel landmark, string btnSave, List<IFormFile> files)
         {
             switch (btnSave)
             {
                 case "Save":
-                    _homeService.UpdateLandmark(landmark, out string errorMessage2);
+                    _homeService.UpdateLandmark(landmark, out string errorMessage2,out int id);
+                    SubmitImage(files, id);
                     if (!string.IsNullOrEmpty(errorMessage2))
                     {
                         TempData["message"] = errorMessage2;
@@ -86,7 +152,8 @@ namespace iWasHere.Web.Controllers
                     }
                     return Redirect("/Home/Landmarks_List_Read");
                 case "Save and New":
-                    _homeService.UpdateLandmark(landmark, out string errorMessage);
+                    _homeService.UpdateLandmark(landmark, out string errorMessage,out int id2);
+                    SubmitImage(files, id2);
                     if (!string.IsNullOrEmpty(errorMessage))
                     {
                         TempData["message"] = errorMessage;
@@ -105,33 +172,52 @@ namespace iWasHere.Web.Controllers
                 text = "";
             }
 
-            List<LandmarkModel> list = GetLandmarksForCB(text);
+            List<DictionaryLandmarkType> list = GetLandmarksForCB(text);
 
             return Json(list);
         }
 
-        public List<LandmarkModel> GetLandmarksForCB(string text)
+        public List<DictionaryLandmarkType> GetLandmarksForCB(string text)
         {
-            List<LandmarkModel> landmarks = _homeService.GetLandmarks(text);
+            List<DictionaryLandmarkType> landmarks = _homeService.GetLandmarks(text);
             return landmarks;
         }
 
-        public JsonResult Countries_Read_ForCB(string text)
+        public JsonResult Cities_Read_ForCB(string text)
         {
             if (String.IsNullOrEmpty(text))
             {
                 text = "";
             }
 
-            List<DictionaryCountryModel> list = GetCountriesForCB(text);
+            List<CityModel> list = GetCountriesForCB(text);
 
             return Json(list);
         }
 
-        public List<DictionaryCountryModel> GetCountriesForCB(string text)
+        public List<CityModel> GetCountriesForCB(string text)
         {
-            List<DictionaryCountryModel> countryModels = _homeService.GetCountries(text);
-            return countryModels;
+            List<CityModel> cityModels = _homeService.GetCities(text);
+            return cityModels;
+        }
+
+        public JsonResult Constructions_Read_ForCB(string text)
+        {
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+
+            List<DictionaryConstructionTypeModel> list = GetConstructionsForCB(text);
+
+            return Json(list);
+        }
+
+        public List<DictionaryConstructionTypeModel> GetConstructionsForCB(string text)
+        {
+            List<DictionaryConstructionTypeModel> constructionModels = _homeService.GetConstructions(text);
+            return constructionModels;
         }
     }
 }
+

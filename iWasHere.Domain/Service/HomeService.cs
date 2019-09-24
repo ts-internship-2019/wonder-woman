@@ -60,7 +60,7 @@ namespace iWasHere.Domain.Service
             }
             return filepaths;
         }
-        public void UpdateLandmark(LandmarkModel lm, out string errorMessage)
+        public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
         {
 
             Landmark landmark = new Landmark();
@@ -90,36 +90,66 @@ namespace iWasHere.Domain.Service
             if (lm.LandmarkId == 0)
             {
                 _dbContext.Landmark.Add(landmark);
+            
+             
             }
             else
             {
                 _dbContext.Landmark.Update(landmark);
+          
             }
+           
             try
             {
                 _dbContext.SaveChanges();
+               
             }
             catch (Exception)
             {
                 errorMessage = "Salvarea/Editarea nu a putut fi efectuata cu succes! Te rog sa mai incearci o data!";
             }
+            id = landmark.LandmarkId;
         }
 
-        public List<LandmarkModel> GetLandmarks(string text)
+        public List<DictionaryLandmarkType> GetLandmarks(string text)
         {
-            var query = _dbContext.Landmark.Select(c => new LandmarkModel()
+            var query = _dbContext.DictionaryLandmarkType.Select(c => new DictionaryLandmarkType()
             {
-                LandmarkId = c.LandmarkId,
+                LandmarkTypeId = c.LandmarkTypeId,
                 Name = c.Name,
             }).Where(c => c.Name.Contains(text)).Take(100);
             return query.ToList();
         }
-
-        public List<DictionaryCountryModel> GetCountries(string text)
+        public void SaveImagesDB(string path, int id)
         {
-            var query = _dbContext.Country.Select(c => new DictionaryCountryModel()
+           
+            Photo photo = new Photo()
             {
-                CountryId = c.CountryId,
+                ImagePath = "~/images/" + path,
+                LandmarkId = id
+            };
+
+            _dbContext.Photo.Add(photo);
+
+            _dbContext.SaveChanges();
+
+        }
+
+        public List<CityModel> GetCities(string text)
+        {
+            var query = _dbContext.City.Select(c => new CityModel()
+            {
+                Id = c.CityId,
+                Name = c.Name
+            }).Where(c => c.Name.Contains(text)).Take(100);
+            return query.ToList();
+        }
+
+        public List<DictionaryConstructionTypeModel> GetConstructions(string text)
+        {
+            var query = _dbContext.DictionaryConstructionType.Select(c => new DictionaryConstructionTypeModel()
+            {
+                ConstructionTypeId = c.ConstructionTypeId,
                 Name = c.Name
             }).Where(c => c.Name.Contains(text)).Take(100);
             return query.ToList();

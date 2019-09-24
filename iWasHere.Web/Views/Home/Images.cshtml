@@ -1,0 +1,57 @@
+﻿@model iWasHere.Domain.Models.Landmark
+@{
+    ViewData["Title"] = "Imagini";
+}
+
+<h1>Images</h1>
+
+
+<form method="post" action='@Url.Action("SubmitImage")'>
+    <div>
+        <table>
+            <tr>
+                <td>
+                    <label for="landmarkCB">Nume obiectiv:</label>
+                </td>
+                <td>
+                    @(Html.Kendo().ComboBoxFor(a => a.LandmarkId)
+                                  .Placeholder("Selecteaza obiectivul")
+                                  .DataTextField("Name")
+                                  .DataValueField("LandmarkId")
+                                  .HtmlAttributes(new { style = "width:100%;" })
+                               
+                                  .Filter(FilterType.Contains)
+                                  .AutoBind(true)
+                                  .Text("obiectiv")
+                                 // .MinLength(3)
+
+                                  .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                      {
+                                          read.Action("Landmarks_Read_ForCB", "Home");
+                                      })
+                                          .ServerFiltering(true);
+                                      })
+                                  .Text(Model.Name)
+                    )
+                  
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="demo-section k-content">
+        @(Html.Kendo().Upload()
+            .Name("files")
+            .HtmlAttributes(new { aria_label = "files" })
+        )
+        <p style="padding-top: 1em; text-align: right">
+            <button type="submit" class="k-button k-primary" name="submit ">Submit</button>
+        </p>
+    </div>
+</form>
+
+
+
+

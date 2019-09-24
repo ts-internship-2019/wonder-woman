@@ -1,8 +1,7 @@
-﻿@model iWasHere.Domain.Models.Landmark
+﻿@model iWasHere.Domain.DTOs.LandmarkModel
 @{
     ViewData["Title"] = "Adauga/Editeaza obiective";
 }
-
 @using (Html.BeginForm("LandmarkSubmit", "Home", FormMethod.Post))
 {
     <label for="Name">Name :</label>
@@ -15,7 +14,7 @@
     <br />
 
     <label for="Description">Description :</label>
-    @(Html.Kendo().TextBoxFor(m => m.LandmarkType.Description)
+    @(Html.Kendo().TextBoxFor(m => m.Descr)
         .HtmlAttributes(new
         {
             validationmessage = "Enter Landmark Description!"
@@ -23,22 +22,47 @@
     )
     <br />
 
-    //GEORGIANA LISTA IMAGINI
-    <br />
-
-
-    <label for="Ticket">Ticket :</label>
-    <input type="checkbox" data-bind="checked: isChecked" />
-    <br />
-
-    <label for="Price">Ticket Price :</label>
-    @(Html.Kendo().TextBoxFor(m => m.Name) /////////////////////////////////////////////////////////////////////////////
+    <label for="Name">Code :</label>
+    @(Html.Kendo().TextBoxFor(m => m.Code)
         .HtmlAttributes(new
         {
-            validationmessage = "Enter Ticket Price!"
+            validationmessage = "Enter Landmark Code!"
         })
     )
+
     <br />
+    //GEORGIANA LISTA IMAGINI
+
+    //   <form method="post" action='@Url.Action("SubmitImage")'>
+    <div>
+
+        <label for="uploadImage">Upload images:</label>
+
+    </div>
+    <div class="demo-section k-content">
+        @(Html.Kendo().Upload()
+            .Name("files")
+            .HtmlAttributes(new { aria_label = "files" })
+        )
+    </div>
+
+    //</form>
+
+    <br />
+
+
+    @*<label for="Ticket">Ticket :</label>
+        <input type="checkbox" data-bind="checked: isChecked" />
+        <br />
+
+                    <label for="Price">Ticket Price :</label>
+                    @(Html.Kendo().TextBoxFor(m => m.Name) /////////////////////////////////////////////////////////////////////////////
+                        .HtmlAttributes(new
+                        {
+                            validationmessage = "Enter Ticket Price!"
+                        })
+                    )
+                    <br />*@
 
     <label for="LandmarkType">Landmark Type :</label>
     <td>
@@ -86,13 +110,13 @@
         </td>
         <br />*@
 
-    <label for="Country">Country :</label>
+    <label for="City">City :</label>
     <td>
         @(Html.Kendo().ComboBox()
-                .Name("countries")
-                .Placeholder("Selecteaza tara!")
+                .Name("cities")
+                .Placeholder("Selecteaza orasul!")
                 .DataTextField("Name")
-                .DataValueField("CountryId")
+                .DataValueField("CityId")
                 .HtmlAttributes(new { style = "width:100%;" })
                 .Filter(FilterType.Contains)
                 .AutoBind(true)
@@ -101,7 +125,30 @@
                     {
                         source.Read(read =>
                     {
-                        read.Action("Countries_Read_ForCB", "Home");
+                        read.Action("Cities_Read_ForCB", "Home");
+                    })
+                        .ServerFiltering(true);
+                    })
+        )
+    </td>
+    <br />
+
+    <label for="Construction">Construction :</label>
+    <td>
+        @(Html.Kendo().ComboBox()
+                .Name("constructions")
+                .Placeholder("Selecteaza constructia!")
+                .DataTextField("Name")
+                .DataValueField("ConstructionTypeId")
+                .HtmlAttributes(new { style = "width:100%;" })
+                .Filter(FilterType.Contains)
+                .AutoBind(true)
+                .MinLength(3)
+                .DataSource(source =>
+                    {
+                        source.Read(read =>
+                    {
+                        read.Action("Constructions_Read_ForCB", "Home");
                     })
                         .ServerFiltering(true);
                     })
@@ -163,7 +210,9 @@
     @Html.HiddenFor(h => h.CountyId);
     @Html.HiddenFor(h => h.CityId);
 }
+
 <script>
+
     var viewModel = kendo.observable({
         isChecked: false
     });
