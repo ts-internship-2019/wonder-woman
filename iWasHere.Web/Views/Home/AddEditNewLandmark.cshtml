@@ -1,9 +1,9 @@
-﻿@model iWasHere.Domain.Models.Landmark
+﻿@model iWasHere.Domain.DTOs.LandmarkModel
 @{
     ViewData["Title"] = "Adauga/Editeaza obiective";
 }
-        @using (Html.BeginForm("LandmarkSubmit", "Home", FormMethod.Post))
-        {
+@using (Html.BeginForm("LandmarkSubmit", "Home", FormMethod.Post))
+ {
             <label for="Name">Name :</label>
             @(Html.Kendo().TextBoxFor(m => m.Name)
                 .HtmlAttributes(new
@@ -14,7 +14,7 @@
             <br />
 
             <label for="Description">Description :</label>
-            @(Html.Kendo().TextBoxFor(m => m.LandmarkType.Description)
+            @(Html.Kendo().TextBoxFor(m => m.Descr)
                 .HtmlAttributes(new
                 {
                     validationmessage = "Enter Landmark Description!"
@@ -43,7 +43,7 @@
                 <br />
 
 
-    <label for="Ticket">Ticket :</label>
+    @*<label for="Ticket">Ticket :</label>
     <input type="checkbox" data-bind="checked: isChecked" />
     <br />
 
@@ -54,7 +54,7 @@
                         validationmessage = "Enter Ticket Price!"
                     })
                 )
-                <br />
+                <br />*@
 
                 <label for="LandmarkType">Landmark Type :</label>
                 <td>
