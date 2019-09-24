@@ -60,6 +60,48 @@ namespace iWasHere.Domain.Service
             }
             return filepaths;
         }
+        public List<String> GetLocationForLandmarkId(int id)
+        {
+            Landmark landmark = _dbContext.Landmark.First(a => a.LandmarkId == id);
+            var cityId = landmark.CityId;
+            City city = _dbContext.City.First(a => a.CityId == cityId);
+            County county = _dbContext.County.First(a => a.CountyId == city.CountyId);
+            Country country = _dbContext.Country.First(a => a.CountryId == county.CountryId);
+            List<String> location = new List<String>();
+            location.Add(country.Name + ", " + county.Name + ", " + city.Name);
+            return location;
+        }
+        public List<String> GetConstructionForLandmarkId(int id)
+        {
+            List<String> constructionstring = new List<String>();
+            Landmark landmark = _dbContext.Landmark.First(a => a.LandmarkId == id);
+            if (landmark.ConstructionTypeId == null)
+            {
+                constructionstring.Add("");
+                constructionstring.Add("");
+                return constructionstring;
+            }
+            DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == landmark.ConstructionTypeId);
+            constructionstring.Add(construction.Name);
+            constructionstring.Add(construction.Description);
+                return constructionstring;
+        }
+        public List<String> GetLandmarktypeForLandmarkId(int id)
+        {
+            List<String> lmkTypestring = new List<String>();
+            Landmark landmark = _dbContext.Landmark.First(a => a.LandmarkId == id);
+            if (landmark.LandmarkTypeId == null)
+            {
+                lmkTypestring.Add("");
+                lmkTypestring.Add("");
+                return lmkTypestring;
+            }
+            DictionaryLandmarkType landmarkType = _dbContext.DictionaryLandmarkType.First(a => a.LandmarkTypeId == landmark.LandmarkTypeId);
+            lmkTypestring.Add(landmarkType.Name);
+            lmkTypestring.Add(landmarkType.Description);
+                return lmkTypestring;
+        }
+        public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
 
         public List<Comment> GetCommentsForLandmarkId(int id)
         {
@@ -87,8 +129,6 @@ namespace iWasHere.Domain.Service
                 landmark.Descr = lm.Descr;
             if (lm.ConstructionTypeId != null)
                 landmark.ConstructionTypeId = lm.ConstructionTypeId;
-            if (lm.HistoricalPeriodTypeId != null)
-                landmark.HistoricalPeriodTypeId = lm.HistoricalPeriodTypeId;
             if (lm.LandmarkTypeId != null)
                 landmark.LandmarkTypeId = lm.LandmarkTypeId;
             if (lm.Latitude != null)
@@ -173,6 +213,24 @@ namespace iWasHere.Domain.Service
             _dbContext.Photo.Add(photo);
 
             _dbContext.SaveChanges();
+
+        }
+        public string DeleteImagesDB( int id)
+        {
+
+            Photo deleted = _dbContext.Photo.First(a => a.PhotoId == id);
+
+            _dbContext.Photo.Remove(deleted);
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                if (string.IsNullOrWhiteSpace(ex.ToString()))
+                    return ex.ToString();
+            }
+            return null;
 
         }
 

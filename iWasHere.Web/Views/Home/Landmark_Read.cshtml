@@ -2,15 +2,31 @@
 @{
     ViewData["Title"] = Model.Name;
     List<string> images = ViewData["Images"] as List<string>;
+    List<string> location = ViewData["Location"] as List<string>;
+    List<string> construction = ViewData["Construction"] as List<string>;
+    List<string> landmarkType = ViewData["Landmark"] as List<string>;
 }
-
-<h1>@Model.Name</h1>
-<div id="header">
-    Cod Obiectiv : @Model.Code <br />
-    Tip Constructie : @Model.ConstructionTypeId <br />
-    Perioada Istorica : @Model.HistoricalPeriodTypeId<br />
-    Locatie: @Model.CountryId , @Model.CountyId , @Model.CityId <br />
-</div>
+<style>
+    img {
+height: 600px;
+}
+    .img-responsive {
+    display: block;
+    width: auto;
+    max-height: 100%;
+}
+</style>
+    <h1>@Model.Name</h1>
+    <div id="header">
+        Cod Obiectiv : @Model.Code <br />
+        @if (landmarkType[0] != "") {
+            @:Tip Obiectiv : @landmarkType[0], (@landmarkType[1]) <br />
+        }
+        @if (construction[0] != "") {
+            @:Tip Constructie : @construction[0], (@construction[1]) <br />
+            }
+        Locatie: @location[0]  <br />
+    </div>
 
 <label for="Description">Descriere :</label>
 <div id="description">

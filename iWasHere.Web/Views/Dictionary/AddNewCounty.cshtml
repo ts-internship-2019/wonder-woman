@@ -30,6 +30,7 @@
                     @(Html.Kendo().ComboBoxFor(a => a.CountryId)
                             .Placeholder("Selecteaza tara")
                             .DataTextField("Name")
+                            .SelectedIndex(-1)
                             .DataValueField("CountryId")
                             .HtmlAttributes(new { style = "width:100%;" })
                             .Filter(FilterType.Contains)

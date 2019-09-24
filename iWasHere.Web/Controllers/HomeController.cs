@@ -44,9 +44,10 @@ namespace iWasHere.Web.Controllers
             if(id != 0)
             {
                 LandmarkModel model = _homeService.GetLandmarkById(id);
+                ViewData["Images"] = _homeService.GetImagesForLandmarkId(id);
                 return View(model);
             }
-            return View();
+            return View(new LandmarkModel());
         }
         //public IActionResult AddEditNewLandmark(int id,string name="")
         //{
@@ -67,6 +68,9 @@ namespace iWasHere.Web.Controllers
             model.MapUrl = "https://www.google.com/maps/embed/v1/place?q=" + model.Latitude.ToString() + "," + model.Longitude.ToString() + "&amp;&key=AIzaSyC0vB7-K0LOaHIDEGEgHba6Wo2f099UFvE";
 
             ViewData["Images"] = _homeService.GetImagesForLandmarkId(id);
+            ViewData["Location"] = _homeService.GetLocationForLandmarkId(id);
+            ViewData["Construction"] = _homeService.GetConstructionForLandmarkId(id); 
+            ViewData["Landmark"] = _homeService.GetLandmarktypeForLandmarkId(id);
             return View(model);
         }
 
@@ -139,6 +143,7 @@ namespace iWasHere.Web.Controllers
         {
             switch (btnSave)
             {
+              
                 case "Save":
                     _homeService.UpdateLandmark(landmark, out string errorMessage2,out int id);
                     SubmitImage(files, id);
@@ -214,6 +219,12 @@ namespace iWasHere.Web.Controllers
         {
             List<DictionaryConstructionTypeModel> constructionModels = _homeService.GetConstructions(text);
             return constructionModels;
+        }
+
+        public ActionResult DestroyPhoto([DataSourceRequest] DataSourceRequest request, string photoPath)
+        {
+            System.IO.File.Delete(photoPath);
+            return Json(request);
         }
 
         [HttpPost]

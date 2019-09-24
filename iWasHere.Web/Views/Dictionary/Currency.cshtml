@@ -41,7 +41,7 @@
         columns.Bound(p => p.Name).Title("Name");
         columns.Bound(p => p.Code).Title("Code");
         columns.Bound(p => p.Description).Title("Description");
-        columns.Bound(p => p.CurrencyCountry).Title("Country");
+        columns.Bound(p => p.CurrencyCountry.Name).Title("Country");
         columns.Template("<a class='k-button' href='/Dictionary/CurrencyAdd?Id=#=CurrencyTypeId# '> Edit </a>").Width(150);
         columns.Command(d => { d.Destroy(); }).Width(150);
     })
