@@ -60,6 +60,7 @@ namespace iWasHere.Domain.Service
             }
             return filepaths;
         }
+
         public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
         {
 
