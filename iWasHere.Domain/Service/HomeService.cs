@@ -105,11 +105,11 @@ namespace iWasHere.Domain.Service
             }
         }
 
-        public List<LandmarkModel> GetLandmarks(string text)
+        public List<DictionaryLandmarkType> GetLandmarks(string text)
         {
-            var query = _dbContext.Landmark.Select(c => new LandmarkModel()
+            var query = _dbContext.DictionaryLandmarkType.Select(c => new DictionaryLandmarkType()
             {
-                LandmarkId = c.LandmarkId,
+                LandmarkTypeId = c.LandmarkTypeId,
                 Name = c.Name,
             }).Where(c => c.Name.Contains(text)).Take(100);
             return query.ToList();

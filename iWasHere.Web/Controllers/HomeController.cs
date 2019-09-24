@@ -107,14 +107,14 @@ namespace iWasHere.Web.Controllers
                 text = "";
             }
 
-            List<LandmarkModel> list = GetLandmarksForCB(text);
+            List<DictionaryLandmarkType> list = GetLandmarksForCB(text);
 
             return Json(list);
         }
 
-        public List<LandmarkModel> GetLandmarksForCB(string text)
+        public List<DictionaryLandmarkType> GetLandmarksForCB(string text)
         {
-            List<LandmarkModel> landmarks = _homeService.GetLandmarks(text);
+            List<DictionaryLandmarkType> landmarks = _homeService.GetLandmarks(text);
             return landmarks;
         }
 

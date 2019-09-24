@@ -29,6 +29,16 @@
 
     <label for="Ticket">Ticket :</label>
     <input type="checkbox" data-bind="checked: isChecked" />
+    <table>
+        @foreach (var item in Model.LandmarkXticket)
+        {
+            <td>
+                @item.Ticket.TicketType.Name
+                @item.Ticket.Price
+            </td>
+        }
+    </table>
+    
     <br />
 
     <label for="Price">Ticket Price :</label>
