@@ -44,9 +44,10 @@ namespace iWasHere.Web.Controllers
             if(id != 0)
             {
                 LandmarkModel model = _homeService.GetLandmarkById(id);
+                ViewData["Images"] = _homeService.GetImagesForLandmarkId(id);
                 return View(model);
             }
-            return View();
+            return View(new LandmarkModel());
         }
         //public IActionResult AddEditNewLandmark(int id,string name="")
         //{
@@ -142,6 +143,7 @@ namespace iWasHere.Web.Controllers
         {
             switch (btnSave)
             {
+              
                 case "Save":
                     _homeService.UpdateLandmark(landmark, out string errorMessage2,out int id);
                     SubmitImage(files, id);
@@ -217,6 +219,12 @@ namespace iWasHere.Web.Controllers
         {
             List<DictionaryConstructionTypeModel> constructionModels = _homeService.GetConstructions(text);
             return constructionModels;
+        }
+
+        public ActionResult DestroyPhoto([DataSourceRequest] DataSourceRequest request, string photoPath)
+        {
+            System.IO.File.Delete(photoPath);
+            return Json(request);
         }
     }
 }

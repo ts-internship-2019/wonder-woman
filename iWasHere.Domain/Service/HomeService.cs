@@ -115,8 +115,6 @@ namespace iWasHere.Domain.Service
                 landmark.Descr = lm.Descr;
             if (lm.ConstructionTypeId != null)
                 landmark.ConstructionTypeId = lm.ConstructionTypeId;
-            if (lm.HistoricalPeriodTypeId != null)
-                landmark.HistoricalPeriodTypeId = lm.HistoricalPeriodTypeId;
             if (lm.LandmarkTypeId != null)
                 landmark.LandmarkTypeId = lm.LandmarkTypeId;
             if (lm.Latitude != null)
@@ -171,6 +169,24 @@ namespace iWasHere.Domain.Service
             _dbContext.Photo.Add(photo);
 
             _dbContext.SaveChanges();
+
+        }
+        public string DeleteImagesDB( int id)
+        {
+
+            Photo deleted = _dbContext.Photo.First(a => a.PhotoId == id);
+
+            _dbContext.Photo.Remove(deleted);
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                if (string.IsNullOrWhiteSpace(ex.ToString()))
+                    return ex.ToString();
+            }
+            return null;
 
         }
 

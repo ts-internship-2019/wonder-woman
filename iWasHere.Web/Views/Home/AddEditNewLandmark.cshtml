@@ -1,7 +1,17 @@
 ﻿@model iWasHere.Domain.DTOs.LandmarkModel
+
 @{
     ViewData["Title"] = "Adauga/Editeaza obiective";
+
+    List<string> images = ViewData["Images"] as List<string>;
+
 }
+<style>
+
+    img {
+        height: 60px;
+    }
+</style>
 @using (Html.BeginForm("LandmarkSubmit", "Home", FormMethod.Post))
 {
     <label for="Name">Name :</label>
@@ -31,9 +41,38 @@
     )
 
     <br />
-    //GEORGIANA LISTA IMAGINI
 
-    //   <form method="post" action='@Url.Action("SubmitImage")'>
+    <div id="images">
+        <table>
+            @{if (Model.LandmarkId != 0)
+                {
+                    int i = 0;
+                    foreach (string image in images)
+                    {
+                        if (i == 0)
+                        {
+                            @:<tr>
+                            }
+
+                                  <td>
+
+                                      <img src="@Url.Content(image)" class=" img-fluid" width="90px" />
+                                    
+                                  </td>
+
+                            if (i == 3)
+                            {
+                                i = 0;
+                            @:</tr>
+                        }
+                        ++i;
+
+                    }
+                }
+            }
+        </table>
+    </div>
+
     <div>
 
         <label for="uploadImage">Upload images:</label>
@@ -66,7 +105,7 @@
 
     <label for="LandmarkType">Landmark Type :</label>
     <td>
-        @(Html.Kendo().ComboBoxFor(c=> c.LandmarkTypeId)
+        @(Html.Kendo().ComboBoxFor(c => c.LandmarkTypeId)
                 //.Name("landmarks")
                 .Placeholder("Selecteaza tip atractie!")
                 .DataTextField("Name")
@@ -112,7 +151,7 @@
 
     <label for="City">City :</label>
     <td>
-        @(Html.Kendo().ComboBoxFor(c=>c.CityId)
+        @(Html.Kendo().ComboBoxFor(c => c.CityId)
                 //.Name("cities")
                 .Placeholder("Selecteaza orasul!")
                 .DataTextField("Name")
@@ -135,7 +174,7 @@
 
     <label for="Construction">Construction :</label>
     <td>
-        @(Html.Kendo().ComboBoxFor(c=>c.ConstructionTypeId)
+        @(Html.Kendo().ComboBoxFor(c => c.ConstructionTypeId)
                 //.Name("constructions")
                 .Placeholder("Selecteaza constructia!")
                 .DataTextField("Name")
@@ -218,4 +257,5 @@
     });
 
     kendo.bind($("input"), viewModel);
+
 </script>
