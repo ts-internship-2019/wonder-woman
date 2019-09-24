@@ -36,8 +36,13 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public IActionResult AddEditNewLandmark()
+        public IActionResult AddEditNewLandmark(int id)
         {
+            if(id != 0)
+            {
+                LandmarkModel model = _homeService.GetLandmarkById(id);
+                return View(model);
+            }
             return View();
         }
 
