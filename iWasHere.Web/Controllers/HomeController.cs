@@ -47,6 +47,9 @@ namespace iWasHere.Web.Controllers
             model.MapUrl = "https://www.google.com/maps/embed/v1/place?q=" + model.Latitude.ToString() + "," + model.Longitude.ToString() + "&amp;&key=AIzaSyC0vB7-K0LOaHIDEGEgHba6Wo2f099UFvE";
 
             ViewData["Images"] = _homeService.GetImagesForLandmarkId(id);
+            //ViewData["Location"] = _homeService.GetLocationForLandmarkId(id);
+            //ViewData["Construction"] = _homeService.GetConstructionForLandmarkId(id); 
+            //ViewData["Landmark"] = _homeService.GetLandmarktypeForLandmarkId(id);
             return View(model);
         }
 

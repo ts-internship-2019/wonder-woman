@@ -4,12 +4,20 @@
     ViewData["Title"] = Model.Name;
     List<string> images = ViewData["Images"] as List<string>;
 }
-
+<style>
+    img {
+height: 600px;
+}
+    .img-responsive {
+    display: block;
+    width: auto;
+    max-height: 100%;
+}
+</style>
     <h1>@Model.Name</h1>
 <div id="header">   
     Cod Obiectiv : @Model.Code <br />
     Tip Constructie : @Model.ConstructionTypeId <br />
-    Perioada Istorica : @Model.HistoricalPeriodTypeId<br />
     Locatie: @Model.CountryId , @Model.CountyId , @Model.CityId <br />
 </div>
 
