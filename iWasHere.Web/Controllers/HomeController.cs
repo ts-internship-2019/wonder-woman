@@ -133,8 +133,6 @@ namespace iWasHere.Web.Controllers
         }
 
 
-
-
         //updatebutton
         [HttpPost]
         public IActionResult LandmarkSubmit(LandmarkModel landmark, string btnSave, List<IFormFile> files)
@@ -142,8 +140,8 @@ namespace iWasHere.Web.Controllers
             switch (btnSave)
             {
                 case "Save":
-                    _homeService.UpdateLandmark(landmark, out string errorMessage2);
-                    SubmitImage(files, landmark.LandmarkId);
+                    _homeService.UpdateLandmark(landmark, out string errorMessage2,out int id);
+                    SubmitImage(files, id);
                     if (!string.IsNullOrEmpty(errorMessage2))
                     {
                         TempData["message"] = errorMessage2;
@@ -151,7 +149,8 @@ namespace iWasHere.Web.Controllers
                     }
                     return Redirect("/Home/Landmarks_List_Read");
                 case "Save and New":
-                    _homeService.UpdateLandmark(landmark, out string errorMessage);
+                    _homeService.UpdateLandmark(landmark, out string errorMessage,out int id2);
+                    SubmitImage(files, id2);
                     if (!string.IsNullOrEmpty(errorMessage))
                     {
                         TempData["message"] = errorMessage;
