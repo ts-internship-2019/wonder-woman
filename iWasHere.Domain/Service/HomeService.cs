@@ -101,7 +101,7 @@ namespace iWasHere.Domain.Service
             lmkTypestring.Add(landmarkType.Description);
                 return lmkTypestring;
         }
-        public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
+        //public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
 
         public List<Comment> GetCommentsForLandmarkId(int id)
         {
