@@ -71,20 +71,13 @@ namespace iWasHere.Web.Controllers
         }
 
 
-        public JsonResult Landmarks_Read_ForCB(string text)
-        {
-
-         
-            List<LandmarkListModel> list = _homeService.GetLandmarkListModels(); 
-
-            return Json(list);
-        }
         public IActionResult Images(int id,string name="")
         {
             Landmark landmark = new Landmark();
             if(!string.IsNullOrEmpty(name)) {
           
                 landmark.LandmarkId = id;
+           
             }
          
             return View(landmark);
@@ -122,8 +115,6 @@ namespace iWasHere.Web.Controllers
         }
 
 
-
-    }
 
 
         //updatebutton
