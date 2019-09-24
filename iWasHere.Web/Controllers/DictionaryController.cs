@@ -434,7 +434,7 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage;
                         return RedirectToAction("AddNewCountry", new { id = model.CountryId });
                     }
-                    return Redirect("/Dictionary/IndexCountry");
+                    return Redirect("/Dictionary/AddNewCountry");
                 default:
                     return Redirect("/Dictionary/IndexCountry");
             }
