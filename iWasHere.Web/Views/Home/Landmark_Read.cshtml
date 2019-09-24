@@ -27,5 +27,8 @@
                 </tr>
         </table>
 </div>
+@if(Model.Latitude != null && Model.Longitude != null)
+{
     <iframe width="500" height="350" frameborder="0" style="border:0"
             src="@Html.Raw(@Model.MapUrl)"></iframe>
+}
