@@ -39,9 +39,17 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public IActionResult AddEditNewLandmark()
+        public IActionResult AddEditNewLandmark(int id,string name="")
         {
-            return View();
+            Landmark landmark = new Landmark();
+            if (!string.IsNullOrEmpty(name))
+            {
+
+                landmark.LandmarkId = id;
+
+            }
+
+            return View(landmark);
         }
 
         public IActionResult Landmark_Read(int id)
@@ -85,7 +93,7 @@ namespace iWasHere.Web.Controllers
        
         }
 
-        public ActionResult SubmitImage(List<IFormFile> files,int LandmarkId)
+        public void SubmitImage(List<IFormFile> files,int LandmarkId)
         {
             List<string> path = new List<string>();
             foreach (var image in files)
@@ -108,7 +116,7 @@ namespace iWasHere.Web.Controllers
                 _homeService.SaveImagesDB(p,LandmarkId);
 
             }
-            return Redirect("/Home/Images");
+
             //  return RedirectToAction("Edit", new { id = employee.Id,name=employee.FirstName});
 
 
@@ -120,12 +128,13 @@ namespace iWasHere.Web.Controllers
 
         //updatebutton
         [HttpPost]
-        public IActionResult LandmarkSubmit(LandmarkModel landmark, string btnSave)
+        public IActionResult LandmarkSubmit(LandmarkModel landmark, string btnSave, List<IFormFile> files)
         {
             switch (btnSave)
             {
                 case "Save":
                     _homeService.UpdateLandmark(landmark, out string errorMessage2);
+                    SubmitImage(files, landmark.LandmarkId);
                     if (!string.IsNullOrEmpty(errorMessage2))
                     {
                         TempData["message"] = errorMessage2;
