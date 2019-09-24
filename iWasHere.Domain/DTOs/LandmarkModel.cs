@@ -19,5 +19,9 @@ namespace iWasHere.Domain.DTOs
         public int? CountyId { get; set; }
         public int? CityId { get; set; }
         public string MapUrl { get; set; }
+        public string CommentText { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentOwner { get; set; }
+        public int? CommentId { get; set; }
     }
 }
