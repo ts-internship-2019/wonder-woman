@@ -60,7 +60,7 @@ namespace iWasHere.Domain.Service
             }
             return filepaths;
         }
-        public void UpdateLandmark(LandmarkModel lm, out string errorMessage)
+        public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
         {
 
             Landmark landmark = new Landmark();
@@ -90,19 +90,25 @@ namespace iWasHere.Domain.Service
             if (lm.LandmarkId == 0)
             {
                 _dbContext.Landmark.Add(landmark);
+            
+             
             }
             else
             {
                 _dbContext.Landmark.Update(landmark);
+          
             }
+           
             try
             {
                 _dbContext.SaveChanges();
+               
             }
             catch (Exception)
             {
                 errorMessage = "Salvarea/Editarea nu a putut fi efectuata cu succes! Te rog sa mai incearci o data!";
             }
+            id = landmark.LandmarkId;
         }
 
         public List<DictionaryLandmarkType> GetLandmarks(string text)
