@@ -135,11 +135,21 @@ namespace iWasHere.Domain.Service
 
         }
 
-        public List<DictionaryCountryModel> GetCountries(string text)
+        public List<CityModel> GetCities(string text)
         {
-            var query = _dbContext.Country.Select(c => new DictionaryCountryModel()
+            var query = _dbContext.City.Select(c => new CityModel()
             {
-                CountryId = c.CountryId,
+                Id = c.CityId,
+                Name = c.Name
+            }).Where(c => c.Name.Contains(text)).Take(100);
+            return query.ToList();
+        }
+
+        public List<DictionaryConstructionTypeModel> GetConstructions(string text)
+        {
+            var query = _dbContext.DictionaryConstructionType.Select(c => new DictionaryConstructionTypeModel()
+            {
+                ConstructionTypeId = c.ConstructionTypeId,
                 Name = c.Name
             }).Where(c => c.Name.Contains(text)).Take(100);
             return query.ToList();

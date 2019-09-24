@@ -3,83 +3,91 @@
     ViewData["Title"] = "Adauga/Editeaza obiective";
 }
 @using (Html.BeginForm("LandmarkSubmit", "Home", FormMethod.Post))
- {
-            <label for="Name">Name :</label>
-            @(Html.Kendo().TextBoxFor(m => m.Name)
-                .HtmlAttributes(new
-                {
-                    validationmessage = "Enter Landmark Name!"
-                })
-            )
-            <br />
+{
+    <label for="Name">Name :</label>
+    @(Html.Kendo().TextBoxFor(m => m.Name)
+        .HtmlAttributes(new
+        {
+            validationmessage = "Enter Landmark Name!"
+        })
+    )
+    <br />
 
-            <label for="Description">Description :</label>
-            @(Html.Kendo().TextBoxFor(m => m.Descr)
-                .HtmlAttributes(new
-                {
-                    validationmessage = "Enter Landmark Description!"
-                })
-            )
-            <br />
+    <label for="Description">Description :</label>
+    @(Html.Kendo().TextBoxFor(m => m.Descr)
+        .HtmlAttributes(new
+        {
+            validationmessage = "Enter Landmark Description!"
+        })
+    )
+    <br />
 
-            //GEORGIANA LISTA IMAGINI
+    <label for="Name">Code :</label>
+    @(Html.Kendo().TextBoxFor(m => m.Code)
+        .HtmlAttributes(new
+        {
+            validationmessage = "Enter Landmark Code!"
+        })
+    )
 
-            //   <form method="post" action='@Url.Action("SubmitImage")'>
-            <div>
-          
-                            <label for="uploadImage">Upload images:</label>
-            
-            </div>
-            <div
-              class="demo-section k-content">
-                    @(Html.Kendo().Upload()
-                        .Name("files")
-                        .HtmlAttributes(new { aria_label = "files" })
-                    )
-                </div>
+    <br />
+    //GEORGIANA LISTA IMAGINI
 
-                //</form>
+    //   <form method="post" action='@Url.Action("SubmitImage")'>
+    <div>
 
-                <br />
+        <label for="uploadImage">Upload images:</label>
+
+    </div>
+    <div class="demo-section k-content">
+        @(Html.Kendo().Upload()
+            .Name("files")
+            .HtmlAttributes(new { aria_label = "files" })
+        )
+    </div>
+
+    //</form>
+
+    <br />
 
 
     @*<label for="Ticket">Ticket :</label>
-    <input type="checkbox" data-bind="checked: isChecked" />
+        <input type="checkbox" data-bind="checked: isChecked" />
+        <br />
+
+                    <label for="Price">Ticket Price :</label>
+                    @(Html.Kendo().TextBoxFor(m => m.Name) /////////////////////////////////////////////////////////////////////////////
+                        .HtmlAttributes(new
+                        {
+                            validationmessage = "Enter Ticket Price!"
+                        })
+                    )
+                    <br />*@
+
+    <label for="LandmarkType">Landmark Type :</label>
+    <td>
+        @(Html.Kendo().ComboBox()
+                .Name("landmarks")
+                .Placeholder("Selecteaza tip atractie!")
+                .DataTextField("Name")
+                .DataValueField("LandmarkId")
+                .HtmlAttributes(new { style = "width:100%;" })
+                .Filter(FilterType.Contains)
+                .AutoBind(true)
+                .MinLength(3)
+                .DataSource(source =>
+                    {
+                        source.Read(read =>
+                    {
+                        read.Action("Landmarks_Read_ForCB", "Home");
+                    })
+                        .ServerFiltering(true);
+                    })
+        )
+    </td>
     <br />
 
-                <label for="Price">Ticket Price :</label>
-                @(Html.Kendo().TextBoxFor(m => m.Name) /////////////////////////////////////////////////////////////////////////////
-                    .HtmlAttributes(new
-                    {
-                        validationmessage = "Enter Ticket Price!"
-                    })
-                )
-                <br />*@
-
-                <label for="LandmarkType">Landmark Type :</label>
-                <td>
-                    @(Html.Kendo().ComboBox()
-                            .Name("landmarks")
-                            .Placeholder("Selecteaza tip atractie!")
-                            .DataTextField("Name")
-                            .DataValueField("LandmarkId")
-                            .HtmlAttributes(new { style = "width:100%;" })
-                            .Filter(FilterType.Contains)
-                            .AutoBind(true)
-                            .MinLength(3)
-                            .DataSource(source =>
-                                {
-                                    source.Read(read =>
-                                {
-                                    read.Action("Landmarks_Read_ForCB", "Home");
-                                })
-                                    .ServerFiltering(true);
-                                })
-                    )
-                </td>
-                <br />
-
-                @*<label for="Time">Time Schedule :</label>
+    @*<label for="Time">Time Schedule :</label>
         <td>
             @(Html.Kendo().ComboBox()
                     .Name("landmarks")
@@ -102,74 +110,97 @@
         </td>
         <br />*@
 
-                <label for="Country">Country :</label>
-                <td>
-                    @(Html.Kendo().ComboBox()
-                            .Name("countries")
-                            .Placeholder("Selecteaza tara!")
-                            .DataTextField("Name")
-                            .DataValueField("CountryId")
-                            .HtmlAttributes(new { style = "width:100%;" })
-                            .Filter(FilterType.Contains)
-                            .AutoBind(true)
-                            .MinLength(3)
-                            .DataSource(source =>
-                                {
-                                    source.Read(read =>
-                                {
-                                    read.Action("Countries_Read_ForCB", "Home");
-                                })
-                                    .ServerFiltering(true);
-                                })
-                    )
-                </td>
-                <br />
-
-                <label for="Lat">Coord latitude:</label>
-                @(Html.Kendo().TextBoxFor(m => m.Latitude)
-                    .HtmlAttributes(new
+    <label for="City">City :</label>
+    <td>
+        @(Html.Kendo().ComboBox()
+                .Name("cities")
+                .Placeholder("Selecteaza orasul!")
+                .DataTextField("Name")
+                .DataValueField("CityId")
+                .HtmlAttributes(new { style = "width:100%;" })
+                .Filter(FilterType.Contains)
+                .AutoBind(true)
+                .MinLength(3)
+                .DataSource(source =>
                     {
-                        validationmessage = "Enter Latitude!"
-                    })
-                )
-                <label for="Long">Coord longitude:</label>
-                @(Html.Kendo().TextBoxFor(m => m.Longitude)
-                    .HtmlAttributes(new
+                        source.Read(read =>
                     {
-                        validationmessage = "Enter Longitude!"
+                        read.Action("Cities_Read_ForCB", "Home");
                     })
-                )
-                <br />
+                        .ServerFiltering(true);
+                    })
+        )
+    </td>
+    <br />
 
-                <div class="demo-section k-content">
-                    @(Html.Kendo().Button()
-                        .Name("btnSave")
-                        .Content("Save")
-                        .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save" })
-                        .Events(ev => ev.Click("onClick")))
-                </div>
-                <br />
+    <label for="Construction">Construction :</label>
+    <td>
+        @(Html.Kendo().ComboBox()
+                .Name("constructions")
+                .Placeholder("Selecteaza constructia!")
+                .DataTextField("Name")
+                .DataValueField("ConstructionTypeId")
+                .HtmlAttributes(new { style = "width:100%;" })
+                .Filter(FilterType.Contains)
+                .AutoBind(true)
+                .MinLength(3)
+                .DataSource(source =>
+                    {
+                        source.Read(read =>
+                    {
+                        read.Action("Constructions_Read_ForCB", "Home");
+                    })
+                        .ServerFiltering(true);
+                    })
+        )
+    </td>
+    <br />
 
-                if (Model == null)
-                {
-                    <div class="demo-section k-content">
-                        @(Html.Kendo().Button()
-                            .Name("btnSave")
-                            .Content("Save and New")
-                            .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save and New" })
-                            .Events(ev => ev.Click("onClick")))
-                    </div>
-                }
-                <br />
+    <label for="Lat">Coord latitude:</label>
+    @(Html.Kendo().TextBoxFor(m => m.Latitude)
+        .HtmlAttributes(new
+        {
+            validationmessage = "Enter Latitude!"
+        })
+    )
+    <label for="Long">Coord longitude:</label>
+    @(Html.Kendo().TextBoxFor(m => m.Longitude)
+        .HtmlAttributes(new
+        {
+            validationmessage = "Enter Longitude!"
+        })
+    )
+    <br />
 
-                <div class="demo-section k-content">
-                    @(Html.Kendo().Button()
-                        .Name("btnSave")
-                        .Content("Cancel")
-                        .HtmlAttributes(new { name = "btnSave", style = "background:red", type = "submit", value = "Cancel" })
-                        .Events(ev => ev.Click("onClick")))
-                </div>
-                <br />
+    <div class="demo-section k-content">
+        @(Html.Kendo().Button()
+            .Name("btnSave")
+            .Content("Save")
+            .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save" })
+            .Events(ev => ev.Click("onClick")))
+    </div>
+    <br />
+
+    if (Model == null)
+    {
+        <div class="demo-section k-content">
+            @(Html.Kendo().Button()
+                .Name("btnSave")
+                .Content("Save and New")
+                .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save and New" })
+                .Events(ev => ev.Click("onClick")))
+        </div>
+    }
+    <br />
+
+    <div class="demo-section k-content">
+        @(Html.Kendo().Button()
+            .Name("btnSave")
+            .Content("Cancel")
+            .HtmlAttributes(new { name = "btnSave", style = "background:red", type = "submit", value = "Cancel" })
+            .Events(ev => ev.Click("onClick")))
+    </div>
+    <br />
 
     @Html.HiddenFor(h => h.LandmarkId);
     @Html.HiddenFor(h => h.ConstructionTypeId);
@@ -181,10 +212,10 @@
 }
 
 <script>
-    
+
     var viewModel = kendo.observable({
         isChecked: false
     });
 
-                kendo.bind($("input"), viewModel);
-            </script>
+    kendo.bind($("input"), viewModel);
+</script>
