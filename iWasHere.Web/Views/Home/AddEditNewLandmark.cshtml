@@ -23,14 +23,7 @@
     )
     <br />
 
-
-    <div class="demo-section k-content">
-        @(Html.Kendo().Button()
-            .Name("btnLoading")
-            .Content("Loading picture")
-            .HtmlAttributes(new { name = "btnLoading", style = "background: yellow", type = "btnLoading", value = "btnLoading" })
-            .Events(ev => ev.Click("onClick")))
-    </div>
+    //GEORGIANA LISTA IMAGINI
     <br />
 
 
@@ -177,23 +170,3 @@
 
     kendo.bind($("input"), viewModel);
 </script>
-
-<input type="file" name="files" id="files" />
-@*<input type="button" value="Upload Selected Files" class="k-button" onclick="uploadSelected()" />*@
-<script>
-    $("#files").kendoUpload({
-        async: {
-            saveUrl: "https://localhost:5001/Home/AddEditNewLandmark",
-            autoUpload: false
-        }
-    });
-
-    function uploadSelected() {
-        $(".k-upload-selected").click();
-    }
-</script>
-<style>
-    .k-clear-selected, .k-upload-selected {
-        display: none !important;
-    }
-</style>
