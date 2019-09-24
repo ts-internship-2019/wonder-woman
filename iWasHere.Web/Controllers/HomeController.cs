@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
 using System.IO;
 using iWasHere.Domain.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
 namespace iWasHere.Web.Controllers
@@ -45,9 +47,8 @@ namespace iWasHere.Web.Controllers
         public IActionResult Landmark_Read(int id)
         {
             LandmarkModel model = _homeService.GetLandmarkById(id);
-            model.Latitude = 40.7127837m;
-            model.Longitude = -74.0059413m;
             model.MapUrl = "https://www.google.com/maps/embed/v1/place?q=" + model.Latitude.ToString() + "," + model.Longitude.ToString() + "&amp;&key=AIzaSyC0vB7-K0LOaHIDEGEgHba6Wo2f099UFvE";
+
             ViewData["Images"] = _homeService.GetImagesForLandmarkId(id);
             return View(model);
         }
@@ -130,7 +131,7 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage2;
                         return RedirectToAction("AddEditNewLandmark", new { id = landmark.LandmarkId });
                     }
-                    return Redirect("/Home/Landmark");
+                    return Redirect("/Home/Landmarks_List_Read");
                 case "Save and New":
                     _homeService.UpdateLandmark(landmark, out string errorMessage);
                     if (!string.IsNullOrEmpty(errorMessage))
@@ -138,9 +139,9 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage;
                         return RedirectToAction("AddEditNewLandmark", new { id = landmark.LandmarkId });
                     }
-                    return Redirect("/Home/Landmark");
+                    return Redirect("/Home/AddEditNewLandmark");
                 default:
-                    return Redirect("/Home/Landmark");
+                    return Redirect("/Home/Landmarks_List_Read");
             }
         }
 
@@ -155,10 +156,29 @@ namespace iWasHere.Web.Controllers
 
             return Json(list);
         }
+
         public List<LandmarkModel> GetLandmarksForCB(string text)
         {
             List<LandmarkModel> landmarks = _homeService.GetLandmarks(text);
             return landmarks;
+        }
+
+        public JsonResult Countries_Read_ForCB(string text)
+        {
+            if (String.IsNullOrEmpty(text))
+            {
+                text = "";
+            }
+
+            List<DictionaryCountryModel> list = GetCountriesForCB(text);
+
+            return Json(list);
+        }
+
+        public List<DictionaryCountryModel> GetCountriesForCB(string text)
+        {
+            List<DictionaryCountryModel> countryModels = _homeService.GetCountries(text);
+            return countryModels;
         }
     }
 }
