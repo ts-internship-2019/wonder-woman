@@ -1,13 +1,12 @@
 ﻿@model iWasHere.Domain.Models.Country
-
 @*<script type="text/javascript">
-    $(document).ready(function () {
-        $('#btnCancel').click(function (e)
-      {
-          window.location = '@Url.Action("IndexCountry", "Dictionary")';
-      });
-    });
-</script>*@
+        $(document).ready(function () {
+            $('#btnCancel').click(function (e)
+          {
+              window.location = '@Url.Action("IndexCountry", "Dictionary")';
+          });
+        });
+    </script>*@
 
 @using (Html.BeginForm("CountrySubmit", "Dictionary", FormMethod.Post))
 {
@@ -34,6 +33,7 @@
             .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save" })
             .Events(ev => ev.Click("onClick")))
     </div>
+    <br />
 
     if (Model == null)
     {
@@ -45,6 +45,7 @@
                 .Events(ev => ev.Click("onClick")))
         </div>
     }
+    <br />
 
     <div class="demo-section k-content">
         @(Html.Kendo().Button()
@@ -53,6 +54,7 @@
             .HtmlAttributes(new { name = "btnSave", style = "background:red", type = "submit", value = "Cancel" })
             .Events(ev => ev.Click("onClick")))
     </div>
+    <br />
 
     @Html.HiddenFor(h => h.CountryId);
     @Html.HiddenFor(h => h.ParentId);

@@ -49,14 +49,20 @@ namespace iWasHere.Domain.Service
 
        public List<String> GetImagesForLandmarkId(int id)
         {
-            //var images = _dbContext.Photo.Where(a => a.LandmarkId == id).ToList();
-            List<String> imagepaths = new List<String>();
-
-            return imagepaths;
+            List<Photo> photopaths = _dbContext.Photo.Where(a => a.LandmarkId == id).Select(a => new Photo()
+            {
+                ImagePath = a.ImagePath,
+            }).ToList();
+            List<String> filepaths = new List<String>();
+            foreach (Photo ph in photopaths)
+            {
+                filepaths.Add(ph.ImagePath);
+            }
+            return filepaths;
         }
         public void UpdateLandmark(LandmarkModel lm, out string errorMessage)
         {
-            
+
             Landmark landmark = new Landmark();
             if (lm.LandmarkId != 0)
                 landmark.LandmarkId = lm.LandmarkId;
@@ -105,6 +111,16 @@ namespace iWasHere.Domain.Service
             {
                 LandmarkId = c.LandmarkId,
                 Name = c.Name,
+            }).Where(c => c.Name.Contains(text)).Take(100);
+            return query.ToList();
+        }
+
+        public List<DictionaryCountryModel> GetCountries(string text)
+        {
+            var query = _dbContext.Country.Select(c => new DictionaryCountryModel()
+            {
+                CountryId = c.CountryId,
+                Name = c.Name
             }).Where(c => c.Name.Contains(text)).Take(100);
             return query.ToList();
         }
