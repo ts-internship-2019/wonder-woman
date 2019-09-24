@@ -114,6 +114,20 @@ namespace iWasHere.Domain.Service
             }).Where(c => c.Name.Contains(text)).Take(100);
             return query.ToList();
         }
+        public void SaveImagesDB(string path, int id)
+        {
+           
+            Photo photo = new Photo()
+            {
+                ImagePath = "~/images/" + path,
+                LandmarkId = id
+            };
+
+            _dbContext.Photo.Add(photo);
+
+            _dbContext.SaveChanges();
+
+        }
 
         public List<DictionaryCountryModel> GetCountries(string text)
         {
