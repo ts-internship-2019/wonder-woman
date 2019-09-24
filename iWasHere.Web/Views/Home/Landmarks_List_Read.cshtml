@@ -66,10 +66,12 @@
         var selectedItem = Grid.dataItem(Grid.select());
 
         if ($(e.event.target).closest(".k-button").attr("id") == "addBtn") {
-
+             window.location = '@Url.Action("AddEditNewLandmark", "Home", new { id = 0 })';
         }
         if ($(e.event.target).closest(".k-button").attr("id") == "editBtn") {
-
+            var url = '@Url.Action("AddEditNewLandmark","Home", new {id="replaceToken"})';
+            url = url.replace("replaceToken", selectedItem.LandmarkId);
+            window.location = url;
         }
         if ($(e.event.target).closest(".k-button").attr("id") == "deleteBtn") {
 

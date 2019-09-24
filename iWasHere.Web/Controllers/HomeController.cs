@@ -31,7 +31,7 @@ namespace iWasHere.Web.Controllers
             return View();
         }
 
-        public IActionResult AddEditNewLandmark()
+        public IActionResult AddEditNewLandmark(int id)
         {
             return View();
         }
