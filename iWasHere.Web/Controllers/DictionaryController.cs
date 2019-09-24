@@ -334,10 +334,11 @@ namespace iWasHere.Web.Controllers
             }         
 
         }
- 
-        #region Currency
+        public IActionResult Currency()
+        {
+            return View();
+        }
 
-      
 
         [HttpPost]
         public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string filterName)
@@ -368,42 +369,6 @@ namespace iWasHere.Web.Controllers
             }
             return Json(ModelState.ToDataSourceResult());
         }
-        #endregion
-
-        #region Landmark
-        public IActionResult Landmark()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult LandmarkDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryLandmarkType landmark)
-        {
-            if (landmark != null && ModelState.IsValid)
-            {
-                _dictionaryService.LandmarkDelete(landmark.LandmarkTypeId);
-            }
-
-            return Json(ModelState.ToDataSourceResult());
-        }
-
-        [HttpPost]
-        public ActionResult LandmarkTypeRead([DataSourceRequest]DataSourceRequest request, string filterName)
-        {
-            DataSourceResult result = new DataSourceResult();
-            if (string.IsNullOrWhiteSpace(filterName))
-            {
-                result.Data = _dictionaryService.GetLandmarkTypeModels(request.Page, request.PageSize, out int count);
-                result.Total = count;
-            }
-            else
-            {
-                result.Data = _dictionaryService.GetFilteredLandmarkTypeModels(request.Page, request.PageSize, filterName, out int count);
-                result.Total = count;
-            }
-            return Json(result);
-        }
-        #endregion
 
         public IActionResult IndexCountry()
         {
