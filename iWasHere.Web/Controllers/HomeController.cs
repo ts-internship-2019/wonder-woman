@@ -279,43 +279,6 @@ namespace iWasHere.Web.Controllers
             return RedirectToAction("Landmark_Read", new { id = comm.LandmarkId });
         }
 
-        //public IActionResult SendEmail(int id)
-
-        //{
-
-        //    LandmarkModel model = _homeService.GetLandmarkById(id);
-
-        //     _homeService.SendEmail(model);
-
-        //    return File(stream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Landmark.docx");
-
-        //}
-    //    public void SendEmail(int id)
-    //    {
-    //        LandmarkModel model = _homeService.GetLandmarkById(id);
-    //        SmtpClient client = new SmtpClient {
-    //            Host= "smtp.gmail.com",
-    //            Port= 587,
-    //            EnableSsl=true,
-    //            DeliveryMethod = SmtpDeliveryMethod.Network,
-    //            Credentials= new NetworkCredential("scarlterwitch@gmail.com", "ThisIsNotAPassword123")
-    //        };
-    //          client.UseDefaultCredentials = false;
-    //        //   client.Credentials = new NetworkCredential("username", "password");
-
-    //        MailMessage mailMessage = new MailMessage();
-    //        mailMessage.From = new MailAddress("scarlterwitch@gmail.com");
-    //        mailMessage.To.Add("georgiana.udrea95.gu@gmail.com");
-    //        Stream v = _homeService.ExportToWord(model);
-    //        System.Net.Mail.Attachment att;
-    //        att = new System.Net.Mail.Attachment(v, "Landmark.docx");
-    //        mailMessage.Attachments.Add(att);
-    //        mailMessage.Subject = "Landmark";
-         
-    //        client.Send(mailMessage);
-    
-    //}
-
         public IActionResult SendEmail([DataSourceRequest] DataSourceRequest request, String email, int id)
 
         {
