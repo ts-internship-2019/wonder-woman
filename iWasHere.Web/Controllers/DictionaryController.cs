@@ -340,10 +340,7 @@ namespace iWasHere.Web.Controllers
         }
 
         #region Currency
-        public IActionResult Currency()
-        {
-            return View();
-        }
+ 
 
         [HttpPost]
         public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string filterName)
@@ -373,7 +370,7 @@ namespace iWasHere.Web.Controllers
                     ModelState.AddModelError("a", error);
             }
             return Json(ModelState.ToDataSourceResult());
-        }
+        } 
         #endregion
 
         #region Landmark
