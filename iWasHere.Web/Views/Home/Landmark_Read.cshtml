@@ -6,7 +6,11 @@
     List<string> construction = ViewData["Construction"] as List<string>;
     List<string> landmarkType = ViewData["Landmark"] as List<string>;
     List<iWasHere.Domain.Models.Comment> comments = ViewData["Comment"] as List<iWasHere.Domain.Models.Comment>;
+    iWasHere.Domain.DTOs.CountryModel country = ViewData["Country"] as iWasHere.Domain.DTOs.CountryModel;
 }
+
+@using Kendo.Mvc.UI
+
 <style>
     img {
         height: 600px;
@@ -18,22 +22,29 @@
         max-height: 100%;
     }
 </style>
-<h1>@Model.Name</h1>
-<div id="header">
-    Cod Obiectiv : @Model.Code <br />
-    @if (landmarkType[0] != "")
-    {
-        @:Tip Obiectiv : @landmarkType[0], (@landmarkType[1]) <br />
-    }
-    @if (construction[0] != "")
-    {
-        @:Tip Constructie : @construction[0], (@construction[1]) <br />
-    }
-    Locatie: @location[0]  <br />
-</div>
+    <h1>@Model.Name</h1>
+    <div id="header">
+        Cod Obiectiv : @Model.Code <br />
+        @if (landmarkType[0] != "")
+        {
+            @:Tip Obiectiv : @landmarkType[0], @landmarkType[1] <br />
+        }
+        @if (construction[0] != "")
+        {
+            @:Tip Constructie : @construction[0], @construction[1] <br />
+        }
+        Locatie: @location[0]  <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
+    </div> <br />
 
 <div id="description">
     Descriere: @Model.Descr
+</div>
+<div class="demo-section k-content">
+    @(Html.Kendo().Button()
+        .Name("btnSendEmail")
+        .Content("Trimite email")
+        .HtmlAttributes(new { name = "btnSendEmail", style = "background: green", type = "submit", value = "Trimite email" })
+        .Events(ev => ev.Click("onClick")))
 </div>
 
 @using (Html.BeginForm("CommentSubmit", "Home", FormMethod.Post))
@@ -73,7 +84,6 @@
             .HtmlAttributes(new { name = "btnSave", style = "background:green", type = "submit", value = "SAVE" })
             .Events(ev => ev.Click("onClick")))
     </div>
-
     @Html.HiddenFor(m => m.LandmarkId);
 }
 
@@ -103,16 +113,13 @@
                 {
                     @:<tr>
                     }
-
                     <td><img src="@Url.Content(image)" class=" img-fluid" /></td>
-
                     if (i == 3)
                     {
                         i = -1;
                     @:</tr>
                 }
                 ++i;
-
             }
         }
     </table>
@@ -165,3 +172,27 @@
         font-family: FontAwesome;
     }
 </style>
+}
+
+@addTagHelper *, Kendo.Mvc
+
+<div class="demo-section k-content">
+    <h4>Rating</h4>
+    <kendo-rating name="rating"
+                  min="1"
+                  max="6"
+                  value="3"
+                  item-template-id="item-template"
+                  selected-template-id="selected-template"
+                  hovered-template-id="selected-template">
+        <label template="<span>#=value# out of #=maxValue#</span>" />
+    </kendo-rating>
+</div>
+
+<script id="item-template" type="x/kendo-template">
+    <i class='k-icon k-i-heart-outline'></i>
+</script>
+
+<script id="selected-template" type="x/kendo-template">
+    <i class='k-icon k-i-heart'></i>
+</script>
