@@ -80,7 +80,7 @@ namespace iWasHere.Domain.Service
             County county = _dbContext.County.First(a => a.CountyId == city.CountyId);
             Country country = _dbContext.Country.First(a => a.CountryId == county.CountryId);
             List<String> location = new List<String>();
-            location.Add(country.Name + ", " + county.Name + ", " + city.Name);
+            location.Add(county.Name + ", " + city.Name + ", ");
             return location;
         }
 
