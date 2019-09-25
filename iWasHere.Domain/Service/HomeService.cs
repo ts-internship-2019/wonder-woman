@@ -84,17 +84,17 @@ namespace iWasHere.Domain.Service
             if (cityId != null)
             {
                 City city = _dbContext.City.First(a => a.CityId == cityId);
-                if (city.CountyId != null)
+                if (city.CountyId != 0)
                 {
                      county = _dbContext.County.First(a => a.CountyId == city.CountyId);
                 }
                 
-                if (county.CountryId != null)
+                if (county.CountryId != 0)
                 {
                      country = _dbContext.Country.First(a => a.CountryId == county.CountryId);
                 }
 
-                location.Add(country.Name + ", " + county.Name + ", " + city.Name);
+                location.Add(county.Name + ", " + city.Name + ", ");
                 return location;
             }
             else
