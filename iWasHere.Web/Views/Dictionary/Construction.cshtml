@@ -55,7 +55,7 @@
                 columns.Bound(c => c.Name).Width(100);
                 columns.Bound(c => c.Description);
                 columns.Template("<a class='k-button' href='/Dictionary/AddConstruction?Id=#=ConstructionTypeId# '> Edit</a>").Width(150);
-                columns.Command(cmd => { cmd.Destroy(); });
+                columns.Command(cmd => { cmd.Destroy();});
             })
             .HtmlAttributes(new { style = "height: 500dp;" })
             .Scrollable()
