@@ -191,6 +191,7 @@ namespace iWasHere.Web.Controllers
      
             return Json(list);
         }
+    
         /// <summary>
         /// Test Gets Counties as a List<>
         /// </summary>
@@ -333,14 +334,11 @@ namespace iWasHere.Web.Controllers
             }         
 
         }
-   
         public IActionResult Currency()
         {
             return View();
         }
 
-        #region Currency
- 
 
         [HttpPost]
         public ActionResult CurrencyRead([DataSourceRequest]DataSourceRequest request, string filterName)
@@ -370,43 +368,7 @@ namespace iWasHere.Web.Controllers
                     ModelState.AddModelError("a", error);
             }
             return Json(ModelState.ToDataSourceResult());
-        } 
-        #endregion
-
-        #region Landmark
-        public IActionResult Landmark()
-        {
-            return View();
         }
-
-        [HttpPost]
-        public ActionResult LandmarkDestroy([DataSourceRequest] DataSourceRequest request, iWasHere.Domain.Models.DictionaryLandmarkType landmark)
-        {
-            if (landmark != null && ModelState.IsValid)
-            {
-                _dictionaryService.LandmarkDelete(landmark.LandmarkTypeId);
-            }
-
-            return Json(ModelState.ToDataSourceResult());
-        }
-
-        [HttpPost]
-        public ActionResult LandmarkTypeRead([DataSourceRequest]DataSourceRequest request, string filterName)
-        {
-            DataSourceResult result = new DataSourceResult();
-            if (string.IsNullOrWhiteSpace(filterName))
-            {
-                result.Data = _dictionaryService.GetLandmarkTypeModels(request.Page, request.PageSize, out int count);
-                result.Total = count;
-            }
-            else
-            {
-                result.Data = _dictionaryService.GetFilteredLandmarkTypeModels(request.Page, request.PageSize, filterName, out int count);
-                result.Total = count;
-            }
-            return Json(result);
-        }
-        #endregion
 
         public IActionResult IndexCountry()
         {
@@ -436,7 +398,7 @@ namespace iWasHere.Web.Controllers
                         TempData["message"] = errorMessage;
                         return RedirectToAction("AddNewCountry", new { id = model.CountryId });
                     }
-                    return Redirect("/Dictionary/IndexCountry");
+                    return Redirect("/Dictionary/AddNewCountry");
                 default:
                     return Redirect("/Dictionary/IndexCountry");
             }
@@ -612,9 +574,6 @@ namespace iWasHere.Web.Controllers
         }
 
 
-        public IActionResult Images()
-        {
-            return View();
-        }
+      
     }
 }

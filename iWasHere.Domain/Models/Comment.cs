@@ -5,6 +5,7 @@ namespace iWasHere.Domain.Models
 {
     public partial class Comment
     {
+        public Comment() { }
         public int CommentId { get; set; }
         public int? LandmarkId { get; set; }
         public string Title { get; set; }

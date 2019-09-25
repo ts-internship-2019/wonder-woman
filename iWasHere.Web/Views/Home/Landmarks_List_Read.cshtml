@@ -37,7 +37,8 @@
         .Columns(columns =>
         {
             columns.Bound(p => p.LandmarkId).Title("Id").Width(80);
-            columns.Template("<a class='k-button' href='/Home/Landmark_Read?Id=#=LandmarkId# '> #=Name# </a>");
+            columns.Template("<a class='k-button' href='/Home/Landmark_Read?id=#=LandmarkId# '> #=Name# </a>");
+            columns.Template("<a href='/Home/ExportWord?id=#=LandmarkId#'></i> Export</a>");
         })
         .HtmlAttributes(new { style = "height: 500dp;" })
         .Pageable(pageable => pageable
@@ -66,10 +67,12 @@
         var selectedItem = Grid.dataItem(Grid.select());
 
         if ($(e.event.target).closest(".k-button").attr("id") == "addBtn") {
-
+             window.location = '@Url.Action("AddEditNewLandmark", "Home", new { id = 0 })';
         }
         if ($(e.event.target).closest(".k-button").attr("id") == "editBtn") {
-
+            var url = '@Url.Action("AddEditNewLandmark","Home", new {id="replaceToken"})';
+            url = url.replace("replaceToken", selectedItem.LandmarkId);
+            window.location = url;
         }
         if ($(e.event.target).closest(".k-button").attr("id") == "deleteBtn") {
 

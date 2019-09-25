@@ -9,6 +9,7 @@ namespace iWasHere.Domain.DTOs
         public int LandmarkId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public string Descr { get; set; }
         public int? ConstructionTypeId { get; set; }
         public int? HistoricalPeriodTypeId { get; set; }
         public int? LandmarkTypeId { get; set; }
@@ -18,5 +19,9 @@ namespace iWasHere.Domain.DTOs
         public int? CountyId { get; set; }
         public int? CityId { get; set; }
         public string MapUrl { get; set; }
+        public string CommentText { get; set; }
+        public string CommentTitle { get; set; }
+        public string CommentOwner { get; set; }
+        public int? CommentId { get; set; }
     }
 }
