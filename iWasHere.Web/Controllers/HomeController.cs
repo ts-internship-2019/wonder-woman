@@ -226,6 +226,27 @@ namespace iWasHere.Web.Controllers
             System.IO.File.Delete(photoPath);
             return Json(request);
         }
+
+        public ActionResult DestroyLandmark([DataSourceRequest] DataSourceRequest request, LandmarkListModel landmarktoDestroy)
+        {
+
+            _homeService.DestroyLandmark(landmarktoDestroy,out string errorMessage);
+            //TODO: HANDLE THE ERROR
+            return Json(request);
+        }
+
+
+        public IActionResult ExportWord(int id)
+
+        {
+
+            LandmarkModel model = _homeService.GetLandmarkById(id);
+
+            Stream stream = _homeService.ExportToWord(model);
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Landmark.docx");
+
+        }
     }
 }
 

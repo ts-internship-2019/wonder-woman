@@ -5,7 +5,7 @@
 }
 
 <div>
-    <table> 
+    <table>
         <tr>
             <td>
                 @(Html.Kendo().Button()
@@ -38,6 +38,7 @@
         {
             columns.Bound(p => p.LandmarkId).Title("Id").Width(80);
             columns.Template("<a class='k-button' href='/Home/Landmark_Read?id=#=LandmarkId# '> #=Name# </a>");
+            columns.Template("<a href='/Home/ExportWord?id=#=LandmarkId#'></i> Export</a>");
         })
         .HtmlAttributes(new { style = "height: 500dp;" })
         .Pageable(pageable => pageable
