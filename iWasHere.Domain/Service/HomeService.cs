@@ -84,17 +84,17 @@ namespace iWasHere.Domain.Service
             if (cityId != null)
             {
                 City city = _dbContext.City.First(a => a.CityId == cityId);
-                if (city.CountyId != null)
+                if (city.CountyId != 0)
                 {
                      county = _dbContext.County.First(a => a.CountyId == city.CountyId);
                 }
                 
-                if (county.CountryId != null)
+                if (county.CountryId != 0)
                 {
                      country = _dbContext.Country.First(a => a.CountryId == county.CountryId);
                 }
 
-                location.Add(country.Name + ", " + county.Name + ", " + city.Name);
+                location.Add(county.Name + ", " + city.Name + ", ");
                 return location;
             }
             else
@@ -371,6 +371,17 @@ namespace iWasHere.Domain.Service
             string countyName = null;
             string countryName = null;
             string constructionType = null;
+            List<Comment> comments = new List<Comment>();
+            if (_dbContext.Comment.Where(a => a.LandmarkId == model.LandmarkId).Count() > 0)
+            {
+                comments = _dbContext.Comment.Where(a => a.LandmarkId == model.LandmarkId).Select(a => new Comment()
+                {
+                    CommentId = a.CommentId,
+                    Title = a.Title,
+                    Text = a.Text,
+                    RatingValue = a.RatingValue
+                }).ToList();
+            }
             model.Name = _dbContext.Landmark.Where(x => x.LandmarkId == model.LandmarkId).Select(x => x.Name).FirstOrDefault();
 
             if (_dbContext.City.Where(a => a.CityId == model.CityId).Count() > 0)
@@ -442,9 +453,25 @@ namespace iWasHere.Domain.Service
                               new Text("\n Judetul: " + countyName))),
                                    new Paragraph(
                         new Run(
-                              new Text("\n Tara: " + countryName)))                          
+                              new Text("\n Tara: " + countryName)))
+                                 
+                
+                
+                            ));
+                int sum = 0;
+                foreach (Comment com in comments)
+            {
+                    sum = sum + com.RatingValue;
+                    body.Append(new Paragraph(
+                        new Run(
+                          new Text("Comentarii: " + com.Text))));
+                         
 
-                          ));
+            }
+                body.Append(  new Paragraph(
+                       new Run(
+                         new Text("Medie rating: " + sum / comments.Count()))));
+
 
                 mainPart.Document.Save();
                 doc.Save();

@@ -24,21 +24,21 @@
 </style>
 <h1>@Model.Name</h1>
 <div id="header">
-    Cod Obiectiv : @Model.Code <br />
+    <b>Cod Obiectiv :</b> @Model.Code <br />
     @if (landmarkType[0] != "")
     {
-        @:Tip Obiectiv : @landmarkType[0], @landmarkType[1] <br />
+        @:<b>Tip Obiectiv :</b> @landmarkType[0], @landmarkType[1] <br />
     }
     @if (construction[0] != "")
     {
-        @:Tip Constructie : @construction[0], @construction[1] <br />
+        @:<b>Tip Constructie :</b> @construction[0], @construction[1] <br />
     }
-    Locatie: @location[0]  <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
+    <b>Locatie:</b> @location[0]  <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
 </div>
 <br />
 <hr>
 <div id="description">
-    Descriere: @Model.Descr
+    <b>Descriere:</b> @Model.Descr
 </div>
 <hr>
 @using (Html.BeginForm("CommentSubmit", "Home", FormMethod.Post))
@@ -49,14 +49,14 @@
                             .Value(""))
     <br />
 
-    <label for="Comentariu">Comment :</label>
+    <b>Comentariu:</b>
 
     @(Html.Kendo().TextBoxFor(t => t.CommentText)
                   .Value(""))
     <br />
     <br />
 
-    <label>Rating: </label>
+    <b>Rating:</b>
     <br />
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
@@ -81,7 +81,7 @@
         @(Html.Kendo().Button()
             .Name("btnSave")
             .Content("SAVE")
-            .HtmlAttributes(new { name = "btnSave", style = "background:green", type = "submit", value = "SAVE" })
+            .HtmlAttributes(new { name = "btnSave", type = "submit", value = "SAVE" })
             .Events(ev => ev.Click("onClick")))
     </div>
     @Html.HiddenFor(m => m.LandmarkId);

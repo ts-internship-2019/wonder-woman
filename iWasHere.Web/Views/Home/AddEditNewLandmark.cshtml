@@ -92,32 +92,6 @@
         )
     </div>
 
-
-    <br />
-
-    <label for="Ticket">Ticket :</label>
-    <input type="checkbox" data-bind="checked: isChecked" />
-    <br />
-
-//    <label for="Price">Ticket Type :</label>
- //   @(Html.Kendo().ComboBoxFor(c => c.LandmarkTypeId)
-//.Name("landmarks")
-@*.Placeholder("Selecteaza tip atractie!")
-.DataTextField("Name")
-.DataValueField("LandmarkTypeId")
-.HtmlAttributes(new { style = "width:100%;" })
-.Filter(FilterType.Contains)
-.AutoBind(true)
-.MinLength(3)
-.DataSource(source =>
-{
-   source.Read(read =>
-   {
-       read.Action("Landmarks_Read_ForCB", "Home");
-   })
-   .ServerFiltering(true);
-})
-   )*@
     <br />
 
     <label for="LandmarkType">Landmark Type :</label>
@@ -142,29 +116,6 @@
         )
     </td>
     <br />
-
-    @*<label for="Time">Time Schedule :</label>
-        <td>
-            @(Html.Kendo().ComboBox()
-                    .Name("landmarks")
-                    .Placeholder("Selecteaza ora vizita!")
-                    .DataTextField("Name")
-                    .DataValueField("LandmarkId")
-                    .HtmlAttributes(new { style = "width:100%;" })
-                    .Filter(FilterType.Contains)
-                    .AutoBind(true)
-                    .MinLength(3)
-                    .DataSource(source =>
-                        {
-                            source.Read(read =>
-                        {
-                            read.Action("Landmarks_Read_ForCB", "Home");
-                        })
-                            .ServerFiltering(true);
-                        })
-            )
-        </td>
-        <br />*@
 
     <label for="City">City :</label>
     <td>
@@ -232,7 +183,7 @@
         @(Html.Kendo().Button()
             .Name("btnSave")
             .Content("Save")
-            .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save" })
+            .HtmlAttributes(new { name = "btnSave", type = "submit", value = "Save" })
             .Events(ev => ev.Click("onClick")))
     </div>
     <br />
@@ -243,7 +194,7 @@
             @(Html.Kendo().Button()
                 .Name("btnSave")
                 .Content("Save and New")
-                .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save and New" })
+                .HtmlAttributes(new { name = "btnSave", type = "submit", value = "Save and New" })
                 .Events(ev => ev.Click("onClick")))
         </div>
     }
@@ -253,7 +204,7 @@
         @(Html.Kendo().Button()
             .Name("btnSave")
             .Content("Cancel")
-            .HtmlAttributes(new { name = "btnSave", style = "background:red", type = "submit", value = "Cancel" })
+            .HtmlAttributes(new { name = "btnSave", type = "submit", value = "Cancel" })
             .Events(ev => ev.Click("onClick")))
     </div>
     <br />
