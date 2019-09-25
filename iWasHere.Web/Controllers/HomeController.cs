@@ -13,6 +13,8 @@ using System.Net.Http.Headers;
 using System.IO;
 using iWasHere.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
+using System.Net.Mail;
+using System.Net;
 
 namespace iWasHere.Web.Controllers
 {
@@ -275,6 +277,120 @@ namespace iWasHere.Web.Controllers
                 TempData["message"] = errorMessage2;
             }
             return RedirectToAction("Landmark_Read", new { id = comm.LandmarkId });
+        }
+
+        //public IActionResult SendEmail(int id)
+
+        //{
+
+        //    LandmarkModel model = _homeService.GetLandmarkById(id);
+
+        //     _homeService.SendEmail(model);
+
+        //    return File(stream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Landmark.docx");
+
+        //}
+    //    public void SendEmail(int id)
+    //    {
+    //        LandmarkModel model = _homeService.GetLandmarkById(id);
+    //        SmtpClient client = new SmtpClient {
+    //            Host= "smtp.gmail.com",
+    //            Port= 587,
+    //            EnableSsl=true,
+    //            DeliveryMethod = SmtpDeliveryMethod.Network,
+    //            Credentials= new NetworkCredential("scarlterwitch@gmail.com", "ThisIsNotAPassword123")
+    //        };
+    //          client.UseDefaultCredentials = false;
+    //        //   client.Credentials = new NetworkCredential("username", "password");
+
+    //        MailMessage mailMessage = new MailMessage();
+    //        mailMessage.From = new MailAddress("scarlterwitch@gmail.com");
+    //        mailMessage.To.Add("georgiana.udrea95.gu@gmail.com");
+    //        Stream v = _homeService.ExportToWord(model);
+    //        System.Net.Mail.Attachment att;
+    //        att = new System.Net.Mail.Attachment(v, "Landmark.docx");
+    //        mailMessage.Attachments.Add(att);
+    //        mailMessage.Subject = "Landmark";
+         
+    //        client.Send(mailMessage);
+    
+    //}
+
+        public IActionResult SendEmail([DataSourceRequest] DataSourceRequest request, String email, int id)
+
+        {
+
+            bool sent = false;
+
+
+            LandmarkModel model = _homeService.GetLandmarkById(id);
+            var fromAddress = new MailAddress("scarlterwitch@gmail.com", "From WonderWoman");
+
+            var toAddress = new MailAddress("georgiana.udrea95.gu@gmail.com", "To Name");
+
+            const string fromPassword = "ThisIsNotAPassword123";
+
+            const string body = "We've attached the landmark in this email!";
+
+            
+
+            // MemoryStream ms = _dictionaryService.ExportFileAlice(id);
+
+            // Attachment data = new Attachment(ms, "Landmark.docx", System.Net.Mime.MediaTypeNames.Text.Plain);
+
+            Attachment data = new Attachment(_homeService.ExportToWord(model), "Landmark.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+
+            var smtp = new SmtpClient
+
+            {
+
+                Host = "smtp.gmail.com",
+
+                Port = 587,
+
+                EnableSsl = true,
+
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+
+                UseDefaultCredentials = false,
+
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+
+            };
+
+            MailMessage message = new MailMessage(fromAddress, toAddress);
+
+            message.Subject = "Landmark Attachment";
+
+            message.Body = body;
+
+            message.Attachments.Add(data);
+
+            {
+
+                try
+
+                {
+
+                    smtp.Send(message);
+
+                    sent = true;
+
+                }
+                catch (Exception ex)
+
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                    sent = false;
+
+                }
+
+            }
+
+            return  RedirectToAction("Landmarks_List_Read", new { id = model.LandmarkId });
+
         }
     }
 }

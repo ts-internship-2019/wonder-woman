@@ -93,10 +93,10 @@
     <input type="checkbox" data-bind="checked: isChecked" />
     <br />
 
-    <label for="Price">Ticket Type :</label>
-    @(Html.Kendo().ComboBoxFor(c => c.LandmarkTypeId)
+//    <label for="Price">Ticket Type :</label>
+ //   @(Html.Kendo().ComboBoxFor(c => c.LandmarkTypeId)
 //.Name("landmarks")
-.Placeholder("Selecteaza tip atractie!")
+@*.Placeholder("Selecteaza tip atractie!")
 .DataTextField("Name")
 .DataValueField("LandmarkTypeId")
 .HtmlAttributes(new { style = "width:100%;" })
@@ -111,7 +111,7 @@
    })
    .ServerFiltering(true);
 })
-    )
+   )*@
     <br />
 
     <label for="LandmarkType">Landmark Type :</label>
