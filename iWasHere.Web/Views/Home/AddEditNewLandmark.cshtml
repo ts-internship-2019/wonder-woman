@@ -54,11 +54,11 @@
                             @:<tr>
                             }
 
-                                  <td>
+                            <td>
 
-                                      <img src="@Url.Content(image)" class=" img-fluid" width="90px" />
-                                    
-                                  </td>
+                                <img src="@Url.Content(image)" class=" img-fluid" width="90px" />
+
+                            </td>
 
                             if (i == 3)
                             {
@@ -78,6 +78,7 @@
         <label for="uploadImage">Upload images:</label>
 
     </div>
+
     <div class="demo-section k-content">
         @(Html.Kendo().Upload()
             .Name("files")
@@ -85,23 +86,33 @@
         )
     </div>
 
-    //</form>
 
     <br />
 
+    <label for="Ticket">Ticket :</label>
+    <input type="checkbox" data-bind="checked: isChecked" />
+    <br />
 
-    @*<label for="Ticket">Ticket :</label>
-        <input type="checkbox" data-bind="checked: isChecked" />
-        <br />
-
-                    <label for="Price">Ticket Price :</label>
-                    @(Html.Kendo().TextBoxFor(m => m.Name) /////////////////////////////////////////////////////////////////////////////
-                        .HtmlAttributes(new
-                        {
-                            validationmessage = "Enter Ticket Price!"
-                        })
-                    )
-                    <br />*@
+    <label for="Price">Ticket Type :</label>
+    @(Html.Kendo().ComboBoxFor(c => c.LandmarkTypeId)
+//.Name("landmarks")
+.Placeholder("Selecteaza tip atractie!")
+.DataTextField("Name")
+.DataValueField("LandmarkTypeId")
+.HtmlAttributes(new { style = "width:100%;" })
+.Filter(FilterType.Contains)
+.AutoBind(true)
+.MinLength(3)
+.DataSource(source =>
+{
+   source.Read(read =>
+   {
+       read.Action("Landmarks_Read_ForCB", "Home");
+   })
+   .ServerFiltering(true);
+})
+    )
+    <br />
 
     <label for="LandmarkType">Landmark Type :</label>
     <td>

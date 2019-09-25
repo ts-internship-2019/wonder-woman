@@ -40,6 +40,13 @@
 <div id="description">
     <p>@Model.Descr</p>
 </div>
+<div class="demo-section k-content">
+    @(Html.Kendo().Button()
+        .Name("btnSendEmail")
+        .Content("Trimite email")
+        .HtmlAttributes(new { name = "btnSendEmail", style = "background: green", type = "submit", value = "Trimite email" })
+        .Events(ev => ev.Click("onClick")))
+</div>
 
 @using (Html.BeginForm("CommentSubmit", "Home", FormMethod.Post))
 {
