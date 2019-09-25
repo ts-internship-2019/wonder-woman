@@ -36,14 +36,14 @@
     <b>Locatie:</b> @location[0]  <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
 </div>
 <br />
-
+<hr>
 <div id="description">
     <b>Descriere:</b> @Model.Descr
 </div>
-
+<hr>
 @using (Html.BeginForm("CommentSubmit", "Home", FormMethod.Post))
 {
-    <b>Titlu:</b>
+    <label for="Title" style="padding-right: 36px">Title :</label>
     @(Html.Kendo().TextBoxFor(t => t.CommentTitle)
 
                             .Value(""))
@@ -103,7 +103,7 @@
         <br />
     }
 </div>
-
+<hr>
 <div id="images">
     <table>
         @{int i = 0;
@@ -124,6 +124,7 @@
         }
     </table>
 </div>
+<hr>
 @if (Model.Latitude != null && Model.Longitude != null)
 {
     <iframe width="500" height="350" frameborder="0" style="border:0"
