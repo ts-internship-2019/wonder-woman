@@ -371,6 +371,17 @@ namespace iWasHere.Domain.Service
             string countyName = null;
             string countryName = null;
             string constructionType = null;
+            List<Comment> comments = new List<Comment>();
+            if (_dbContext.Comment.Where(a => a.LandmarkId == model.LandmarkId).Count() > 0)
+            {
+                comments = _dbContext.Comment.Where(a => a.LandmarkId == model.LandmarkId).Select(a => new Comment()
+                {
+                    CommentId = a.CommentId,
+                    Title = a.Title,
+                    Text = a.Text,
+                    RatingValue = a.RatingValue
+                }).ToList();
+            }
             model.Name = _dbContext.Landmark.Where(x => x.LandmarkId == model.LandmarkId).Select(x => x.Name).FirstOrDefault();
 
             if (_dbContext.City.Where(a => a.CityId == model.CityId).Count() > 0)
@@ -442,9 +453,25 @@ namespace iWasHere.Domain.Service
                               new Text("\n Judetul: " + countyName))),
                                    new Paragraph(
                         new Run(
-                              new Text("\n Tara: " + countryName)))                          
+                              new Text("\n Tara: " + countryName)))
+                                 
+                
+                
+                            ));
+                int sum = 0;
+                foreach (Comment com in comments)
+            {
+                    sum = sum + com.RatingValue;
+                    body.Append(new Paragraph(
+                        new Run(
+                          new Text("Comentarii: " + com.Text))));
+                         
 
-                          ));
+            }
+                body.Append(  new Paragraph(
+                       new Run(
+                         new Text("Medie rating: " + sum / comments.Count()))));
+
 
                 mainPart.Document.Save();
                 doc.Save();
