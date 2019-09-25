@@ -234,7 +234,10 @@ namespace iWasHere.Web.Controllers
             Comment comm = new Comment()
             {
                 LandmarkId = ldm.LandmarkId,
-                Text = ldm.CommentText
+                Text = ldm.CommentText,
+                Title = ldm.CommentTitle,
+                OwnerName = ldm.CommentOwner,
+                RatingValue = ldm.RatingValue
             };
             _homeService.AddComments(comm, out string errorMessage2);
             if (!string.IsNullOrEmpty(errorMessage2))

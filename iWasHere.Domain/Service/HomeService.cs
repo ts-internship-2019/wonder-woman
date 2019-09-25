@@ -107,10 +107,12 @@ namespace iWasHere.Domain.Service
         {
             List<Comment> comm = _dbContext.Comment.Where(a => a.LandmarkId == id).Select(a => new Comment()
             {
+                CommentId= a.CommentId,
                 OwnerName = a.OwnerName,
                 RatingValue = a.RatingValue,
                 Title = a.Title,
-                Text = a.Text
+                Text = a.Text,
+                SubmitedDate = a.SubmitedDate
             }).ToList();
             return comm;
         }
@@ -166,6 +168,7 @@ namespace iWasHere.Domain.Service
         {
 
             Comment comm = new Comment();
+            comm.SubmitedDate = DateTime.Now;
             if (!string.IsNullOrWhiteSpace(cm.OwnerName))
                 comm.OwnerName = cm.OwnerName;
             else
