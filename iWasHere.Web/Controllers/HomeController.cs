@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
 using System.IO;
 using iWasHere.Domain.Models;
-using Microsoft.AspNetCore.Http;
-using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
 namespace iWasHere.Web.Controllers
@@ -72,18 +70,29 @@ namespace iWasHere.Web.Controllers
             ViewData["Construction"] = _homeService.GetConstructionForLandmarkId(id); 
             ViewData["Landmark"] = _homeService.GetLandmarktypeForLandmarkId(id);
             ViewData["Comment"] = _homeService.GetCommentsForLandmarkId(id);
+            ViewData["Country"] = _homeService.GetCountryByLandmarkId(id);
             return View(model);
         }
 
-        public ActionResult GetLandmarks([DataSourceRequest] DataSourceRequest request)
+        public ActionResult GetLandmarks([DataSourceRequest] DataSourceRequest request, int? filterId)
         {
-            List<LandmarkListModel> landmarkList = _homeService.GetLandmarkListModels();
+            List<LandmarkModel> landmarkList = new List<LandmarkModel>();
+            if (filterId == null || filterId < 1)
+            {
+                landmarkList = _homeService.GetLandmarkListModels();
+            }
+            else
+            {
+                landmarkList = _homeService.GetLandmarksByCountryId(filterId);
+            }
+
             DataSourceResult result = new DataSourceResult();
             result.Data = landmarkList;
             return Json(result);
         }
-            public IActionResult Landmarks_List_Read([DataSourceRequest] DataSourceRequest request)
+            public IActionResult Landmarks_List_Read([DataSourceRequest] DataSourceRequest request, int id)
         {
+            ViewData["CountryId"] = id;
             return View();
         }
 
@@ -228,7 +237,7 @@ namespace iWasHere.Web.Controllers
             return Json(request);
         }
 
-        public ActionResult DestroyLandmark([DataSourceRequest] DataSourceRequest request, LandmarkListModel landmarktoDestroy)
+        public ActionResult DestroyLandmark([DataSourceRequest] DataSourceRequest request, LandmarkModel landmarktoDestroy)
         {
 
             _homeService.DestroyLandmark(landmarktoDestroy,out string errorMessage);

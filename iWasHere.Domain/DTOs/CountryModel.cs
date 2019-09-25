@@ -4,9 +4,9 @@ using System.Text;
 
 namespace iWasHere.Domain.DTOs
 {
-    public class LandmarkListModel
+    public class CountryModel
     {
-        public int LandmarkId { get; set; }
+        public int CountryId { get; set; }
         public string Name { get; set; }
     }
 }
