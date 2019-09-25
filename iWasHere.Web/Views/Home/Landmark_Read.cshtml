@@ -25,14 +25,17 @@
     <h1>@Model.Name</h1>
     <div id="header">
         Cod Obiectiv : @Model.Code <br />
-        @if (landmarkType[0] != "") {
+        @if (landmarkType[0] != "")
+        {
             @:Tip Obiectiv : @landmarkType[0], @landmarkType[1] <br />
         }
-        @if (construction[0] != "") {
+        @if (construction[0] != "")
+        {
             @:Tip Constructie : @construction[0], @construction[1] <br />
-            }
-        Locatie: @location[0]  <br />
-    </div>
+        }
+        Locatie: @location[0]  <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
+    </div> <br />
+
 
 <label for="Description">Descriere :</label>
 <div id="description">
