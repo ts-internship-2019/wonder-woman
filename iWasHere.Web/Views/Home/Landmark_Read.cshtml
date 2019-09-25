@@ -173,26 +173,3 @@
     }
 </style>
 }
-
-@addTagHelper *, Kendo.Mvc
-
-<div class="demo-section k-content">
-    <h4>Rating</h4>
-    <kendo-rating name="rating"
-                  min="1"
-                  max="6"
-                  value="3"
-                  item-template-id="item-template"
-                  selected-template-id="selected-template"
-                  hovered-template-id="selected-template">
-        <label template="<span>#=value# out of #=maxValue#</span>" />
-    </kendo-rating>
-</div>
-
-<script id="item-template" type="x/kendo-template">
-    <i class='k-icon k-i-heart-outline'></i>
-</script>
-
-<script id="selected-template" type="x/kendo-template">
-    <i class='k-icon k-i-heart'></i>
-</script>
