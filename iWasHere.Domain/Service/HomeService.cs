@@ -31,9 +31,9 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
             _environment = environment;
         }
-        public List<LandmarkListModel> GetLandmarkListModels()
+        public List<LandmarkModel> GetLandmarkListModels()
         {
-            List<LandmarkListModel> landmarkList = _dbContext.Landmark.Select(a => new LandmarkListModel()
+            List<LandmarkModel> landmarkList = _dbContext.Landmark.Select(a => new LandmarkModel()
             {
                 LandmarkId = a.LandmarkId,
                 Name = a.Name
@@ -85,6 +85,41 @@ namespace iWasHere.Domain.Service
             location.Add(country.Name + ", " + county.Name + ", " + city.Name);
             return location;
         }
+
+        public CountryModel GetCountryByLandmarkId(int id)
+        {
+            Landmark lm = _dbContext.Landmark.First(a => a.LandmarkId == id);
+            Country ct = _dbContext.Country.First(a => a.CountryId == lm.County.Country.CountryId);
+
+            CountryModel countrym = new CountryModel()
+            {
+                CountryId = ct.CountryId,
+                Name = ct.Name
+            };
+
+            return countrym;
+        }
+
+        public List<LandmarkModel> GetLandmarksByCountryId(int? id)
+        {
+            List<LandmarkModel> landmarks = _dbContext.Landmark.Select(a => new LandmarkModel()
+            {
+                LandmarkId = a.LandmarkId,
+                Code = a.Code,
+                Name = a.Name,
+                Descr = a.Descr,
+                ConstructionTypeId = a.ConstructionTypeId,
+                HistoricalPeriodTypeId = a.HistoricalPeriodTypeId,
+                LandmarkTypeId = a.LandmarkTypeId,
+                Latitude = a.Latitude,
+                Longitude = a.Longitude,
+                CountryId = a.CountryId,
+                CountyId = a.CountyId,
+                CityId = a.CityId
+            }).Where(a => a.CountryId == id).ToList();
+            return landmarks;
+        }
+
         public List<String> GetConstructionForLandmarkId(int id)
         {
             List<String> constructionstring = new List<String>();
@@ -97,7 +132,10 @@ namespace iWasHere.Domain.Service
             }
             DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == landmark.ConstructionTypeId);
             constructionstring.Add(construction.Name);
-            constructionstring.Add(construction.Description);
+            if (construction.Description != "NULL")
+                constructionstring.Add("(" + construction.Description + ")");
+            else
+                constructionstring.Add("");
                 return constructionstring;
         }
         public List<String> GetLandmarktypeForLandmarkId(int id)
@@ -112,8 +150,11 @@ namespace iWasHere.Domain.Service
             }
             DictionaryLandmarkType landmarkType = _dbContext.DictionaryLandmarkType.First(a => a.LandmarkTypeId == landmark.LandmarkTypeId);
             lmkTypestring.Add(landmarkType.Name);
-            lmkTypestring.Add(landmarkType.Description);
-                return lmkTypestring;
+            if (landmarkType.Description != "NULL")
+                lmkTypestring.Add("(" + landmarkType.Description + ")");
+            else
+                lmkTypestring.Add("");
+            return lmkTypestring;
         }
         //public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
 
@@ -121,10 +162,12 @@ namespace iWasHere.Domain.Service
         {
             List<Comment> comm = _dbContext.Comment.Where(a => a.LandmarkId == id).Select(a => new Comment()
             {
+                CommentId= a.CommentId,
                 OwnerName = a.OwnerName,
                 RatingValue = a.RatingValue,
                 Title = a.Title,
-                Text = a.Text
+                Text = a.Text,
+                SubmitedDate = a.SubmitedDate
             }).ToList();
             return comm;
         }
@@ -188,6 +231,7 @@ namespace iWasHere.Domain.Service
         {
 
             Comment comm = new Comment();
+            comm.SubmitedDate = DateTime.Now;
             if (!string.IsNullOrWhiteSpace(cm.OwnerName))
                 comm.OwnerName = cm.OwnerName;
             else
@@ -276,7 +320,7 @@ namespace iWasHere.Domain.Service
             return query.ToList();
         }
 
-        public void DestroyLandmark(LandmarkListModel landmarkToDestroy,out string errorMessage)
+        public void DestroyLandmark(LandmarkModel landmarkToDestroy,out string errorMessage)
         {
             var db = _dbContext;
             errorMessage = "";
@@ -312,15 +356,15 @@ namespace iWasHere.Domain.Service
             countyName = county.Name;
             Country country = _dbContext.Country.First(a => a.CountryId == model.CountryId);
             countryName = country.Name;
-            DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == model.ConstructionTypeId);
-            constructionType = construction.Name;
-            if (_dbContext.Photo.Where(a => a.LandmarkId == model.LandmarkId).Count() > 0)
+            Photo photo = _dbContext.Photo.First(a => a.LandmarkId == model.LandmarkId);
+            firstPhoto = photo.ImagePath;
+            if (model.ConstructionTypeId != null)
             {
-                Photo photo = _dbContext.Photo.First(a => a.LandmarkId == model.LandmarkId);
-                firstPhoto = photo.ImagePath;
-
+                DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == model.ConstructionTypeId);
+                constructionType = "\n Tipul de constructie este: " + construction.Name;
             }
-
+            else
+                constructionType = "";
             var stream = new MemoryStream();
 
             using (WordprocessingDocument doc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document, true))
@@ -333,10 +377,10 @@ namespace iWasHere.Domain.Service
                 {
                     ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
 
-                    using (FileStream imgstream = new FileStream(_environment.WebRootPath + firstPhoto.Substring(1), FileMode.Open))
-                    {
-                        imagePart.FeedData(stream);
-                    }
+                using (FileStream imgstream = new FileStream(_environment.WebRootPath + firstPhoto.Substring(1), FileMode.Open))
+                {
+                    imagePart.FeedData(imgstream);
+                }
 
                     AddImageToBody(doc, mainPart.GetIdOfPart(imagePart));
                 }
@@ -348,11 +392,11 @@ namespace iWasHere.Domain.Service
                           new Text("Numele obiectivului: " + model.Name))),                     
                            new Paragraph(
                         new Run(
-                          new Text("\n Descrierea atractiei este: " + model.Descr))),
+                          new Text("\n Descriere: " + model.Descr))),
                             
                                new Paragraph(
                         new Run(
-                            new Text("\n Tipul de constructie este: " + constructionType))),
+                            new Text(constructionType))),
 
                                  new Paragraph(
                         new Run(
@@ -368,6 +412,9 @@ namespace iWasHere.Domain.Service
                           ));
 
                 mainPart.Document.Save();
+                doc.Save();
+                doc.Close();
+                
             }
 
 

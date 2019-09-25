@@ -16,6 +16,7 @@ namespace iWasHere.Domain.DTOs
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
         public int? CountryId { get; set; }
+        public string CountryName { get; set; }
         public int? CountyId { get; set; }
         public int? CityId { get; set; }
         public string MapUrl { get; set; }
@@ -23,5 +24,7 @@ namespace iWasHere.Domain.DTOs
         public string CommentTitle { get; set; }
         public string CommentOwner { get; set; }
         public int? CommentId { get; set; }
+
+        public int RatingValue { get; set; }
     }
 }

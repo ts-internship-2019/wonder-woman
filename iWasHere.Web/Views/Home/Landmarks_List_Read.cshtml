@@ -1,7 +1,8 @@
-﻿@model IEnumerable<iWasHere.Domain.DTOs.LandmarkListModel>
+﻿@model IEnumerable<iWasHere.Domain.DTOs.LandmarkModel>
 @using Kendo.Mvc.UI
 @{
     ViewData["Title"] = "Lista Obiective";
+    int? CountryId = ViewData["CountryId"] as int?;
 }
 
 <div>
@@ -53,7 +54,7 @@
             .Ajax()
             .PageSize(10)
             .Model(model => model.Id(p => p.LandmarkId))
-            .Read(read => read.Action("GetLandmarks", "Home"))
+            .Read(read => read.Action("GetLandmarks", "Home").Data("getfilter"))
 
          )
     )
@@ -81,3 +82,11 @@
     }
 </script>
 
+<script type="text/javascript">
+    var id = @CountryId;
+    function getfilter() {
+        return {
+            filterId: id,
+        };
+    }
+</script>
