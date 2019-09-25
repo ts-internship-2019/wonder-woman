@@ -67,27 +67,27 @@ height: 600px;
 
 
 <div id="images">
-    <table>
-        @{int i = 0;
-            foreach (string image in images)
-            {
-                if (i == 0)
+        <table>
+            @{int i = 0;
+                foreach (string image in images)
                 {
-                    @:<tr>
-                    }
-
-                    <td><img src="@Url.Content(image)" class=" img-fluid" /></td>
-
-                    if (i == 3)
+                    if (i == 0)
                     {
-                        i = 0;
-                    @:</tr>
-                }
-                ++i;
+                        @:<tr>
+                        }
 
+                        <td><img src="@Url.Content(image)" class=" img-fluid" /></td>
+
+                        if (i == 3)
+                        {
+                            i = -1;
+                        @:</tr>
+                    }
+                    ++i;
+
+                }
             }
-        }
-    </table>
+        </table>
 </div>
 @if (Model.Latitude != null && Model.Longitude != null)
 {
