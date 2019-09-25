@@ -11,6 +11,12 @@
     img {
         height: 60px;
     }
+    div {
+        align-self: center
+    }
+    .k-textbox{
+        padding-left: 5em
+    }
 </style>
 @using (Html.BeginForm("LandmarkSubmit", "Home", FormMethod.Post))
 {
@@ -231,7 +237,7 @@
     </div>
     <br />
 
-    if (Model == null)
+    if (Model.LandmarkId == 0)
     {
         <div class="demo-section k-content">
             @(Html.Kendo().Button()
