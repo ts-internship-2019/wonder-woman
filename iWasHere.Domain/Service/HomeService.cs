@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Web.Mvc;
 using A = DocumentFormat.OpenXml.Drawing;
+using Comment = iWasHere.Domain.Models.Comment;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 
@@ -94,7 +95,10 @@ namespace iWasHere.Domain.Service
             }
             DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == landmark.ConstructionTypeId);
             constructionstring.Add(construction.Name);
-            constructionstring.Add(construction.Description);
+            if (construction.Description != "NULL")
+                constructionstring.Add("(" + construction.Description + ")");
+            else
+                constructionstring.Add("");
                 return constructionstring;
         }
         public List<String> GetLandmarktypeForLandmarkId(int id)
@@ -109,8 +113,11 @@ namespace iWasHere.Domain.Service
             }
             DictionaryLandmarkType landmarkType = _dbContext.DictionaryLandmarkType.First(a => a.LandmarkTypeId == landmark.LandmarkTypeId);
             lmkTypestring.Add(landmarkType.Name);
-            lmkTypestring.Add(landmarkType.Description);
-                return lmkTypestring;
+            if (landmarkType.Description != "NULL")
+                lmkTypestring.Add("(" + landmarkType.Description + ")");
+            else
+                lmkTypestring.Add("");
+            return lmkTypestring;
         }
         //public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
 
@@ -311,10 +318,13 @@ namespace iWasHere.Domain.Service
             countryName = country.Name;
             Photo photo = _dbContext.Photo.First(a => a.LandmarkId == model.LandmarkId);
             firstPhoto = photo.ImagePath;
-            
-            DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == model.ConstructionTypeId);
-            constructionType = construction.Name;
-
+            if (model.ConstructionTypeId != null)
+            {
+                DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == model.ConstructionTypeId);
+                constructionType = "\n Tipul de constructie este: " + construction.Name;
+            }
+            else
+                constructionType = "";
             var stream = new MemoryStream();
 
             using (WordprocessingDocument doc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document, true))
@@ -327,7 +337,7 @@ namespace iWasHere.Domain.Service
 
                 using (FileStream imgstream = new FileStream(_environment.WebRootPath + firstPhoto.Substring(1), FileMode.Open))
                 {
-                    imagePart.FeedData(stream);
+                    imagePart.FeedData(imgstream);
                 }
 
                 AddImageToBody(doc, mainPart.GetIdOfPart(imagePart));
@@ -340,11 +350,11 @@ namespace iWasHere.Domain.Service
                           new Text("Numele obiectivului: " + model.Name))),                     
                            new Paragraph(
                         new Run(
-                          new Text("\n Descrierea atractiei este: " + model.Descr))),
+                          new Text("\n Descriere: " + model.Descr))),
                             
                                new Paragraph(
                         new Run(
-                            new Text("\n Tipul de constructie este: " + constructionType))),
+                            new Text(constructionType))),
 
                                  new Paragraph(
                         new Run(
@@ -360,6 +370,9 @@ namespace iWasHere.Domain.Service
                           ));
 
                 mainPart.Document.Save();
+                doc.Save();
+                doc.Close();
+                
             }
 
 
