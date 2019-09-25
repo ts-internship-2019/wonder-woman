@@ -71,6 +71,7 @@ namespace iWasHere.Web.Controllers
             ViewData["Location"] = _homeService.GetLocationForLandmarkId(id);
             ViewData["Construction"] = _homeService.GetConstructionForLandmarkId(id); 
             ViewData["Landmark"] = _homeService.GetLandmarktypeForLandmarkId(id);
+            ViewData["Comment"] = _homeService.GetCommentsForLandmarkId(id);
             return View(model);
         }
 
@@ -246,6 +247,22 @@ namespace iWasHere.Web.Controllers
 
             return File(stream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Landmark.docx");
 
+        }
+
+        [HttpPost]
+        public IActionResult CommentSubmit(LandmarkModel ldm)
+        {
+            Comment comm = new Comment()
+            {
+                LandmarkId = ldm.LandmarkId,
+                Text = ldm.CommentText
+            };
+            _homeService.AddComments(comm, out string errorMessage2);
+            if (!string.IsNullOrEmpty(errorMessage2))
+            {
+                TempData["message"] = errorMessage2;
+            }
+            return RedirectToAction("Landmark_Read", new { id = comm.LandmarkId });
         }
     }
 }

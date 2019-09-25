@@ -112,7 +112,21 @@ namespace iWasHere.Domain.Service
             lmkTypestring.Add(landmarkType.Description);
                 return lmkTypestring;
         }
-        public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
+        //public void UpdateLandmark(LandmarkModel lm, out string errorMessage,out int id)
+
+        public List<Comment> GetCommentsForLandmarkId(int id)
+        {
+            List<Comment> comm = _dbContext.Comment.Where(a => a.LandmarkId == id).Select(a => new Comment()
+            {
+                OwnerName = a.OwnerName,
+                RatingValue = a.RatingValue,
+                Title = a.Title,
+                Text = a.Text
+            }).ToList();
+            return comm;
+        }
+
+        public void UpdateLandmark(LandmarkModel lm, out string errorMessage, out int id)
         {
 
             Landmark landmark = new Landmark();
@@ -165,6 +179,36 @@ namespace iWasHere.Domain.Service
                 errorMessage = "Salvarea/Editarea nu a putut fi efectuata cu succes! Te rog sa mai incearci o data!";
             }
             id = landmark.LandmarkId;
+        }
+
+        public void AddComments(Comment cm, out string errorMessage)
+        {
+
+            Comment comm = new Comment();
+            if (!string.IsNullOrWhiteSpace(cm.OwnerName))
+                comm.OwnerName = cm.OwnerName;
+            else
+                comm.OwnerName = "Anonim";
+            if (!string.IsNullOrWhiteSpace(cm.Title))
+                comm.Title = cm.Title;
+            else
+                comm.Title = "No Title!";
+            if (!string.IsNullOrWhiteSpace(cm.Text))
+                comm.Text = cm.Text;
+            if (cm.RatingValue != 0)
+                comm.RatingValue = cm.RatingValue;
+            comm.LandmarkId = cm.LandmarkId;
+                errorMessage = "";
+            _dbContext.Comment.Add(comm);
+            //try
+            {
+                _dbContext.SaveChanges();
+            }
+            //catch (Exception ex)
+            {
+                //string var = ex.Message;
+                errorMessage = "Salvarea/Editarea nu a putut fi efectuata cu succes! Te rog sa mai incearci o data!";
+            }
         }
 
         public List<DictionaryLandmarkType> GetLandmarks(string text)
