@@ -30,7 +30,7 @@
         @(Html.Kendo().Button()
             .Name("btnSave")
             .Content("Save")
-            .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save" })
+            .HtmlAttributes(new { name = "btnSave", type = "submit", value = "Save" })
             .Events(ev => ev.Click("onClick")))
     </div>
     <br />
@@ -41,7 +41,7 @@
             @(Html.Kendo().Button()
                 .Name("btnSave")
                 .Content("Save and New")
-                .HtmlAttributes(new { name = "btnSave", style = "background: green", type = "submit", value = "Save and New" })
+                .HtmlAttributes(new { name = "btnSave", type = "submit", value = "Save and New" })
                 .Events(ev => ev.Click("onClick")))
         </div>
     }
@@ -51,7 +51,7 @@
         @(Html.Kendo().Button()
             .Name("btnSave")
             .Content("Cancel")
-            .HtmlAttributes(new { name = "btnSave", style = "background:red", type = "submit", value = "Cancel" })
+            .HtmlAttributes(new { name = "btnSave", type = "submit", value = "Cancel" })
             .Events(ev => ev.Click("onClick")))
     </div>
     <br />

@@ -8,7 +8,7 @@
     @(Html.Kendo().Button()
         .Name("btnAdd")
         .Content("Add Country")
-        .HtmlAttributes(new { type = "button", style = "background:green" })
+        .HtmlAttributes(new { type = "button" })
         .Events(ev => ev.Click("onClick")))
 </div>
 
@@ -32,7 +32,7 @@
                     .Name("filterBtn")
                     .Content("Filter")
                     .Icon("filter")
-                    .HtmlAttributes(new { type = "button", style = "background: blue" })
+                    .HtmlAttributes(new { type = "button"})
                     .Events(ev => ev.Click("onClick")))
             </td>
             <td>
@@ -40,7 +40,7 @@
                     .Name("clearFilterBtn")
                     .Icon("clear-filter")
                     .Content("Reset Filter")
-                    .HtmlAttributes(new { type = "button", style = "background: blue" })
+                    .HtmlAttributes(new { type = "button"})
                     .Events(ev => ev.Click("onClick")))
             </td>
         </tr>
