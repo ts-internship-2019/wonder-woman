@@ -71,10 +71,8 @@
                 .Read(read => read.Action("GetConstruction", "Dictionary").Data("constructionReadData"))
                  .Model(model => model.Id(p => p.ConstructionTypeId))
                   .Destroy(update => update.Action("DestroyConstruction", "Dictionary"))
-               )
-
-    )
-    )
+                  )
+            )
     </div>
     <script type="text/javascript">
         var construction = "";
