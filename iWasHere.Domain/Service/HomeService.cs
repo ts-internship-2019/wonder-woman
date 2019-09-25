@@ -459,19 +459,22 @@ namespace iWasHere.Domain.Service
                 
                             ));
                 int sum = 0;
-                foreach (Comment com in comments)
-            {
-                    sum = sum + com.RatingValue;
+                if (comments.Count() > 0)
+                {
+                    foreach (Comment com in comments)
+                    {
+                        sum = sum + com.RatingValue;
+                        body.Append(new Paragraph(
+                            new Run(
+                              new Text("Comentarii: " + com.Text))));
+
+
+                    }
+
                     body.Append(new Paragraph(
-                        new Run(
-                          new Text("Comentarii: " + com.Text))));
-                         
-
-            }
-                body.Append(  new Paragraph(
-                       new Run(
-                         new Text("Medie rating: " + sum / comments.Count()))));
-
+                           new Run(
+                             new Text("Medie rating: " + sum / comments.Count()))));
+                }
 
                 mainPart.Document.Save();
                 doc.Save();
