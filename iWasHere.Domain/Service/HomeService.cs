@@ -71,6 +71,41 @@ namespace iWasHere.Domain.Service
             location.Add(country.Name + ", " + county.Name + ", " + city.Name);
             return location;
         }
+
+        public CountryModel GetCountryByLandmarkId(int id)
+        {
+            Landmark lm = _dbContext.Landmark.First(a => a.LandmarkId == id);
+            Country ct = _dbContext.Country.First(a => a.CountryId == lm.County.Country.CountryId);
+
+            CountryModel countrym = new CountryModel()
+            {
+                CountryId = ct.CountryId,
+                Name = ct.Name
+            };
+
+            return countrym;
+        }
+
+        public List<LandmarkModel> GetLandmarksByCountryId(int id)
+        {
+            List<LandmarkModel> landmarks = _dbContext.Landmark.Select(a => new LandmarkModel()
+            {
+                LandmarkId = a.LandmarkId,
+                Code = a.Code,
+                Name = a.Name,
+                Descr = a.Descr,
+                ConstructionTypeId = a.ConstructionTypeId,
+                HistoricalPeriodTypeId = a.HistoricalPeriodTypeId,
+                LandmarkTypeId = a.LandmarkTypeId,
+                Latitude = a.Latitude,
+                Longitude = a.Longitude,
+                CountryId = a.CountryId,
+                CountyId = a.CountyId,
+                CityId = a.CityId
+            }).Where(a => a.CountryId == id).ToList();
+            return landmarks;
+        }
+
         public List<String> GetConstructionForLandmarkId(int id)
         {
             List<String> constructionstring = new List<String>();

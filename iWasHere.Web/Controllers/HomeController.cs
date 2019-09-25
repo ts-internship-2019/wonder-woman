@@ -72,6 +72,7 @@ namespace iWasHere.Web.Controllers
             ViewData["Construction"] = _homeService.GetConstructionForLandmarkId(id); 
             ViewData["Landmark"] = _homeService.GetLandmarktypeForLandmarkId(id);
             ViewData["Comment"] = _homeService.GetCommentsForLandmarkId(id);
+            ViewData["Country"] = _homeService.GetCountryByLandmarkId(id);
             return View(model);
         }
 
