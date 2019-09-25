@@ -24,5 +24,7 @@ namespace iWasHere.Domain.DTOs
         public string CommentTitle { get; set; }
         public string CommentOwner { get; set; }
         public int? CommentId { get; set; }
+
+        public int RatingValue { get; set; }
     }
 }
