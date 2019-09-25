@@ -77,18 +77,41 @@ namespace iWasHere.Domain.Service
         public List<String> GetLocationForLandmarkId(int id)
         {
             Landmark landmark = _dbContext.Landmark.First(a => a.LandmarkId == id);
-            var cityId = landmark.CityId;
-            City city = _dbContext.City.First(a => a.CityId == cityId);
-            County county = _dbContext.County.First(a => a.CountyId == city.CountyId);
-            Country country = _dbContext.Country.First(a => a.CountryId == county.CountryId);
+            County county = new County();
+            Country country = new Country();
             List<String> location = new List<String>();
-            location.Add(country.Name + ", " + county.Name + ", " + city.Name);
-            return location;
+            var cityId = landmark.CityId;
+            if (cityId != null)
+            {
+                City city = _dbContext.City.First(a => a.CityId == cityId);
+                if (city.CountyId != null)
+                {
+                     county = _dbContext.County.First(a => a.CountyId == city.CountyId);
+                }
+                
+                if (county.CountryId != null)
+                {
+                     country = _dbContext.Country.First(a => a.CountryId == county.CountryId);
+                }
+
+                location.Add(country.Name + ", " + county.Name + ", " + city.Name);
+                return location;
+            }
+            else
+            {
+                location.Add("");
+                return location;
+            }
+                 
         }
 
         public CountryModel GetCountryByLandmarkId(int id)
         {
             Landmark lm = _dbContext.Landmark.First(a => a.LandmarkId == id);
+            if(lm.CountryId == null)
+            {
+                return new CountryModel();
+            }
             Country ct = _dbContext.Country.First(a => a.CountryId == lm.County.Country.CountryId);
 
             CountryModel countrym = new CountryModel()
@@ -343,21 +366,33 @@ namespace iWasHere.Domain.Service
         public Stream ExportToWord(LandmarkModel model)
 
         {
-            string firstPhoto=null;
+            string firstPhoto = null;
             string cityName = null;
             string countyName = null;
             string countryName = null;
             string constructionType = null;
             model.Name = _dbContext.Landmark.Where(x => x.LandmarkId == model.LandmarkId).Select(x => x.Name).FirstOrDefault();
 
-            City city = _dbContext.City.First(a => a.CityId == model.CityId);
-            cityName = city.Name;
-            County county = _dbContext.County.First(a => a.CountyId == model.CountyId);
-            countyName = county.Name;
-            Country country = _dbContext.Country.First(a => a.CountryId == model.CountryId);
-            countryName = country.Name;
-            Photo photo = _dbContext.Photo.First(a => a.LandmarkId == model.LandmarkId);
-            firstPhoto = photo.ImagePath;
+            if (_dbContext.City.Where(a => a.CityId == model.CityId).Count() > 0)
+            {
+                City city = _dbContext.City.First(a => a.CityId == model.CityId);
+                cityName = city.Name;
+            }
+            if (_dbContext.County.Where(a => a.CountyId == model.CountyId).Count() > 0)
+            {
+                County county = _dbContext.County.First(a => a.CountyId == model.CountyId);
+                countyName = county.Name;
+            }
+            if (_dbContext.Country.Where(a => a.CountryId == model.CountryId).Count() > 0)
+            {
+                Country country = _dbContext.Country.First(a => a.CountryId == model.CountryId);
+                countryName = country.Name;
+            }
+            if(_dbContext.Photo.Where(a => a.LandmarkId == model.LandmarkId).Count() > 0)
+            {
+                Photo photo = _dbContext.Photo.First(a => a.LandmarkId == model.LandmarkId);
+                firstPhoto = photo.ImagePath;
+            }
             if (model.ConstructionTypeId != null)
             {
                 DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == model.ConstructionTypeId);
@@ -377,10 +412,10 @@ namespace iWasHere.Domain.Service
                 {
                     ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
 
-                using (FileStream imgstream = new FileStream(_environment.WebRootPath + firstPhoto.Substring(1), FileMode.Open))
-                {
-                    imagePart.FeedData(imgstream);
-                }
+                    using (FileStream imgstream = new FileStream(_environment.WebRootPath + firstPhoto.Substring(1), FileMode.Open))
+                    {
+                        imagePart.FeedData(imgstream);
+                    }
 
                     AddImageToBody(doc, mainPart.GetIdOfPart(imagePart));
                 }
