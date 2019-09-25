@@ -33,7 +33,7 @@
     {
         @:Tip Constructie : @construction[0], (@construction[1]) <br />
     }
-    Locatie: @location[0]  <br /> <a href="google.ro"> @country.Name</a>
+    Locatie: @location[0]  <br /> <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
 </div>
 
 <label for="Description">Descriere :</label>
@@ -74,7 +74,8 @@
     <table>
         @foreach (var comment in comments)
         {
-            <td><@comment.Text></td>
+            @:<td>@comment.Text
+        @:</td>
         }
     </table>
 </div>

@@ -34,7 +34,7 @@ namespace iWasHere.Domain.Service
                 _dbContext.SaveChanges();
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -172,7 +172,7 @@ namespace iWasHere.Domain.Service
             {
                 _dbContext.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

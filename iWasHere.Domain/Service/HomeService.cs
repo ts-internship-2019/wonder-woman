@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Web.Mvc;
 using A = DocumentFormat.OpenXml.Drawing;
+using Comment = iWasHere.Domain.Models.Comment;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 
@@ -28,9 +29,9 @@ namespace iWasHere.Domain.Service
             _dbContext = databaseContext;
             _environment = environment;
         }
-        public List<LandmarkListModel> GetLandmarkListModels()
+        public List<LandmarkModel> GetLandmarkListModels()
         {
-            List<LandmarkListModel> landmarkList = _dbContext.Landmark.Select(a => new LandmarkListModel()
+            List<LandmarkModel> landmarkList = _dbContext.Landmark.Select(a => new LandmarkModel()
             {
                 LandmarkId = a.LandmarkId,
                 Name = a.Name
@@ -97,7 +98,7 @@ namespace iWasHere.Domain.Service
             return countrym;
         }
 
-        public List<LandmarkModel> GetLandmarksByCountryId(int id)
+        public List<LandmarkModel> GetLandmarksByCountryId(int? id)
         {
             List<LandmarkModel> landmarks = _dbContext.Landmark.Select(a => new LandmarkModel()
             {
@@ -308,7 +309,7 @@ namespace iWasHere.Domain.Service
             return query.ToList();
         }
 
-        public void DestroyLandmark(LandmarkListModel landmarkToDestroy,out string errorMessage)
+        public void DestroyLandmark(LandmarkModel landmarkToDestroy,out string errorMessage)
         {
             var db = _dbContext;
             errorMessage = "";
