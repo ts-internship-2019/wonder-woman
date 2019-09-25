@@ -22,38 +22,38 @@
         max-height: 100%;
     }
 </style>
-    <h1>@Model.Name</h1>
-    <div id="header">
-        Cod Obiectiv : @Model.Code <br />
-        @if (landmarkType[0] != "")
-        {
-            @:Tip Obiectiv : @landmarkType[0], @landmarkType[1] <br />
-        }
-        @if (construction[0] != "")
-        {
-            @:Tip Constructie : @construction[0], @construction[1] <br />
-        }
-        Locatie: @location[0]  <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
-    </div> <br />
+<h1>@Model.Name</h1>
+<div id="header">
+    Cod Obiectiv : @Model.Code <br />
+    @if (landmarkType[0] != "")
+    {
+        @:Tip Obiectiv : @landmarkType[0], @landmarkType[1] <br />
+    }
+    @if (construction[0] != "")
+    {
+        @:Tip Constructie : @construction[0], @construction[1] <br />
+    }
+    Locatie: @location[0]  <a href="Landmarks_List_Read?id=@country.CountryId"> @country.Name</a>
+</div>
+<br />
 
 <div id="description">
     Descriere: @Model.Descr
 </div>
-<div class="demo-section k-content">
-    @(Html.Kendo().Button()
-        .Name("btnSendEmail")
-        .Content("Trimite email")
-        .HtmlAttributes(new { name = "btnSendEmail", style = "background: green", type = "submit", value = "Trimite email" })
-        .Events(ev => ev.Click("onClick")))
-</div>
 
 @using (Html.BeginForm("CommentSubmit", "Home", FormMethod.Post))
 {
+    <label for="Title">Title :</label>
+    @(Html.Kendo().TextBoxFor(t => t.CommentTitle)
+
+                            .Value(""))
+    <br />
+
     <label for="Comentariu">Comment :</label>
 
     @(Html.Kendo().TextBoxFor(t => t.CommentText)
-                          
-                            .Value(""))
+                  .Value(""))
+    <br />
     <br />
 
     <label>Rating: </label>
@@ -61,18 +61,18 @@
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <div class="stars">
-        
-            <input value ="5" class="star star-5" id="star-5" type="radio" name="RatingValue" />
-            <label class="star star-5" for="star-5"></label>
-            <input value ="4" class="star star-4" id="star-4" type="radio" name="RatingValue" />
-            <label class="star star-4" for="star-4"></label>
-            <input value ="3" class="star star-3" id="star-3" type="radio" name="RatingValue" />
-            <label class="star star-3" for="star-3"></label>
-            <input value ="2" class="star star-2" id="star-2" type="radio" name="RatingValue" />
-            <label class="star star-2" for="star-2"></label>
-            <input value ="1"class="star star-1" id="star-1" type="radio" name="RatingValue" />
-            <label class="star star-1" for="star-1"></label>
-        
+
+        <input value="5" class="star star-5" id="star-5" type="radio" name="RatingValue" />
+        <label class="star star-5" for="star-5"></label>
+        <input value="4" class="star star-4" id="star-4" type="radio" name="RatingValue" />
+        <label class="star star-4" for="star-4"></label>
+        <input value="3" class="star star-3" id="star-3" type="radio" name="RatingValue" />
+        <label class="star star-3" for="star-3"></label>
+        <input value="2" class="star star-2" id="star-2" type="radio" name="RatingValue" />
+        <label class="star star-2" for="star-2"></label>
+        <input value="1" class="star star-1" id="star-1" type="radio" name="RatingValue" />
+        <label class="star star-1" for="star-1"></label>
+
     </div>
     <br />
     <br />
