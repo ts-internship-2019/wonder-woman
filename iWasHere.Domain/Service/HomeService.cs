@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Web.Mvc;
 using A = DocumentFormat.OpenXml.Drawing;
+using Comment = iWasHere.Domain.Models.Comment;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 
