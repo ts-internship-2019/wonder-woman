@@ -11,9 +11,12 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Reflection.Metadata;
 using System.Web.Mvc;
 using A = DocumentFormat.OpenXml.Drawing;
+using Comment = iWasHere.Domain.Models.Comment;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 
@@ -296,7 +299,7 @@ namespace iWasHere.Domain.Service
         public Stream ExportToWord(LandmarkModel model)
 
         {
-            string firstPhoto;
+            string firstPhoto=null;
             string cityName = null;
             string countyName = null;
             string countryName = null;
@@ -309,11 +312,14 @@ namespace iWasHere.Domain.Service
             countyName = county.Name;
             Country country = _dbContext.Country.First(a => a.CountryId == model.CountryId);
             countryName = country.Name;
-            Photo photo = _dbContext.Photo.First(a => a.LandmarkId == model.LandmarkId);
-            firstPhoto = photo.ImagePath;
-            
             DictionaryConstructionType construction = _dbContext.DictionaryConstructionType.First(a => a.ConstructionTypeId == model.ConstructionTypeId);
             constructionType = construction.Name;
+            if (_dbContext.Photo.Where(a => a.LandmarkId == model.LandmarkId).Count() > 0)
+            {
+                Photo photo = _dbContext.Photo.First(a => a.LandmarkId == model.LandmarkId);
+                firstPhoto = photo.ImagePath;
+
+            }
 
             var stream = new MemoryStream();
 
@@ -323,15 +329,17 @@ namespace iWasHere.Domain.Service
                 MainDocumentPart mainPart = doc.AddMainDocumentPart();
 
                 new DocumentFormat.OpenXml.Wordprocessing.Document(new Body()).Save(mainPart);
-                ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
-
-                using (FileStream imgstream = new FileStream(_environment.WebRootPath + firstPhoto.Substring(1), FileMode.Open))
+                if (firstPhoto != null)
                 {
-                    imagePart.FeedData(stream);
+                    ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
+
+                    using (FileStream imgstream = new FileStream(_environment.WebRootPath + firstPhoto.Substring(1), FileMode.Open))
+                    {
+                        imagePart.FeedData(stream);
+                    }
+
+                    AddImageToBody(doc, mainPart.GetIdOfPart(imagePart));
                 }
-
-                AddImageToBody(doc, mainPart.GetIdOfPart(imagePart));
-
                 Body body = mainPart.Document.Body;
                 body.Append(
                       new Body(
@@ -442,5 +450,7 @@ namespace iWasHere.Domain.Service
             // Append the reference to body, the element should be in a Run.
             wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
         }
+
+
     }
 }
