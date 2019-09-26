@@ -43,7 +43,7 @@
         .Name("Grid")
         .Columns(columns =>
         {
-            columns.Bound(p => p.TicketTypeId).Title("TicketTypeId");
+            columns.Bound(p => p.TicketTypeId).Title("TicketTypeId").Hidden();
             columns.Bound(p => p.Code).Title("Code");
             columns.Bound(p => p.Name).Title("Name");
             columns.Bound(p => p.Description).Title("Description");
